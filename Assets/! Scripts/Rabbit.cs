@@ -58,7 +58,7 @@ public class Rabbit : MonoBehaviour
     public float wanderDistanceMin = 2f;
     public float wanderDistanceMax = 5f;
     public float runDistance = 6f;
-    public float wanderInterval = 4f;
+    public float wanderInterval = 2f;
 
     private float needsTimer = 0f;
     private NavMeshAgent agent;
@@ -67,7 +67,6 @@ public class Rabbit : MonoBehaviour
     private Transform targetBurrow;
     private Transform detectedWolf;
     private float nextLookTime;
-    private Coroutine eatingRoutine;
     private float wanderTimer = 0f;
 
     void Start()
@@ -112,7 +111,7 @@ public class Rabbit : MonoBehaviour
         switch (currentState)
         {
             case RabbitState.Wandering:
-                if (wanderTimer < wanderInterval || !agent.pathPending || agent.remainingDistance <= 0.5f) wanderTimer += Time.deltaTime;
+                if (wanderTimer < wanderInterval && !agent.pathPending) wanderTimer += Time.deltaTime;
                 else if (wanderTimer >= wanderInterval) Wander();
 
                 if (isFoodCritical()) DetectFood();
@@ -187,6 +186,8 @@ public class Rabbit : MonoBehaviour
         if (currentState != RabbitState.Wandering || agent.pathPending || agent.remainingDistance > 0.5f)
             return;
 
+        wanderTimer = 0f;
+
         Vector3 randomDirection = Random.insideUnitSphere * Random.Range(wanderDistanceMin, wanderDistanceMax);
         randomDirection += transform.position;
         randomDirection = AdjustPositionToLand(randomDirection);
@@ -200,9 +201,9 @@ public class Rabbit : MonoBehaviour
     }
     void ApplyPersonality()
     {
-        foreach (Personality personality in stats.personalities)
+        foreach (Genes gene in stats.genes)
         {
-            switch (personality.name)
+            switch (gene.name)
             {
                 case "Lazy":
                     wanderDistanceMax -= 1.5f;
@@ -671,12 +672,12 @@ public class Rabbit : MonoBehaviour
             {
                 case RabbitState.GoingToSleep:
                     currentState = RabbitState.Sleeping;
-                    time = Random.Range(6.0f, 8.0f); //6-8 hours
+                    time = Random.Range(6.0f, 8.0f) * 60f; //6-8 hours
 
-                    if (stats.personalities.Exists(p => p.name == "Sleeper"))
-                        time += Random.Range(0.5f, 1.5f);
-                    if (stats.personalities.Exists(p => p.name == "Active"))
-                        time -= Random.Range(0.5f, 1.5f);
+                    if (stats.genes.Exists(p => p.name == "Sleeper"))
+                        time += Random.Range(0.5f, 1.5f) * 60f;
+                    if (stats.genes.Exists(p => p.name == "Active"))
+                        time -= Random.Range(0.5f, 1.5f) * 60f;
 
                     burrowScript.EnterBurrow(this, time);
                     break;

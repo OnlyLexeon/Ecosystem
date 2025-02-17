@@ -74,19 +74,19 @@ public class InputHandler : MonoBehaviour
         if (target == null) return;
 
         if (Input.GetKey(KeyCode.A))
-            yaw -= rotationSpeed * Time.deltaTime;
+            yaw -= rotationSpeed * Time.unscaledDeltaTime;
         if (Input.GetKey(KeyCode.D))
-            yaw += rotationSpeed * Time.deltaTime;
+            yaw += rotationSpeed * Time.unscaledDeltaTime;
 
         if (Input.GetKey(KeyCode.W))
-            yOffset += movementSpeed * Time.deltaTime;
+            yOffset += movementSpeed * Time.unscaledDeltaTime;
         if (Input.GetKey(KeyCode.S))
-            yOffset -= movementSpeed * Time.deltaTime;
+            yOffset -= movementSpeed * Time.unscaledDeltaTime;
 
         if (Input.GetKey(KeyCode.Q))
-            distanceFromTarget += movementSpeed * Time.deltaTime;
+            distanceFromTarget += movementSpeed * Time.unscaledDeltaTime;
         if (Input.GetKey(KeyCode.E))
-            distanceFromTarget -= movementSpeed * Time.deltaTime;
+            distanceFromTarget -= movementSpeed * Time.unscaledDeltaTime;
 
         // Prevent negative distance
         distanceFromTarget = Mathf.Max(distanceFromTarget, 1f);
@@ -118,7 +118,7 @@ public class InputHandler : MonoBehaviour
         if (Input.GetKey(KeyCode.A)) moveDirection -= transform.right;
         if (Input.GetKey(KeyCode.D)) moveDirection += transform.right;
 
-        transform.position += moveDirection * movementSpeed * Time.deltaTime;
+        transform.position += moveDirection * movementSpeed * Time.unscaledDeltaTime;
     }
 
     void HandleTargetSelection()

@@ -131,17 +131,17 @@ public class UIManager : MonoBehaviour
             if (targetStats)
             {
                 //Personality
-                List<Personality> personalities = targetStats.personalities;
-                foreach (Personality personality in personalities)
+                List<Genes> genes = targetStats.genes;
+                foreach (Genes gene in genes)
                 {
                     GameObject newPersonality = Instantiate(personalityPrefab, personalityPanel);
                     PersonalityButton buttonScript = newPersonality.GetComponent<PersonalityButton>();
 
                     if (buttonScript)
                     {
-                        buttonScript.nameText.text = personality.name;
-                        buttonScript.descriptionText.text = personality.description;
-                        buttonScript.positivity = personality.positive;
+                        buttonScript.nameText.text = gene.name;
+                        buttonScript.descriptionText.text = gene.description;
+                        buttonScript.positivity = gene.positive;
                     }
                 }
 

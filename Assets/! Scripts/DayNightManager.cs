@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class DayNightManager : MonoBehaviour
@@ -9,6 +10,13 @@ public class DayNightManager : MonoBehaviour
     [Header("Lighting Settings")]
     public Light sunLight;
     public Material skyboxMaterial;
+
+    [Header("Time Control")]
+    public TextMeshProUGUI speedText;
+    public float currentTimeSpeed = 1f;
+    public float timeIncrement = 0.2f;
+    public float maxTimeScale = 4f;
+    public float minTimeScale = 0f;
 
     [Header("Time Settings")]
     public float time = 720f; // Starts at noon (12:00 PM)
@@ -60,5 +68,23 @@ public class DayNightManager : MonoBehaviour
         // Atmosphere thickness control based on time (thicker at sunrise & sunset)
         float atmosphereThickness = Mathf.Lerp(0.3f, 1.2f, Mathf.Sin((time / dayDuration) * Mathf.PI));
         skyboxMaterial.SetFloat("_AtmosphereThickness", atmosphereThickness);
+    }
+
+    public void UpSpeed()
+    {
+        currentTimeSpeed = Mathf.Min(currentTimeSpeed + timeIncrement, maxTimeScale);
+
+        Time.timeScale = currentTimeSpeed;
+
+        speedText.text = "x" + currentTimeSpeed.ToString("F1");
+    }
+
+    public void DownSpeed()
+    {
+        currentTimeSpeed = Mathf.Max(currentTimeSpeed - timeIncrement, minTimeScale);
+
+        Time.timeScale = currentTimeSpeed;
+
+        speedText.text = "x" + currentTimeSpeed.ToString("F1");
     }
 }
