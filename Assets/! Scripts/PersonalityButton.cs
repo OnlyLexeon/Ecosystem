@@ -12,9 +12,11 @@ public class PersonalityButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public TextMeshProUGUI nameText; // UI text for personality name
     public TextMeshProUGUI descriptionText; // UI text for personality description
     public int positivity = 1;
+    public Color extremelyPositive;
     public Color positive;
     public Color neutral;
     public Color negative;
+    public Color extremelyNegative;
 
     private RectTransform buttonRect;
 
@@ -30,14 +32,20 @@ public class PersonalityButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
         switch (positivity)
         {
+            case -2:
+                colorImage.color = extremelyNegative;
+                break;
+            case -1:
+                colorImage.color = negative;
+                break;
             case 0:
                 colorImage.color = negative;
                 break;
             case 1:
-                colorImage.color = neutral;
+                colorImage.color = positive;
                 break;
             case 2:
-                colorImage.color = positive;
+                colorImage.color = extremelyPositive;
                 break;
         }
     }

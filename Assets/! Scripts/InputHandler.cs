@@ -11,6 +11,14 @@ public class InputHandler : MonoBehaviour
     //mode
     public bool isFollowingTarget = true;
 
+    //pausing
+    public float savedTimeScale = 0f;
+    public bool isPaused = false;
+
+    //gene
+    public bool isGenePanelOpen = false;
+    public GameObject genePanel;
+
     private float yaw = 0f;
     private float pitch = 0f;
 
@@ -21,6 +29,22 @@ public class InputHandler : MonoBehaviour
 
     void Update()
     {
+        //NO INPUT HANDLING WHEN DOING GENE
+        if (isGenePanelOpen && Input.GetKeyDown(KeyCode.Escape)) ToggleGeneMenu();
+        else if (isGenePanelOpen) return;
+
+        //handle Gene
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            ToggleGeneMenu();
+        }
+
+        //handle pause
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+
         HandleModeSwitch();
         HandleToggleCursor();
 
@@ -154,5 +178,29 @@ public class InputHandler : MonoBehaviour
         }
 
         target = closest;
+    }
+
+    public void TogglePause()
+    {
+        isPaused = !isPaused;
+
+        if (isPaused)
+        {
+            savedTimeScale = Time.timeScale;
+            Time.timeScale = 0;
+            DayNightManager.Instance.UpdateSpeed();
+        }
+        else
+        {
+            Time.timeScale = savedTimeScale;
+            DayNightManager.Instance.UpdateSpeed();
+        }
+    }
+
+    public void ToggleGeneMenu()
+    {
+        isGenePanelOpen = !isGenePanelOpen;
+
+        genePanel.SetActive(isGenePanelOpen);
     }
 }

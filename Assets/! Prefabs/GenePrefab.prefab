@@ -289,7 +289,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2429286624093179089
 RectTransform:
   m_ObjectHideFlags: 0
@@ -363,7 +363,7 @@ GameObject:
   - component: {fileID: 2776456542938998975}
   - component: {fileID: 4204340307769485199}
   m_Layer: 5
-  m_Name: Personality
+  m_Name: GenePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -404,13 +404,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltip: {fileID: 7680998260805576788}
   tooltipRect: {fileID: 2429286624093179089}
-  offsetX: 0
   nameText: {fileID: 4503548635265838905}
   descriptionText: {fileID: 3647399133107933897}
   positivity: 1
-  positive: {r: 0.76845473, g: 1, b: 0.75, a: 1}
+  extremelyPositive: {r: 0.6273585, g: 1, b: 0.6442967, a: 1}
+  positive: {r: 0.79069734, g: 0.9716981, b: 0.7746084, a: 1}
   neutral: {r: 1, g: 0.91197443, b: 0.6933962, a: 1}
   negative: {r: 1, g: 0.75, b: 0.7598039, a: 1}
+  extremelyNegative: {r: 1, g: 0.5503416, b: 0.5424528, a: 1}
 --- !u!114 &7083038777385506350
 MonoBehaviour:
   m_ObjectHideFlags: 0

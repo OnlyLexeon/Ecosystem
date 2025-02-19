@@ -79,6 +79,11 @@ public class DayNightManager : MonoBehaviour
         speedText.text = "x" + currentTimeSpeed.ToString("F1");
     }
 
+    public void UpdateSpeed()
+    {
+        speedText.text = "x" + Time.timeScale.ToString("F1");
+    }
+
     public void DownSpeed()
     {
         currentTimeSpeed = Mathf.Max(currentTimeSpeed - timeIncrement, minTimeScale);

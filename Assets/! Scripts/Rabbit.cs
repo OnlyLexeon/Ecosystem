@@ -36,30 +36,6 @@ public class Rabbit : MonoBehaviour
     public RabbitState currentState = RabbitState.Wandering;
     public GameObject burrowPrefab;
 
-    [Header("Eat Settings")]
-    public float needsInterval = 1f;
-    public float foodEatPerSecond = 2f;
-    public float drinkPerSecond = 4f;
-    public float lookWhileEatingInterval = 5f;
-    public float lookAngleMin = 30f;
-    public float lookAngleMax = 90f;
-
-    [Header("Hiding Settings")]
-    public float burrowThreatDetectProximity = 12f;
-    public float waitBeforeLeavingBurrow = 5f;
-
-    [Header("Detect Settings")]
-    public float detectionDistance = 6f;
-    public float detectionAngle = 90f;
-
-    [Header("Move Settings")]
-    public float baseSpeed = 1.5f;
-    public float runSpeed = 3f;
-    public float wanderDistanceMin = 2f;
-    public float wanderDistanceMax = 5f;
-    public float runDistance = 6f;
-    public float wanderInterval = 2f;
-
     private float needsTimer = 0f;
     private NavMeshAgent agent;
     private Transform targetFood;
@@ -75,7 +51,7 @@ public class Rabbit : MonoBehaviour
         stats = GetComponent<Stats>();
 
         stats.AssignRandomPersonalities();
-        ApplyPersonality();
+        stats.ApplyGenesToStats();
         stats.SetStats();
     }
 
@@ -84,13 +60,14 @@ public class Rabbit : MonoBehaviour
         if (isDead) return;
 
         //NEEDS DEPLETION
-        if (needsTimer <= needsInterval) needsTimer += Time.deltaTime;
-        if (needsTimer >= needsInterval && currentState != RabbitState.Sleeping)
+        if (needsTimer <= stats.needsInterval) needsTimer += Time.deltaTime;
+        if (needsTimer >= stats.needsInterval && currentState != RabbitState.Sleeping)
         {
             needsTimer = 0f;
             DepleteNeeds();
         }
 
+        //Threats
         DetectThreats(); // Always check for threats first
         if (currentState == RabbitState.Running)
         {
@@ -99,7 +76,7 @@ public class Rabbit : MonoBehaviour
         }
 
         //Speed
-        agent.speed = (currentState == RabbitState.Running) ? runSpeed : baseSpeed;
+        agent.speed = (currentState == RabbitState.Running) ? stats.runSpeed : stats.baseSpeed;
 
         //Sleeping
         if (DayNightManager.Instance.isNight)
@@ -111,8 +88,8 @@ public class Rabbit : MonoBehaviour
         switch (currentState)
         {
             case RabbitState.Wandering:
-                if (wanderTimer < wanderInterval && !agent.pathPending) wanderTimer += Time.deltaTime;
-                else if (wanderTimer >= wanderInterval) Wander();
+                if (wanderTimer < stats.wanderInterval && !agent.pathPending) wanderTimer += Time.deltaTime;
+                else if (wanderTimer >= stats.wanderInterval) Wander();
 
                 if (isFoodCritical()) DetectFood();
                 if (isThirstCritical()) DetectDrink();
@@ -146,15 +123,25 @@ public class Rabbit : MonoBehaviour
             stats.health -= 0.5f;
             Debug.Log("Ouch!");
         }
-            
+        
+        //Health Manager
         if (stats.health <= 0)
             Die();
+        else if (!isDead && stats.health < stats.maxHealth
+            && !isFoodCritical() && !isThirstCritical())
+        {
+            Regenerate();
+        }
     }
 
     public void Die()
     {
         isDead = true;
         Debug.Log("Dieded");
+    }
+    public void Regenerate()
+    {
+        stats.health = Mathf.Min(stats.health + stats.regenAmount, stats.maxHealth);
     }
     bool isFoodCritical()
     {
@@ -188,159 +175,16 @@ public class Rabbit : MonoBehaviour
 
         wanderTimer = 0f;
 
-        Vector3 randomDirection = Random.insideUnitSphere * Random.Range(wanderDistanceMin, wanderDistanceMax);
+        Vector3 randomDirection = Random.insideUnitSphere * Random.Range(stats.wanderDistanceMin, stats.wanderDistanceMax);
         randomDirection += transform.position;
         randomDirection = AdjustPositionToLand(randomDirection);
 
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomDirection, out hit, Random.Range(wanderDistanceMin, wanderDistanceMax), NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out hit, Random.Range(stats.wanderDistanceMin, stats.wanderDistanceMax), NavMesh.AllAreas))
         {
             agent.SetDestination(hit.position);
 
         }
-    }
-    void ApplyPersonality()
-    {
-        foreach (Genes gene in stats.genes)
-        {
-            switch (gene.name)
-            {
-                case "Lazy":
-                    wanderDistanceMax -= 1.5f;
-                    break;
-                case "Restful":
-                    wanderInterval += 2.5f;
-                    break;
-                case "Restless":
-                    waitBeforeLeavingBurrow -= 1.5f;
-                    break;
-                case "Adventurer":
-                    wanderDistanceMax += 2.5f;
-                    break;
-
-                case "Energetic":
-                    stats.hungerDepletionRate += 0.05f;
-                    baseSpeed += 0.5f;
-                    runSpeed += 0.5f;
-                    break;
-                case "Sluggish":
-                    stats.hungerDepletionRate -= 0.05f;
-                    baseSpeed -= 0.5f;
-                    runSpeed -= 0.5f;
-                    break;
-
-                case "Thirsty":
-                    stats.thirstDepletionRate += 0.05f;
-                    break;
-                case "Retention":
-                    stats.thirstDepletionRate -= 0.05f;
-                    break;
-                case "IronStomach":
-                    stats.hungerDepletionRate -= 0.05f;
-                    break;
-                case "Hunger":
-                    stats.hungerDepletionRate += 0.05f;
-                    break;
-
-                case "Gluttonous":
-                    stats.maxHunger += 15f;
-                    foodEatPerSecond += 2f;
-                    baseSpeed -= 0.5f;
-                    runSpeed -= 0.5f;
-                    break;
-
-                case "Unathletic":
-                    baseSpeed -= 0.4f;
-                    runSpeed -= 0.4f;
-                    break;
-                case "Athletic":
-                    baseSpeed += 0.4f;
-                    runSpeed += 0.4f;
-                    break;
-                case "Runner":
-                    runSpeed += 0.4f;
-                    break;
-                case "Wanderer":
-                    baseSpeed += 0.4f;
-                    break;
-                case "Snail":
-                    baseSpeed -= 0.75f;
-                    runSpeed -= 0.75f;
-                    break;
-
-                case "Healthy":
-                    stats.maxHealth += 10f;
-                    break;
-                case "Weak":
-                    stats.maxHealth -= 10f;
-                    break;
-
-                case "Alert":
-                    detectionDistance += 0.75f;
-                    detectionAngle += 20f;
-                    break;
-                case "Blurred":
-                    detectionDistance -= 0.75f;
-                    detectionAngle -= 20f;
-                    break;
-                case "FarVision":
-                    detectionDistance += 1.5f;
-                    break;
-                case "Shortsight":
-                    detectionDistance -= 1.5f;
-                    break;
-
-                case "Paranoid":
-                    lookWhileEatingInterval -= 1f;
-                    lookAngleMax += 10f;
-                    lookAngleMin += 10f;
-                    break;
-                case "Careful":
-                    waitBeforeLeavingBurrow += 7.5f;
-                    break;
-
-                
-
-                case "FastEater":
-                    foodEatPerSecond += 2f;
-                    break;
-                case "SlowEater":
-                    foodEatPerSecond -= 1f;
-                    break;
-                case "FastDrinker":
-                    drinkPerSecond += 2f;
-                    break;
-                case "SlowDrinker":
-                    drinkPerSecond -= 1f;
-                    break;
-
-                case "HighMetabolism":
-                    needsInterval -= 0.25f;
-                    break;
-                case "LowMetabolism":
-                    needsInterval += 0.25f;
-                    break;
-            }
-        }
-
-        wanderInterval = Mathf.Max(wanderInterval, 2f);
-        wanderDistanceMax = Mathf.Max(wanderDistanceMax, 1);
-
-        baseSpeed = Mathf.Max(baseSpeed, 1);
-        runSpeed = Mathf.Max(runSpeed, 1);
-
-        stats.maxHealth = Mathf.Max(stats.maxHealth, 5);
-        stats.thirstDepletionRate = Mathf.Max(stats.thirstDepletionRate, 0.05f);
-        stats.hungerDepletionRate = Mathf.Max(stats.hungerDepletionRate, 0.05f);
-        
-        foodEatPerSecond = Mathf.Max(foodEatPerSecond, 1);
-        drinkPerSecond = Mathf.Max(drinkPerSecond, 1);
-        needsInterval = Mathf.Max(needsInterval, 0.5f);
-
-        lookWhileEatingInterval = Mathf.Max(lookWhileEatingInterval, 1);
-        waitBeforeLeavingBurrow = Mathf.Max(waitBeforeLeavingBurrow, 1);
-
-        detectionDistance = Mathf.Max(detectionDistance, 4f);
     }
 
     //BURROW
@@ -351,7 +195,7 @@ public class Rabbit : MonoBehaviour
         currentState = RabbitState.MakingBurrow;
         Vector3 burrowLocation = transform.position; // Default to current position
 
-        Collider[] foodSources = Physics.OverlapSphere(transform.position, detectionDistance, LayerMask.GetMask("Food"));
+        Collider[] foodSources = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Food"));
 
         if (foodSources.Length > 0)
         {
@@ -414,11 +258,11 @@ public class Rabbit : MonoBehaviour
     }
     void DetectBurrow()
     {
-        Collider[] burrows = Physics.OverlapSphere(transform.position, detectionDistance, LayerMask.GetMask("Burrow"));
+        Collider[] burrows = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Burrow"));
         foreach (Collider burrow in burrows)
         {
             Vector3 directionToBurrow = (burrow.transform.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, directionToBurrow) < detectionAngle / 2)
+            if (Vector3.Angle(transform.forward, directionToBurrow) < stats.detectionAngle / 2)
             {
                 targetBurrow = burrow.transform;
             }
@@ -458,7 +302,7 @@ public class Rabbit : MonoBehaviour
     //FOOD + DRINK
     void DetectFood()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectionDistance, LayerMask.GetMask("Food"));
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Food"));
 
         Transform closestFood = null;
         float closestDistance = Mathf.Infinity;
@@ -466,7 +310,7 @@ public class Rabbit : MonoBehaviour
         foreach (Collider hit in hitColliders)
         {
             Vector3 directionToResource = (hit.transform.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, directionToResource) < detectionAngle / 2)
+            if (Vector3.Angle(transform.forward, directionToResource) < stats.detectionAngle / 2)
             {
                 FoodSource food = hit.GetComponent<FoodSource>();
                 if (food != null && food.foodAvailable >= food.minFoodToEat)
@@ -490,7 +334,7 @@ public class Rabbit : MonoBehaviour
     }
     void DetectDrink()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectionDistance, LayerMask.GetMask("Drink"));
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Drink"));
 
         Transform closestWater = null;
         float closestDistance = Mathf.Infinity;
@@ -498,7 +342,7 @@ public class Rabbit : MonoBehaviour
         foreach (Collider hit in hitColliders)
         {
             Vector3 directionToResource = (hit.transform.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, directionToResource) < detectionAngle / 2)
+            if (Vector3.Angle(transform.forward, directionToResource) < stats.detectionAngle / 2)
             {
                 float distance = Vector3.Distance(transform.position, hit.transform.position);
                 if (distance < closestDistance)
@@ -542,7 +386,7 @@ public class Rabbit : MonoBehaviour
                 yield break;
             }
 
-            float foodConsumed = foodSource.ConsumeFood(foodEatPerSecond * Time.deltaTime);
+            float foodConsumed = foodSource.ConsumeFood(stats.foodEatPerSecond * Time.deltaTime);
             stats.hunger += foodConsumed;
 
             if (foodSource.foodAvailable <= 0)
@@ -567,7 +411,7 @@ public class Rabbit : MonoBehaviour
                 yield break;
             }
 
-            stats.thirst += drinkPerSecond * Time.deltaTime;
+            stats.thirst += stats.drinkPerSecond * Time.deltaTime;
             yield return null;
         }
 
@@ -583,10 +427,10 @@ public class Rabbit : MonoBehaviour
 
         if (Time.time >= nextLookTime)
         {
-            float randomAngle = Random.Range(lookAngleMin, lookAngleMax);
+            float randomAngle = Random.Range(stats.lookAngleMin, stats.lookAngleMax);
             Quaternion targetRotation = Quaternion.Euler(0, transform.eulerAngles.y + randomAngle, 0);
             StartCoroutine(SmoothLook(targetRotation));
-            nextLookTime = Time.time + lookWhileEatingInterval;
+            nextLookTime = Time.time + stats.lookWhileEatingInterval;
         }
     }
     IEnumerator SmoothLook(Quaternion targetRotation)
@@ -610,13 +454,13 @@ public class Rabbit : MonoBehaviour
     //THREATS
     void DetectThreats()
     {
-        Collider[] threats = Physics.OverlapSphere(transform.position, detectionDistance, LayerMask.GetMask("Wolf"));
+        Collider[] threats = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Wolf"));
         detectedWolf = null;
 
         foreach (Collider threat in threats)
         {
             Vector3 directionToThreat = (threat.transform.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, directionToThreat) < detectionAngle / 2)
+            if (Vector3.Angle(transform.forward, directionToThreat) < stats.detectionAngle / 2)
             {
                 detectedWolf = threat.transform;
                 currentState = RabbitState.Running;
@@ -645,7 +489,7 @@ public class Rabbit : MonoBehaviour
 
         // If no burrow or Wolf is too close, run in the opposite direction
         Vector3 escapeDirection = (transform.position - detectedWolf.position).normalized;
-        Vector3 escapeTarget = transform.position + escapeDirection * detectionDistance;
+        Vector3 escapeTarget = transform.position + escapeDirection * stats.detectionDistance;
 
         // Ensure the escape target is valid
         NavMeshHit hit;
@@ -672,18 +516,13 @@ public class Rabbit : MonoBehaviour
             {
                 case RabbitState.GoingToSleep:
                     currentState = RabbitState.Sleeping;
-                    time = Random.Range(6.0f, 8.0f) * 60f; //6-8 hours
-
-                    if (stats.genes.Exists(p => p.name == "Sleeper"))
-                        time += Random.Range(0.5f, 1.5f) * 60f;
-                    if (stats.genes.Exists(p => p.name == "Active"))
-                        time -= Random.Range(0.5f, 1.5f) * 60f;
+                    time = Random.Range(6.0f, 8.0f) * 60f + stats.additionalSleepHours; //6-8 hours + extra sleep hours
 
                     burrowScript.EnterBurrow(this, time);
                     break;
                 case RabbitState.Running:
                     currentState = RabbitState.Hiding;
-                    time = waitBeforeLeavingBurrow;
+                    time = stats.waitBeforeLeavingBurrow;
 
                     burrowScript.EnterBurrow(this, time);
                     break;
@@ -705,7 +544,7 @@ public class Rabbit : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        DrawDetectionCone(transform.position, transform.forward, detectionDistance, detectionAngle);
+        DrawDetectionCone(transform.position, transform.forward, stats.detectionDistance, stats.detectionAngle); 
     }
 
     void DrawDetectionCone(Vector3 position, Vector3 forward, float distance, float angle)

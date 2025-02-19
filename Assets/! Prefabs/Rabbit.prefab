@@ -57,8 +57,27 @@ MonoBehaviour:
   maxHealth: 20
   maxHunger: 100
   maxThirst: 100
+  regenAmount: 1
+  needsInterval: 1
+  foodEatPerSecond: 2
+  drinkPerSecond: 4
+  lookWhileEatingInterval: 5
+  lookAngleMin: 30
+  lookAngleMax: 90
+  waitBeforeLeavingBurrow: 5
+  detectionDistance: 6
+  detectionAngle: 90
+  baseSpeed: 1.5
+  runSpeed: 3
+  wanderDistanceMin: 2
+  wanderDistanceMax: 5
+  wanderInterval: 2
   hungerDepletionRate: 0.1
   thirstDepletionRate: 0.15
+  additionalSleepHours: 0
+  baseOffSpringCount: 2
+  minAdditionalOffSpring: 0
+  maxAdditionalOffSpring: 4
 --- !u!114 &2043556500688764339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,22 +95,6 @@ MonoBehaviour:
   stats: {fileID: 5322848338293705964}
   currentState: 2
   burrowPrefab: {fileID: 6033719048836278259, guid: 36927acf63382554eb7e325af482cb06, type: 3}
-  needsInterval: 1
-  foodEatPerSecond: 2
-  drinkPerSecond: 4
-  lookWhileEatingInterval: 5
-  lookAngleMin: 30
-  lookAngleMax: 90
-  burrowThreatDetectProximity: 12
-  waitBeforeLeavingBurrow: 5
-  detectionDistance: 8
-  detectionAngle: 100
-  baseSpeed: 1.5
-  runSpeed: 3
-  wanderDistanceMin: 2
-  wanderDistanceMax: 5
-  runDistance: 6
-  wanderInterval: 4
 --- !u!195 &6372509079974295027
 NavMeshAgent:
   m_ObjectHideFlags: 0

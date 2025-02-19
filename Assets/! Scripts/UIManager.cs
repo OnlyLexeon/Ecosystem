@@ -36,7 +36,11 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI eatPerSec;
     public TextMeshProUGUI thirstPerSec;
     public TextMeshProUGUI needsInterval;
+
+    [Header("Rabbit Exclusive")]
     public TextMeshProUGUI lookInverval;
+    public TextMeshProUGUI lookMinAngle;
+    public TextMeshProUGUI lookMaxAngle;
     public TextMeshProUGUI waitInBurrowTime;
 
     [Header("Time")]
@@ -141,7 +145,7 @@ public class UIManager : MonoBehaviour
                     {
                         buttonScript.nameText.text = gene.name;
                         buttonScript.descriptionText.text = gene.description;
-                        buttonScript.positivity = gene.positive;
+                        buttonScript.positivity = gene.positivity;
                     }
                 }
 
@@ -152,18 +156,7 @@ public class UIManager : MonoBehaviour
                 Rabbit rabbitScript = cameraScript.target.GetComponent<Rabbit>();
                 if (rabbitScript != null)
                 {
-                    detectionRange.text = "Detection Range: " + rabbitScript.detectionDistance.ToString();
-                    detectionRadius.text = "Detection Angle: " + rabbitScript.detectionAngle.ToString();
-                    baseSpeed.text = "Base Speed: " + rabbitScript.baseSpeed.ToString();
-                    runSpeed.text = "Run Speed: " + rabbitScript.runSpeed.ToString();
-                    wanderInterval.text = "Wander Interval: " + rabbitScript.wanderInterval.ToString();
-                    wanderMin.text = "Wander Min Distance: " + rabbitScript.wanderDistanceMin.ToString();
-                    wanderMax.text = "Wander Max Distance: " + rabbitScript.wanderDistanceMax.ToString();
-                    eatPerSec.text = "Eat/Second: " + rabbitScript.foodEatPerSecond.ToString();
-                    thirstPerSec.text = "Drink/Second: " + rabbitScript.drinkPerSecond.ToString();
-                    needsInterval.text = "Needs Deplete Interval: " + rabbitScript.needsInterval.ToString();
-                    lookInverval.text = "Look While Eat/Drink Interval: " + rabbitScript.lookWhileEatingInterval.ToString();
-                    waitInBurrowTime.text = "Wait in Burrow after Chase Time: " + rabbitScript.waitBeforeLeavingBurrow.ToString();
+                    UpdateRabbitStats(rabbitScript);
                 }
                 
 }
@@ -189,5 +182,23 @@ public class UIManager : MonoBehaviour
         if (DayNightManager.Instance.isDay)
             dayNightText.text = "Day";
         else dayNightText.text = "Night";
+    }
+
+    public void UpdateRabbitStats(Rabbit rabbitScript)
+    {
+        detectionRange.text = "Detection Range: " + rabbitScript.stats.detectionDistance.ToString();
+        detectionRadius.text = "Detection Angle: " + rabbitScript.stats.detectionAngle.ToString();
+        baseSpeed.text = "Base Speed: " + rabbitScript.stats.baseSpeed.ToString();
+        runSpeed.text = "Run Speed: " + rabbitScript.stats.runSpeed.ToString();
+        wanderInterval.text = "Wander Interval: " + rabbitScript.stats.wanderInterval.ToString();
+        wanderMin.text = "Wander Min Distance: " + rabbitScript.stats.wanderDistanceMin.ToString();
+        wanderMax.text = "Wander Max Distance: " + rabbitScript.stats.wanderDistanceMax.ToString();
+        eatPerSec.text = "Eat/Second: " + rabbitScript.stats.foodEatPerSecond.ToString();
+        thirstPerSec.text = "Drink/Second: " + rabbitScript.stats.drinkPerSecond.ToString();
+        needsInterval.text = "Needs Deplete Interval: " + rabbitScript.stats.needsInterval.ToString();
+        lookInverval.text = "Look While Eat/Drink Interval: " + rabbitScript.stats.lookWhileEatingInterval.ToString();
+        lookMinAngle.text = "Look Min Angle: " + rabbitScript.stats.lookAngleMin.ToString();
+        lookMaxAngle.text = "Look Max Angle: " + rabbitScript.stats.lookAngleMax.ToString();
+        waitInBurrowTime.text = "Wait in Burrow after Chase Time: " + rabbitScript.stats.waitBeforeLeavingBurrow.ToString();
     }
 }
