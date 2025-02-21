@@ -4,37 +4,45 @@ using UnityEngine;
 
 public enum StatType
 {
+    //stats
     MaxHealth,
     MaxHunger,
     MaxThirst,
     Regen,
 
+    //eatng
     NeedsInterval,
     FoodEatPerSecond,
     DrinkPerSecond,
-
-    LookWhileEatingInterval,
-    LookAngleMin,
-    LookAngleMax,
-    WaitBeforeLeavingBurrow,
-
-    DetectionDistance,
-    DetectionAngle,
-
-    BaseSpeed,
-    RunSpeed,
-
-    WanderDistanceMin,
-    WanderDistanceMax,
-    WanderInterval,
-
     HungerDepletionRate,
     ThirstDepletionRate,
 
-    BaseOffspringCount,
-    MinAdditionalOffspring,
-    MaxAdditionalOffspring,
+    //look around
+    LookWhileEatingInterval,
+    LookAngleMin,
+    LookAngleMax,
+    LeaveBurrowWaitTime,
 
+    //detect
+    DetectionDistance,
+    DetectionAngle,
+
+    //Movement
+    BaseSpeed,
+    RunSpeed,
+    WanderDistanceMin,
+    WanderDistanceMax,
+    WanderInterval,
+    
+    //seggs
+    Fertile,
+    BaseOffspringCount,
+    MaxAdditionalOffspring,
+    MinPositiveGenesPrefered,
+    MaxNegativeGenesPrefered,
+    ReproduceCooldownDays,
+
+    //Eep
     SleepHours,
 }
 
@@ -53,8 +61,9 @@ public class StatModifier
 
 public class Stats : MonoBehaviour
 {
-    [Header("Gender")]
+    [Header("About")]
     public Gender gender;
+    public int agedDays = 7;
 
     [Header("Current Stats")]
     public float health = 20f;
@@ -66,6 +75,7 @@ public class Stats : MonoBehaviour
     public float maxHunger = 100f;
     public float maxThirst = 100f;
     public float regenAmount = 1f;
+    public int reproduceDaysLeft = 3;
 
     [Header("Eat Settings")]
     public float needsInterval = 1f;
@@ -76,7 +86,7 @@ public class Stats : MonoBehaviour
     public float lookAngleMax = 90f;
 
     [Header("Hiding Settings")]
-    public float waitBeforeLeavingBurrow = 5f;
+    public float waitBeforeLeavingBurrow = 10f;
 
     [Header("Detect Settings")]
     public float detectionDistance = 6f;
@@ -84,22 +94,25 @@ public class Stats : MonoBehaviour
 
     [Header("Move Settings")]
     public float baseSpeed = 1.5f;
-    public float runSpeed = 3f;
+    public float runSpeed = 3.5f;
     public float wanderDistanceMin = 2f;
     public float wanderDistanceMax = 5f;
     public float wanderInterval = 2f;
 
     [Header("Deplete Settings")]
-    public float hungerDepletionRate = 0.1f;
-    public float thirstDepletionRate = 0.15f;
+    public float hungerDepletionRate = 0.15f;
+    public float thirstDepletionRate = 0.2f;
 
     [Header("Sleep Settings")]
     public float additionalSleepHours = 0f;
 
     [Header("Seggs Settings")]
+    public int fertile = 1; // 0 - false 1 - true
     public int baseOffSpringCount = 2;
-    public int minAdditionalOffSpring = 0;
     public int maxAdditionalOffSpring = 4;
+    public int minPositiveGenesPrefered = 2;
+    public int maxNegativeGenesPrefered = 2;
+    public int reproduceCooldownDays = 3;
 
     public List<Genes> genes = new List<Genes>();
 
@@ -109,11 +122,13 @@ public class Stats : MonoBehaviour
         health = maxHealth;
         hunger = maxHunger / 2;
         thirst = maxThirst / 2;
+        reproduceDaysLeft = reproduceCooldownDays;
     }
 
     public void AssignRandomPersonalities()
     {
         int GenesCount = Random.Range(3, 7);
+
         List<Genes> allPersonalities = GeneManager.Instance.GetAllGenes();
 
         for (int i = 0; i < GenesCount; i++)
@@ -137,51 +152,65 @@ public class Stats : MonoBehaviour
                     case StatType.MaxHealth: maxHealth += modifier.value; break;
                     case StatType.MaxHunger: maxHunger += modifier.value; break;
                     case StatType.MaxThirst: maxThirst += modifier.value; break;
+                    case StatType.Regen: regenAmount += modifier.value; break;
+
                     case StatType.NeedsInterval: needsInterval += modifier.value; break;
                     case StatType.FoodEatPerSecond: foodEatPerSecond += modifier.value; break;
                     case StatType.DrinkPerSecond: drinkPerSecond += modifier.value; break;
+                    case StatType.HungerDepletionRate: hungerDepletionRate += modifier.value; break;
+                    case StatType.ThirstDepletionRate: thirstDepletionRate += modifier.value; break;
+
                     case StatType.LookWhileEatingInterval: lookWhileEatingInterval += modifier.value; break;
                     case StatType.LookAngleMin: lookAngleMin += modifier.value; break;
                     case StatType.LookAngleMax: lookAngleMax += modifier.value; break;
-                    case StatType.WaitBeforeLeavingBurrow: waitBeforeLeavingBurrow += modifier.value; break;
+                    case StatType.LeaveBurrowWaitTime: waitBeforeLeavingBurrow += modifier.value; break;
                     case StatType.DetectionDistance: detectionDistance += modifier.value; break;
                     case StatType.DetectionAngle: detectionAngle += modifier.value; break;
+
                     case StatType.BaseSpeed: baseSpeed += modifier.value; break;
                     case StatType.RunSpeed: runSpeed += modifier.value; break;
                     case StatType.WanderDistanceMin: wanderDistanceMin += modifier.value; break;
                     case StatType.WanderDistanceMax: wanderDistanceMax += modifier.value; break;
                     case StatType.WanderInterval: wanderInterval += modifier.value; break;
-                    case StatType.HungerDepletionRate: hungerDepletionRate += modifier.value; break;
-                    case StatType.ThirstDepletionRate: thirstDepletionRate += modifier.value; break;
-                    case StatType.Regen: regenAmount += modifier.value; break;
+                    
                     case StatType.SleepHours: additionalSleepHours += modifier.value; break;
+
+                    case StatType.Fertile:
+                        fertile = Mathf.RoundToInt(modifier.value);
+                        break;
                     case StatType.BaseOffspringCount: baseOffSpringCount += Mathf.RoundToInt(modifier.value); break;
-                    case StatType.MinAdditionalOffspring: minAdditionalOffSpring += Mathf.RoundToInt(modifier.value); break;
                     case StatType.MaxAdditionalOffspring: maxAdditionalOffSpring += Mathf.RoundToInt(modifier.value); break;
+                    case StatType.MinPositiveGenesPrefered: minPositiveGenesPrefered += Mathf.RoundToInt(modifier.value); break;
+                    case StatType.MaxNegativeGenesPrefered: maxNegativeGenesPrefered += Mathf.RoundToInt(modifier.value); break;
+                    case StatType.ReproduceCooldownDays: reproduceCooldownDays += Mathf.RoundToInt(modifier.value); break;
                 }
             }
         }
 
-        wanderInterval = Mathf.Max(wanderInterval, 2f);
+        wanderInterval = Mathf.Max(wanderInterval, 1f);
         wanderDistanceMax = Mathf.Max(wanderDistanceMax, 1);
 
-        baseSpeed = Mathf.Max(baseSpeed, 1);
+        baseSpeed = Mathf.Max(baseSpeed, 0.75f);
         runSpeed = Mathf.Max(runSpeed, 1);
 
         maxHealth = Mathf.Max(maxHealth, 5);
-        thirstDepletionRate = Mathf.Max(thirstDepletionRate, 0.05f);
-        hungerDepletionRate = Mathf.Max(hungerDepletionRate, 0.05f);
+        thirstDepletionRate = Mathf.Max(thirstDepletionRate, 0.025f);
+        hungerDepletionRate = Mathf.Max(hungerDepletionRate, 0.025f);
 
-        foodEatPerSecond = Mathf.Max(foodEatPerSecond, 1);
-        drinkPerSecond = Mathf.Max(drinkPerSecond, 1);
-        needsInterval = Mathf.Max(needsInterval, 0.5f);
+        foodEatPerSecond = Mathf.Max(foodEatPerSecond, 0.5f);
+        drinkPerSecond = Mathf.Max(drinkPerSecond, 0.5f);
+        needsInterval = Mathf.Max(needsInterval, 0.25f);
 
-        lookWhileEatingInterval = Mathf.Max(lookWhileEatingInterval, 1);
-        waitBeforeLeavingBurrow = Mathf.Max(waitBeforeLeavingBurrow, 1);
+        lookWhileEatingInterval = Mathf.Max(lookWhileEatingInterval, 0.5f);
+        waitBeforeLeavingBurrow = Mathf.Max(waitBeforeLeavingBurrow, 0.5f);
 
-        detectionDistance = Mathf.Max(detectionDistance, 4f);
+        detectionDistance = Mathf.Max(detectionDistance, 3f);
 
-        regenAmount = Mathf.Max(regenAmount, 0.25f);
+        regenAmount = Mathf.Max(regenAmount, 0.2f);
+
+        baseOffSpringCount = Mathf.Max(baseOffSpringCount, 1);
+        minPositiveGenesPrefered = Mathf.Max(minPositiveGenesPrefered, 0);
+        maxNegativeGenesPrefered = Mathf.Max(maxNegativeGenesPrefered, 0);
     }
 }
 

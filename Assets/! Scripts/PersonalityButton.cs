@@ -39,7 +39,7 @@ public class PersonalityButton : MonoBehaviour, IPointerEnterHandler, IPointerEx
                 colorImage.color = negative;
                 break;
             case 0:
-                colorImage.color = negative;
+                colorImage.color = neutral;
                 break;
             case 1:
                 colorImage.color = positive;

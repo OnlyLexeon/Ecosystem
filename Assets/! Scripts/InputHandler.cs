@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class InputHandler : MonoBehaviour
 {
+    [Header("HUD")]
+    public LineRenderer lineRenderer;
+    public int segments = 20;
+
+    [Header("Target")]
     public Transform target;
     public float yOffset = 2f;
     public float distanceFromTarget = 5f;
@@ -22,9 +27,26 @@ public class InputHandler : MonoBehaviour
     private float yaw = 0f;
     private float pitch = 0f;
 
+    public static InputHandler Instance;
+
     private void Start()
     {
+        Instance = this;
+
         UIManager.Instance.ShowControls(isFollowingTarget);
+
+        //LINE RENDERER FOR TARGET HUD
+        if (!lineRenderer)
+        {
+            lineRenderer = gameObject.AddComponent<LineRenderer>();
+        }
+        lineRenderer.positionCount = segments + 3; // Start + End + Arc
+        lineRenderer.loop = true; // Close the loop to form a cone
+        lineRenderer.widthMultiplier = 0.1f;
+        lineRenderer.useWorldSpace = true;
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.startColor = new Color(0, 1, 1, 0.5f); // Semi-transparent yellow
+        lineRenderer.endColor = new Color(0, 1, 1, 0.5f);
     }
 
     void Update()
@@ -49,11 +71,24 @@ public class InputHandler : MonoBehaviour
         HandleToggleCursor();
 
         if (isFollowingTarget)
+        {
+            lineRenderer.enabled = true;
             FollowTargetMode();
+        }
         else
+        {
+            lineRenderer.enabled = false;
             FreeRoamMode();
+        }
 
         HandleTargetSelection();
+    }
+    
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+
+        UIManager.Instance.UpdateTargetUI();
     }
 
     public void HandleToggleCursor()
@@ -96,7 +131,8 @@ public class InputHandler : MonoBehaviour
             UIManager.Instance.UpdateTargetUI();
         }
         if (target == null) return;
-
+        
+        //Input
         if (Input.GetKey(KeyCode.A))
             yaw -= rotationSpeed * Time.unscaledDeltaTime;
         if (Input.GetKey(KeyCode.D))
@@ -123,6 +159,37 @@ public class InputHandler : MonoBehaviour
 
         transform.position = targetPosition + offset;
         transform.LookAt(target);
+
+        DrawVisionCone();
+    }
+
+    void DrawVisionCone()
+    {
+        if (target == null) return; // No target, no vision cone
+
+        Rabbit rabbitScript = target.GetComponent<Rabbit>();
+        if (rabbitScript == null) return; // Only works for Rabbits
+
+        Vector3 startPosition = target.position;
+        Vector3 forward = target.forward;
+        float halfAngle = rabbitScript.stats.detectionAngle * 0.5f;
+        float detectionRadius = rabbitScript.stats.detectionDistance;
+
+        // First point is at the rabbit's position
+        lineRenderer.SetPosition(0, startPosition);
+
+        for (int i = 0; i <= segments + 1; i++)
+        {
+            float angle = -halfAngle + (i / (float)segments) * rabbitScript.stats.detectionAngle;
+
+            Vector3 direction = Quaternion.Euler(0, angle, 0) * forward; // Rotate forward vector
+            Vector3 point = startPosition + direction * detectionRadius; // Extend to detection distance
+
+            lineRenderer.SetPosition(i + 1, point);
+        }
+
+        // Close the arc to form a cone
+        lineRenderer.SetPosition(segments + 2, startPosition);
     }
 
     void FreeRoamMode()

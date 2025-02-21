@@ -14,8 +14,8 @@ public class DayNightManager : MonoBehaviour
     [Header("Time Control")]
     public TextMeshProUGUI speedText;
     public float currentTimeSpeed = 1f;
-    public float timeIncrement = 0.2f;
-    public float maxTimeScale = 4f;
+    public float timeIncrement = 0.5f;
+    public float maxTimeScale = 10f;
     public float minTimeScale = 0f;
 
     [Header("Time Settings")]
@@ -23,7 +23,7 @@ public class DayNightManager : MonoBehaviour
     public int dayNumber = 1;
     private const float dayDuration = 1440f; // 24 hours * 60 minutes
 
-    public bool isDay => time >= 360f && time < 1080f; // 6:00 AM to 6:00 PM
+    public bool isDay => time >= 360f && time < 1200f; // 6:00 AM to 8:00 PM
     public bool isNight => !isDay;
 
     void Awake()
@@ -68,6 +68,10 @@ public class DayNightManager : MonoBehaviour
         // Atmosphere thickness control based on time (thicker at sunrise & sunset)
         float atmosphereThickness = Mathf.Lerp(0.3f, 1.2f, Mathf.Sin((time / dayDuration) * Mathf.PI));
         skyboxMaterial.SetFloat("_AtmosphereThickness", atmosphereThickness);
+
+        // Adjust exposure based on time (brighter at noon, dim at midnight)
+        float exposure = Mathf.Lerp(0.25f, 1.25f, Mathf.Sin((time / dayDuration) * Mathf.PI));
+        skyboxMaterial.SetFloat("_Exposure", exposure);
     }
 
     public void UpSpeed()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using System;
 using static UnityEngine.EventSystems.EventTrigger;
+using System.Collections;
 
 public class GeneUI : MonoBehaviour
 {
@@ -18,8 +19,11 @@ public class GeneUI : MonoBehaviour
     public int positivity = 0;
     public Button addModifierButton;
     public Button addGeneButton;
+    public Button clearCustomGenes;
 
+    [Header("Info")]
     public TextMeshProUGUI errorText;
+    public TextMeshProUGUI positivitySelectedText;
 
     public GameObject dropdownWithInputPrefab;
     public Transform dropdownContainer; // Parent object for dropdowns
@@ -35,14 +39,11 @@ public class GeneUI : MonoBehaviour
 
         addGeneButton.onClick.AddListener(AddGene);
         addModifierButton.onClick.AddListener(CreateNewDropdown);
+        clearCustomGenes.onClick.AddListener(ClearCustomGenes);
 
         DisplayGenes();
-    }
 
-
-    public void SetPositivity(int value)
-    {
-        positivity = value;
+        GeneMenu.SetActive(false);
     }
 
     private void DisplayGenes()
@@ -76,16 +77,16 @@ public class GeneUI : MonoBehaviour
             SetPersonalityButtonDisplay(entry, gene);
         }
 
-        // Force Layout Update
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(dropdownContainer as RectTransform);
+        ResizeUI();
     }
 
+    //UI Reset
     public void ResetInputs()
     {
         nameInput.text = string.Empty;
         descriptionInput.text = string.Empty;
         positivity = 0;
+        positivitySelectedText.text = "Selected: " + "Neutral";
 
         // Clear all dropdowns and input fields
         foreach (var dropdown in statModifierDropdowns)
@@ -98,8 +99,13 @@ public class GeneUI : MonoBehaviour
         // Create a fresh dropdown after clearing
         CreateNewDropdown();
     }
+    public void ResizeUI()
+    {
+        GeneMenu.SetActive(false);
+        GeneMenu.SetActive(true);
+    }
 
-
+    //UI Set
     public void SetPersonalityButtonDisplay(GameObject entry, Genes gene)
     {
         //Change prefab's UI to display the gene info
@@ -112,7 +118,36 @@ public class GeneUI : MonoBehaviour
             buttonScript.positivity = gene.positivity;
         }
     }
+    public void SetPositivity(int value)
+    {
+        positivity = value;
 
+        string positiveValueText = "";
+        switch(positivity)
+        {
+            case -2:
+                positiveValueText = "Extremely Negative";
+                break;
+            case -1:
+                positiveValueText = "Negative";
+                break;
+            case 0:
+                positiveValueText = "Neutral";
+                break;
+            case 1:
+                positiveValueText = "Positive";
+                break;
+            case 2:
+                positiveValueText = "Extremely Positive";
+                break;
+            default:
+                positiveValueText = "-";
+                break;
+        }
+        positivitySelectedText.text = "Selected: " + positiveValueText;
+    }
+
+    //Dropdown
     private void CreateNewDropdown()
     {
         // Instantiate dropdown + input field + delete button from prefab
@@ -139,11 +174,8 @@ public class GeneUI : MonoBehaviour
         // Assign delete button functionality
         deleteButton.onClick.AddListener(() => RemoveDropdown(dropdownObj));
 
-        // Force Layout Update
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(dropdownContainer as RectTransform);
+        ResizeUI();
     }
-
     private void OnDropdownValueChanged(TMP_Dropdown changedDropdown)
     {
         int lastIndex = statModifierDropdowns.IndexOf(changedDropdown);
@@ -162,7 +194,6 @@ public class GeneUI : MonoBehaviour
             valueInputs.RemoveAt(i);
         }
     }
-
     private void RemoveDropdown(GameObject dropdownObj)
     {
         TMP_Dropdown dropdown = dropdownObj.GetComponentInChildren<TMP_Dropdown>();
@@ -175,8 +206,11 @@ public class GeneUI : MonoBehaviour
         }
 
         Destroy(dropdownObj);
+
+        ResizeUI();
     }
 
+    //Adding
     private List<StatModifier> GetSelectedStatModifiers()
     {
         List<StatModifier> modifiers = new List<StatModifier>();
@@ -202,8 +236,6 @@ public class GeneUI : MonoBehaviour
         //Debug.Log($"Total modifiers collected: {modifiers.Count}");
         return modifiers;
     }
-
-
     private void AddGene()
     {
         string name = nameInput.text;
@@ -247,5 +279,12 @@ public class GeneUI : MonoBehaviour
         DisplayGenes();
 
         errorText.text = "";
+    }
+
+    //Clear Custom Genes
+    public void ClearCustomGenes()
+    {
+        GeneManager.Instance.ClearAllCustomGenes();
+        DisplayGenes();
     }
 }
