@@ -45,9 +45,9 @@ public class Rabbit : MonoBehaviour
     public RabbitState currentState = RabbitState.Wandering;
     public GameObject burrowPrefab;
     public GameObject rabbitPrefab;
-    public List<Rabbit> children;
-    public Rabbit father;
-    public Rabbit mother;
+    public List<GameObject> children;
+    public GameObject father;
+    public GameObject mother;
 
     private float needsTimer = 0f;
     private NavMeshAgent agent;
@@ -64,6 +64,8 @@ public class Rabbit : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         stats = GetComponent<Stats>();
+
+        if (stats.agedDays >= 3) isAdult = true;
 
         //Assumes the rabbit was spawned
         if (stats.genes.Count <= 0)
@@ -173,8 +175,10 @@ public class Rabbit : MonoBehaviour
     public void Die()
     {
         isDead = true;
-
-        Destroy(gameObject, 60f);
+       
+        //Spawm a corpse
+        //Rabbit corpse will be food source for Fox
+        //Do not despawn this script object, required for child
 
         Debug.Log("Dieded");
     }
@@ -233,26 +237,29 @@ public class Rabbit : MonoBehaviour
         if (!isAdult)
         {
             //scale
-            float scaleFactor = Mathf.Lerp(0.25f, 0.5f, stats.agedDays / 7f);
+            float scaleFactor = Mathf.Lerp(0.2f, 0.5f, stats.agedDays / 3f);
             transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
-            if (stats.agedDays >= 7) isAdult = true;
+            if (stats.agedDays >= 3) isAdult = true;
         }
     }
 
     //SEGGS
     public void WakeUpCheckHorniness()
     {
-        //called by burrow
-        stats.reproduceDaysLeft -= 1;
+        if (isAdult)
+        {
+            //called by burrow
+            stats.reproduceDaysLeft -= 1;
 
-        if (stats.reproduceDaysLeft <= 0)
-        {
-            wantsToReproduce = true;
-        }
-        else
-        {
-            wantsToReproduce = false;
+            if (stats.reproduceDaysLeft <= 0)
+            {
+                wantsToReproduce = true;
+            }
+            else
+            {
+                wantsToReproduce = false;
+            }
         }
     }
     void DetectMate()
@@ -373,6 +380,7 @@ public class Rabbit : MonoBehaviour
     public List<Genes> GetGeneticAlgorithm()
     {
         List<Genes> parentsGenes = new List<Genes>();
+
         parentsGenes.AddRange(stats.genes); //female
 
         Rabbit mateScript = targetMate.GetComponent<Rabbit>();
@@ -416,6 +424,7 @@ public class Rabbit : MonoBehaviour
             //Set Size
             childScript.stats.agedDays = 0;
             childScript.isAdult = false;
+            childScript.timeSlept = Time.time;
             childScript.WakeUpAgeUpdate();
 
             //Genetic Algorithm
@@ -440,12 +449,12 @@ public class Rabbit : MonoBehaviour
             childScript.stats.genes = childGenes;
 
             //Add child to children list
-            children.Add(childScript);
-            mateScript.children.Add(childScript);
+            children.Add(rabbitChild);
+            mateScript.children.Add(rabbitChild);
 
             //Add parent reference to child for debugging
-            childScript.father = targetMate.GetComponent<Rabbit>();
-            childScript.mother = this;
+            childScript.father = targetMate.gameObject;
+            childScript.mother = gameObject;
         }
 
         targetMate = null;

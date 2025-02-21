@@ -63,7 +63,7 @@ public class Stats : MonoBehaviour
 {
     [Header("About")]
     public Gender gender;
-    public int agedDays = 7;
+    public int agedDays = 3;
 
     [Header("Current Stats")]
     public float health = 20f;
@@ -127,7 +127,7 @@ public class Stats : MonoBehaviour
 
     public void AssignRandomPersonalities()
     {
-        int GenesCount = Random.Range(3, 7);
+        int GenesCount = Random.Range(4, 8);
 
         List<Genes> allPersonalities = GeneManager.Instance.GetAllGenes();
 

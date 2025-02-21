@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
     public GameObject freeRoamControls;
 
     [Header("Family")]
+    public GameObject familyPanel;
     public Button motherButton;
     public Button fatherButton;
     public Transform childrenButtonsPanel;
@@ -83,6 +84,12 @@ public class UIManager : MonoBehaviour
         UpdateTargetStats();
 
         UpdateTime();
+    }
+
+    public void ResizeUI()
+    {
+        familyPanel.SetActive(false);
+        familyPanel.SetActive(true);
     }
 
     public void ShowControls(bool isFollowing)
@@ -245,6 +252,7 @@ public class UIManager : MonoBehaviour
     public void PopulateFamilyUI(Transform target)
     {
         Rabbit rabbitScript = target.GetComponent<Rabbit>();
+
         if (rabbitScript != null)
         {
 
@@ -281,15 +289,19 @@ public class UIManager : MonoBehaviour
             if (rabbitScript.children.Count > 0)
             {
                 childrenButtonsPanel.gameObject.SetActive(true);
+
                 // Populate Children Buttons
-                for (int i = 0; i < rabbitScript.children.Count + 1; i++)
+                for (int i = 0; i < rabbitScript.children.Count; i++)
                 {
                     GameObject childButtonObj = Instantiate(childrenButtonsPrefab, childrenButtonsPanel);
                     Button childButton = childButtonObj.GetComponent<Button>();
                     TMP_Text buttonText = childButtonObj.GetComponentInChildren<TMP_Text>();
 
-                    buttonText.text = $"Child {i + 1}";
-                    childButton.onClick.AddListener(() => InputHandler.Instance.SetTarget(rabbitScript.children[i].transform));
+                    childButton.onClick.RemoveAllListeners();
+                    AssignButton(childButton, rabbitScript.children[i].transform);
+
+                    if (rabbitScript.isDead) buttonText.text = $"Dead {i + 1}";
+                    else buttonText.text = $"Child {i + 1}";
                 }
             }
             else
@@ -298,6 +310,12 @@ public class UIManager : MonoBehaviour
             }
             
         }
-        
+
+        ResizeUI();
+    }
+
+    void AssignButton(Button button, Transform child)
+    {
+        button.onClick.AddListener(() => InputHandler.Instance.SetTarget(child.transform));
     }
 }

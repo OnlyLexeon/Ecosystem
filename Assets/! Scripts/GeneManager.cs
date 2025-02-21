@@ -169,6 +169,14 @@ public class GeneManager : MonoBehaviour
                 new List<StatModifier> {
                     new StatModifier(StatType.MaxNegativeGenesPrefered, -1f)
                 }));
+        defaultGenes.Add(new Genes("GeneUnbias", "Decrease mate's positive gene required. (-1)", 1,
+                new List<StatModifier> {
+                    new StatModifier(StatType.MinPositiveGenesPrefered, -1f)
+                }));
+        defaultGenes.Add(new Genes("NonStandard", "Increase mate's negative gene cap. (+1)", 1,
+                new List<StatModifier> {
+                    new StatModifier(StatType.MaxNegativeGenesPrefered, 1f)
+                }));
         defaultGenes.Add(new Genes("Horny", "Reduce reproduction cooldown day. (-1)", 1,
                 new List<StatModifier> {
                     new StatModifier(StatType.ReproduceCooldownDays, -1f)
