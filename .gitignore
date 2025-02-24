@@ -26834,3 +26834,10 @@ Library/Style.catalog
 Library/UIElements/EditorWindows/UnityEditor.InspectorWindow.pref
 Library/UndoData.bin
 Library/UndoStack.bin
+/Library
+/Library
+*.log
+/Temp
+/UIElementsSchema
+/Logs
+/Library
