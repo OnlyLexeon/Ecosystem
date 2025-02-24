@@ -60,6 +60,7 @@ MonoBehaviour:
   maxThirst: 100
   regenAmount: 1
   reproduceDaysLeft: 3
+  isAdultDays: 3
   needsInterval: 1
   foodEatPerSecond: 2
   drinkPerSecond: 4

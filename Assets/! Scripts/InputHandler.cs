@@ -3,27 +3,29 @@ using UnityEngine;
 public class InputHandler : MonoBehaviour
 {
     [Header("HUD")]
-    public LineRenderer lineRenderer;
-    public int segments = 20;
+    [Tooltip("Reference to LineRenderer Component")] public LineRenderer lineRenderer;
+    [Tooltip("Resolution of HUD when following target.")] public int segments = 20;
 
     [Header("Target")]
-    public Transform target;
-    public float yOffset = 2f;
-    public float distanceFromTarget = 5f;
-    public float rotationSpeed = 100f;
-    public float movementSpeed = 5f;
+    [Tooltip("Reference to target")] public Transform target;
+    [Tooltip("Current yOffset")] public float yOffset = 2f;
+    [Tooltip("Camera distance from target.")] public float distanceFromTarget = 5f;
+    [Tooltip("Camera rotation speed around target")] public float rotationSpeed = 100f;
+    [Tooltip("Camera movement speed relative to target.")] public float movementSpeed = 5f;
+
+    [Header("References")]
+    //gene
+    [Tooltip("is Gene panel open?")] public bool isGenePanelOpen = false;
+    [Tooltip("Reference to Gene Menu in Canvas.")] public GameObject genePanel;
 
     //mode
-    public bool isFollowingTarget = true;
+    public bool isFollowingTarget = false;
 
     //pausing
     public float savedTimeScale = 0f;
     public bool isPaused = false;
 
-    //gene
-    public bool isGenePanelOpen = false;
-    public GameObject genePanel;
-
+    //rotation
     private float yaw = 0f;
     private float pitch = 0f;
 
@@ -36,10 +38,6 @@ public class InputHandler : MonoBehaviour
         UIManager.Instance.ShowControls(isFollowingTarget);
 
         //LINE RENDERER FOR TARGET HUD
-        if (!lineRenderer)
-        {
-            lineRenderer = gameObject.AddComponent<LineRenderer>();
-        }
         lineRenderer.positionCount = segments + 3; // Start + End + Arc
         lineRenderer.loop = true; // Close the loop to form a cone
         lineRenderer.widthMultiplier = 0.1f;
@@ -167,20 +165,20 @@ public class InputHandler : MonoBehaviour
     {
         if (target == null) return; // No target, no vision cone
 
-        Rabbit rabbitScript = target.GetComponent<Rabbit>();
-        if (rabbitScript == null) return; // Only works for Rabbits
+        Animal animalScript = target.GetComponent<Animal>();
+        if (animalScript == null) return; // Only works for Rabbits
 
         Vector3 startPosition = target.position;
         Vector3 forward = target.forward;
-        float halfAngle = rabbitScript.stats.detectionAngle * 0.5f;
-        float detectionRadius = rabbitScript.stats.detectionDistance;
+        float halfAngle = animalScript.stats.detectionAngle * 0.5f;
+        float detectionRadius = animalScript.stats.detectionDistance;
 
         // First point is at the rabbit's position
         lineRenderer.SetPosition(0, startPosition);
 
         for (int i = 0; i <= segments + 1; i++)
         {
-            float angle = -halfAngle + (i / (float)segments) * rabbitScript.stats.detectionAngle;
+            float angle = -halfAngle + (i / (float)segments) * animalScript.stats.detectionAngle;
 
             Vector3 direction = Quaternion.Euler(0, angle, 0) * forward; // Rotate forward vector
             Vector3 point = startPosition + direction * detectionRadius; // Extend to detection distance

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2262436294219814633}
   - component: {fileID: 5322848338293705964}
-  - component: {fileID: 2043556500688764339}
+  - component: {fileID: 2831069753851925193}
   - component: {fileID: 6372509079974295027}
   - component: {fileID: 4228594817768824214}
   - component: {fileID: 718514829661110159}
@@ -60,6 +60,7 @@ MonoBehaviour:
   maxThirst: 100
   regenAmount: 1
   reproduceDaysLeft: 3
+  isAdultDays: 3
   needsInterval: 1
   foodEatPerSecond: 2
   drinkPerSecond: 4
@@ -84,7 +85,7 @@ MonoBehaviour:
   maxNegativeGenesPrefered: 2
   reproduceCooldownDays: 3
   genes: []
---- !u!114 &2043556500688764339
+--- !u!114 &2831069753851925193
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -96,17 +97,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f59198866933754eb81111c30811385, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  homeBurrow: {fileID: 0}
   isDead: 0
   wantsToReproduce: 0
   isAdult: 0
-  stats: {fileID: 5322848338293705964}
+  animal: 0
+  adultDays: 3
+  stats: {fileID: 0}
   currentState: 2
-  burrowPrefab: {fileID: 6033719048836278259, guid: 36927acf63382554eb7e325af482cb06, type: 3}
-  rabbitPrefab: {fileID: 1151711369364588460, guid: da6d3b614f551bd458ed91a161e1eff2, type: 3}
+  childPrefab: {fileID: 0}
+  statsHUD: {fileID: 0}
   children: []
   father: {fileID: 0}
   mother: {fileID: 0}
+  home: {fileID: 0}
+  burrowPrefab: {fileID: 6033719048836278259, guid: 36927acf63382554eb7e325af482cb06, type: 3}
+  rabbitPrefab: {fileID: 1151711369364588460, guid: da6d3b614f551bd458ed91a161e1eff2, type: 3}
   timeSlept: 0
 --- !u!195 &6372509079974295027
 NavMeshAgent:

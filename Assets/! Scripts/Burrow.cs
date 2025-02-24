@@ -2,64 +2,64 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Burrow : MonoBehaviour
+public class Home : MonoBehaviour
 {
-    public List<Rabbit> rabbitsInside = new List<Rabbit>();
+    public List<Animal> animalInside = new List<Animal>();
 
     public bool threatNearby = false;
 
-    public void EnterBurrow(Rabbit rabbit, float time)
+    //ENTERING
+    public void EnterBurrow(Animal animal, float time) //hiding/making home
     {
         Debug.Log("Burrow Entered!");
 
-        rabbitsInside.Add(rabbit);
-        rabbit.gameObject.SetActive(false);
-        StartCoroutine(ExitBurrowAfterTime(rabbit, time, false));
+        animalInside.Add(animal);
+        animal.gameObject.SetActive(false);
+        StartCoroutine(ExitBurrowAfterTime(animal, time, false));
     }
-
-    public void EnterBurrowForSleep(Rabbit rabbit, float time)
+    public void EnterBurrowForSleep(Animal animal, float time) //update age+horny
     {
         Debug.Log("Sleeping in Burrow!");
 
-        rabbitsInside.Add(rabbit);
-        rabbit.gameObject.SetActive(false);
-        StartCoroutine(ExitBurrowAfterTime(rabbit, time, true));
+        animalInside.Add(animal);
+        animal.gameObject.SetActive(false);
+        StartCoroutine(ExitBurrowAfterTime(animal, time, true));
     }
-
-    public void EnterBurrowForMating(Rabbit rabbit, float time)
+    public void EnterBurrowForMating(Animal animal, float time) //mate, give birth
     {
         Debug.Log("Burrow For Seggs!");
 
-        rabbitsInside.Add(rabbit);
-        rabbit.gameObject.SetActive(false);
-        StartCoroutine(ExitBurrowGiveBirth(rabbit, time));
+        animalInside.Add(animal);
+        animal.gameObject.SetActive(false);
+        StartCoroutine(ExitBurrowGiveBirth(animal, time));
     }
 
-    private IEnumerator ExitBurrowAfterTime(Rabbit rabbit, float time, bool isSlept)
+    //EXITING
+    private IEnumerator ExitBurrowAfterTime(Animal animal, float time, bool isSlept)
     {
         yield return new WaitForSeconds(time);
 
-        rabbitsInside.Remove(rabbit);
-        rabbit.gameObject.SetActive(true);
-        rabbit.currentState = RabbitState.Wandering;
+        animalInside.Remove(animal);
+        animal.gameObject.SetActive(true);
+        animal.currentState = AnimalState.Wandering;
 
         if (isSlept == true)
         {
-            rabbit.WakeUpCheckHorniness();
-            rabbit.WakeUpAgeUpdate();
+            animal.WakeUpCheckHorniness();
+            animal.WakeUpAgeUpdate();
         }
     }
 
-    private IEnumerator ExitBurrowGiveBirth(Rabbit rabbit, float time)
+    private IEnumerator ExitBurrowGiveBirth(Animal animal, float time)
     {
         yield return new WaitForSeconds(time);
 
-        rabbitsInside.Remove(rabbit);
-        rabbit.gameObject.SetActive(true);
-        rabbit.currentState = RabbitState.Wandering;
+        animalInside.Remove(animal);
+        animal.gameObject.SetActive(true);
+        animal.currentState = AnimalState.Wandering;
 
         //Birth
         //Check if female, give birth
-        if (rabbit.stats.gender == Gender.Female) rabbit.GiveBirth(this);
+        if (animal.stats.gender == Gender.Female) animal.GiveBirth(this);
     }
 }

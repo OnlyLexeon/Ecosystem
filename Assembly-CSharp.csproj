@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Assets\! Scripts\GeneUI.cs" />
     <Compile Include="Assets\! Scripts\DayNightManager.cs" />
+    <Compile Include="Assets\! Scripts\AnimalStats.cs" />
     <Compile Include="Assets\! Scripts\GeneManager.cs" />
     <Compile Include="Assets\! Scripts\InputHandler.cs" />
     <Compile Include="Assets\! Scripts\PersonalityButton.cs" />
@@ -70,7 +71,7 @@
     <Compile Include="Assets\! Scripts\Burrow.cs" />
     <Compile Include="Assets\! Scripts\UIManager.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
-    <Compile Include="Assets\! Scripts\Rabbit.cs" />
+    <Compile Include="Assets\! Scripts\Animal.cs" />
     <Compile Include="Assets\! Scripts\Stats.cs" />
     <Compile Include="Assets\! Scripts\FoodSource.cs" />
   </ItemGroup>

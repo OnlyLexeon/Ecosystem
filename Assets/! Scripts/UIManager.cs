@@ -137,8 +137,8 @@ public class UIManager : MonoBehaviour
             else Debug.LogWarning("No Stats script found!");
 
             // UPDATING ACTION TEXT
-            Rabbit rabbitScript = cameraScript.target.GetComponent<Rabbit>();
-            if (rabbitScript != null) targetAction.text = "Action: " + rabbitScript.currentState.ToString();
+            Animal animalScript = cameraScript.target.GetComponent<Animal>();
+            if (animalScript != null) targetAction.text = "Action: " + animalScript.currentState.ToString();
         }
     }
 
@@ -183,10 +183,10 @@ public class UIManager : MonoBehaviour
                 hungerDepletion.text = "Hunger Depletion Rate: " + targetStats.hungerDepletionRate.ToString();
                 thirstDepletion.text = "Thirst Depletion Rate: " + targetStats.thirstDepletionRate.ToString();
 
-                Rabbit rabbitScript = cameraScript.target.GetComponent<Rabbit>();
-                if (rabbitScript != null)
+                Animal animalScript = cameraScript.target.GetComponent<Animal>();
+                if (animalScript != null)
                 {
-                    UpdateRabbitStats(rabbitScript);
+                    UpdateRabbitStats(animalScript);
                 }
 
                 //Family Buttons
@@ -218,50 +218,50 @@ public class UIManager : MonoBehaviour
         else dayNightText.text = "NightTime "+ "| " + "Day " + +DayNightManager.Instance.dayNumber;
     }
 
-    public void UpdateRabbitStats(Rabbit rabbitScript)
+    public void UpdateRabbitStats(Animal animalScript)
     {
-        detectionRange.text = "Detection Range: " + rabbitScript.stats.detectionDistance.ToString();
-        detectionRadius.text = "Detection Angle: " + rabbitScript.stats.detectionAngle.ToString();
+        detectionRange.text = "Detection Range: " + animalScript.stats.detectionDistance.ToString();
+        detectionRadius.text = "Detection Angle: " + animalScript.stats.detectionAngle.ToString();
 
-        baseSpeed.text = "Base Speed: " + rabbitScript.stats.baseSpeed.ToString();
-        runSpeed.text = "Run Speed: " + rabbitScript.stats.runSpeed.ToString();
-        wanderInterval.text = "Wander Interval: " + rabbitScript.stats.wanderInterval.ToString();
-        wanderMin.text = "Wander Min Distance: " + rabbitScript.stats.wanderDistanceMin.ToString();
-        wanderMax.text = "Wander Max Distance: " + rabbitScript.stats.wanderDistanceMax.ToString();
+        baseSpeed.text = "Base Speed: " + animalScript.stats.baseSpeed.ToString();
+        runSpeed.text = "Run Speed: " + animalScript.stats.runSpeed.ToString();
+        wanderInterval.text = "Wander Interval: " + animalScript.stats.wanderInterval.ToString();
+        wanderMin.text = "Wander Min Distance: " + animalScript.stats.wanderDistanceMin.ToString();
+        wanderMax.text = "Wander Max Distance: " + animalScript.stats.wanderDistanceMax.ToString();
 
-        eatPerSec.text = "Eat/Second: " + rabbitScript.stats.foodEatPerSecond.ToString();
-        thirstPerSec.text = "Drink/Second: " + rabbitScript.stats.drinkPerSecond.ToString();
-        needsInterval.text = "Needs Deplete Interval: " + rabbitScript.stats.needsInterval.ToString();
+        eatPerSec.text = "Eat/Second: " + animalScript.stats.foodEatPerSecond.ToString();
+        thirstPerSec.text = "Drink/Second: " + animalScript.stats.drinkPerSecond.ToString();
+        needsInterval.text = "Needs Deplete Interval: " + animalScript.stats.needsInterval.ToString();
 
-        baseOffSpring.text = "Base Offspring Count: " + rabbitScript.stats.baseOffSpringCount.ToString();
-        maxAdditionalOffSpring.text = "Max Random Extra OffSpring: " + rabbitScript.stats.maxAdditionalOffSpring.ToString();
-        minPositiveGenes.text = "Min Positive Genes: " + rabbitScript.stats.minPositiveGenesPrefered.ToString();
-        maxNegativeGenes.text = "Max Negative Genes: " + rabbitScript.stats.maxNegativeGenesPrefered.ToString();
-        reproduceCooldownDays.text = "Reproduce Cooldown (Days): " + rabbitScript.stats.reproduceCooldownDays.ToString();
-        reproduceDaysLeft.text = "Reproduce Ready (Days Left): " + rabbitScript.stats.reproduceDaysLeft.ToString();
+        baseOffSpring.text = "Base Offspring Count: " + animalScript.stats.baseOffSpringCount.ToString();
+        maxAdditionalOffSpring.text = "Max Random Extra OffSpring: " + animalScript.stats.maxAdditionalOffSpring.ToString();
+        minPositiveGenes.text = "Min Positive Genes: " + animalScript.stats.minPositiveGenesPrefered.ToString();
+        maxNegativeGenes.text = "Max Negative Genes: " + animalScript.stats.maxNegativeGenesPrefered.ToString();
+        reproduceCooldownDays.text = "Reproduce Cooldown (Days): " + animalScript.stats.reproduceCooldownDays.ToString();
+        reproduceDaysLeft.text = "Reproduce Ready (Days Left): " + animalScript.stats.reproduceDaysLeft.ToString();
 
-        lookInverval.text = "Look While Eat/Drink Interval: " + rabbitScript.stats.lookWhileEatingInterval.ToString();
-        lookMinAngle.text = "Look Min Angle: " + rabbitScript.stats.lookAngleMin.ToString();
-        lookMaxAngle.text = "Look Max Angle: " + rabbitScript.stats.lookAngleMax.ToString();
+        lookInverval.text = "Look While Eat/Drink Interval: " + animalScript.stats.lookWhileEatingInterval.ToString();
+        lookMinAngle.text = "Look Min Angle: " + animalScript.stats.lookAngleMin.ToString();
+        lookMaxAngle.text = "Look Max Angle: " + animalScript.stats.lookAngleMax.ToString();
 
-        additionalSleep.text = "Additional Sleep Hours: " + rabbitScript.stats.additionalSleepHours.ToString();
+        additionalSleep.text = "Additional Sleep Hours: " + animalScript.stats.additionalSleepHours.ToString();
 
-        waitInBurrowTime.text = "Wait in Burrow after Chase Time: " + rabbitScript.stats.waitBeforeLeavingBurrow.ToString();
+        waitInBurrowTime.text = "Wait in Burrow after Chase Time: " + animalScript.stats.waitBeforeLeavingBurrow.ToString();
     }
 
     public void PopulateFamilyUI(Transform target)
     {
-        Rabbit rabbitScript = target.GetComponent<Rabbit>();
+        Animal animalScript = target.GetComponent<Animal>();
 
-        if (rabbitScript != null)
+        if (animalScript != null)
         {
 
             // Set Mother Button
-            if (rabbitScript.mother != null)
+            if (animalScript.mother != null)
             {
                 motherButton.gameObject.SetActive(true);
                 motherButton.onClick.RemoveAllListeners();
-                motherButton.onClick.AddListener(() => InputHandler.Instance.SetTarget(rabbitScript.mother.transform));
+                motherButton.onClick.AddListener(() => InputHandler.Instance.SetTarget(animalScript.mother.transform));
             }
             else
             {
@@ -269,11 +269,11 @@ public class UIManager : MonoBehaviour
             }
 
             // Set Father Button
-            if (rabbitScript.father != null)
+            if (animalScript.father != null)
             {
                 fatherButton.gameObject.SetActive(true);
                 fatherButton.onClick.RemoveAllListeners();
-                fatherButton.onClick.AddListener(() => InputHandler.Instance.SetTarget(rabbitScript.father.transform));
+                fatherButton.onClick.AddListener(() => InputHandler.Instance.SetTarget(animalScript.father.transform));
             }
             else
             {
@@ -286,21 +286,21 @@ public class UIManager : MonoBehaviour
                 Destroy(child.gameObject);
             }
 
-            if (rabbitScript.children.Count > 0)
+            if (animalScript.children.Count > 0)
             {
                 childrenButtonsPanel.gameObject.SetActive(true);
 
                 // Populate Children Buttons
-                for (int i = 0; i < rabbitScript.children.Count; i++)
+                for (int i = 0; i < animalScript.children.Count; i++)
                 {
                     GameObject childButtonObj = Instantiate(childrenButtonsPrefab, childrenButtonsPanel);
                     Button childButton = childButtonObj.GetComponent<Button>();
                     TMP_Text buttonText = childButtonObj.GetComponentInChildren<TMP_Text>();
 
                     childButton.onClick.RemoveAllListeners();
-                    AssignButton(childButton, rabbitScript.children[i].transform);
+                    AssignButton(childButton, animalScript.children[i].transform);
 
-                    if (rabbitScript.isDead) buttonText.text = $"Dead {i + 1}";
+                    if (animalScript.isDead) buttonText.text = $"Dead {i + 1}";
                     else buttonText.text = $"Child {i + 1}";
                 }
             }

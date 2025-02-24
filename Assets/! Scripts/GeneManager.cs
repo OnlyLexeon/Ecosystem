@@ -33,7 +33,7 @@ public class GeneManager : MonoBehaviour
         //        new List<StatModifier> {
         //            new StatModifier(StatType.WanderDistanceMax, 1.5f)
         //        }));
-        //defaultGenes.Add(new Genes("Restful", "Increases wander interval. (+2)", Positivity.Positive,
+        //defaultGenes.Add(new Genes("Restful", "Increases wander interval. (+2)", Positivity.Negative,
         //        new List<StatModifier> {
         //            new StatModifier(StatType.WanderInterval, 2f)
         //        }));

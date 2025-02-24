@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using System.Security.Cryptography;
 
-public enum RabbitState
+public enum AnimalState
 {
+    //Rabbit
     MakingBurrow,
     DiggingBurrow,
 
@@ -32,22 +33,38 @@ public enum RabbitState
     Mating,
 }
 
-public class Rabbit : MonoBehaviour
+public enum AnimalType
+{
+    Rabbit,
+    Wolf,
+}
+
+public class Animal : MonoBehaviour
 {
     [Header("Current")]
-    public Burrow homeBurrow;
     public bool isDead = false;
     public bool wantsToReproduce = false;
     public bool isAdult = false;
 
+    [Header("Animal Settings")]
+    public AnimalType animal;
+    [Tooltip("Days taken to fully turn into an Adult.")] public int adultDays = 3;
+
     [Header("References")]
     public Stats stats;
-    public RabbitState currentState = RabbitState.Wandering;
-    public GameObject burrowPrefab;
-    public GameObject rabbitPrefab;
+    public AnimalState currentState = AnimalState.Wandering;
+    public GameObject childPrefab;
+    public GameObject statsHUD;
+
+    [Header("Family References")]
     public List<GameObject> children;
     public GameObject father;
     public GameObject mother;
+
+    [Header("Rabbit Only")]
+    public Home home;
+    public GameObject burrowPrefab;
+    [Tooltip("Make Prefab a clone of the Rabbit (If not, the child will be a clone of parent).")] public GameObject rabbitPrefab;
 
     private float needsTimer = 0f;
     private NavMeshAgent agent;
@@ -65,7 +82,11 @@ public class Rabbit : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         stats = GetComponent<Stats>();
 
-        if (stats.agedDays >= 3) isAdult = true;
+        //might be spawned as adult
+        if (stats.agedDays >= adultDays) isAdult = true;
+
+        //up stats
+        AnimalStats.Instance.PlusRabbitCount();
 
         //Assumes the rabbit was spawned
         if (stats.genes.Count <= 0)
@@ -76,7 +97,9 @@ public class Rabbit : MonoBehaviour
             stats.ApplyGenesToStats();
             stats.SetStats();
         }
-        
+
+        //Start Updating UI
+        InvokeRepeating(nameof(UpdateOverHeadUI), 1f, 1f);
     }
 
     void Update()
@@ -85,7 +108,7 @@ public class Rabbit : MonoBehaviour
 
         //NEEDS DEPLETION
         if (needsTimer <= stats.needsInterval) needsTimer += Time.deltaTime;
-        if (needsTimer >= stats.needsInterval && currentState != RabbitState.Sleeping)
+        if (needsTimer >= stats.needsInterval && currentState != AnimalState.Sleeping)
         {
             needsTimer = 0f;
             DepleteNeeds();
@@ -93,14 +116,14 @@ public class Rabbit : MonoBehaviour
 
         //Threats
         DetectThreats(); // Always check for threats first
-        if (currentState == RabbitState.Running)
+        if (currentState == AnimalState.Running)
         {
             RunAway();
             return; // Stop other actions if running
         }
 
         //Speed
-        agent.speed = (currentState == RabbitState.Running) ? stats.runSpeed : stats.baseSpeed;
+        agent.speed = (currentState == AnimalState.Running) ? stats.runSpeed : stats.baseSpeed;
 
         //Sleeping
         if (DayNightManager.Instance.isNight)
@@ -117,7 +140,7 @@ public class Rabbit : MonoBehaviour
 
         switch (currentState)
         {
-            case RabbitState.Wandering:
+            case AnimalState.Wandering:
                 if (wanderTimer < stats.wanderInterval && !agent.pathPending) wanderTimer += Time.deltaTime;
                 else if (wanderTimer >= stats.wanderInterval) Wander();
 
@@ -128,25 +151,26 @@ public class Rabbit : MonoBehaviour
                     DetectMate();
                 }
 
-                if (detectedWolf == null && homeBurrow == null && currentState != RabbitState.MakingBurrow)
+                if (detectedWolf == null && home == null && currentState != AnimalState.MakingBurrow)
                 {
                     MakeBurrow();
                 }
                 break;
-            case RabbitState.GoingToEat:
-            case RabbitState.GoingToDrink:
+            case AnimalState.GoingToEat:
+            case AnimalState.GoingToDrink:
                 CheckArrival();
                 break;
-            case RabbitState.Eating:
-            case RabbitState.Drinking:
+            case AnimalState.Eating:
+            case AnimalState.Drinking:
                 LookAroundWhileEatingOrDrinking();
                 break;
-            case RabbitState.Running:
+            case AnimalState.Running:
                 RunAway();
                 break;
         }
     }
 
+    //Survival
     void DepleteNeeds()
     {
         stats.hunger -= stats.hungerDepletionRate;
@@ -171,11 +195,13 @@ public class Rabbit : MonoBehaviour
             Regenerate();
         }
     }
-
     public void Die()
     {
         isDead = true;
-       
+
+        //update stats
+        AnimalStats.Instance.MinusRabbitCount();
+
         //Spawm a corpse
         //Rabbit corpse will be food source for Fox
         //Do not despawn this script object, required for child
@@ -213,7 +239,7 @@ public class Rabbit : MonoBehaviour
 
     void Wander()
     {
-        if (currentState != RabbitState.Wandering || agent.pathPending || agent.remainingDistance > 0.5f)
+        if (currentState != AnimalState.Wandering || agent.pathPending || agent.remainingDistance > 0.5f)
             return;
 
         wanderTimer = 0f;
@@ -237,10 +263,10 @@ public class Rabbit : MonoBehaviour
         if (!isAdult)
         {
             //scale
-            float scaleFactor = Mathf.Lerp(0.2f, 0.5f, stats.agedDays / 3f);
+            float scaleFactor = Mathf.Lerp(0.2f, 0.5f, stats.agedDays / (float)adultDays);
             transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
-            if (stats.agedDays >= 3) isAdult = true;
+            if (stats.agedDays >= adultDays) isAdult = true;
         }
     }
 
@@ -264,19 +290,19 @@ public class Rabbit : MonoBehaviour
     }
     void DetectMate()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Rabbit"));
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, gameObject.layer); //same species
 
         Transform closestMate = null;
         float closestDistance = Mathf.Infinity;
 
         foreach (Collider hit in hitColliders)
         {
-            Vector3 directionToRabbit = (hit.transform.position - transform.position).normalized;
+            Vector3 directionToMate = (hit.transform.position - transform.position).normalized;
             //check in angle
-            if (Vector3.Angle(transform.forward, directionToRabbit) < stats.detectionAngle / 2)
+            if (Vector3.Angle(transform.forward, directionToMate) < stats.detectionAngle / 2)
             {
                 //checking part
-                Rabbit targetScript = hit.GetComponent<Rabbit>();
+                Animal targetScript = hit.GetComponent<Animal>();
                 if (targetScript != null)
                 {
                     //is horny & no target yet
@@ -305,16 +331,16 @@ public class Rabbit : MonoBehaviour
         if (closestMate != null)
         {
             targetMate = closestMate;
-            Rabbit mateScript = closestMate.GetComponent<Rabbit>();
+            Animal mateScript = closestMate.GetComponent<Animal>();
             
             if (mateScript != null)
             {
-                bool mateFound = mateScript.SignalMating(transform, homeBurrow, this);
+                bool mateFound = mateScript.SignalMating(transform, home, this);
                 
                 if (mateFound)
                 {
-                    currentState = RabbitState.GoingToMate;
-                    agent.SetDestination(homeBurrow.transform.position);
+                    currentState = AnimalState.GoingToMate;
+                    agent.SetDestination(home.transform.position);
                 }
                 else
                 {
@@ -323,7 +349,7 @@ public class Rabbit : MonoBehaviour
             }
         }
     }
-    public bool CheckGender(Rabbit targetScript)
+    public bool CheckGender(Animal targetScript)
     {
         //Check Gender
         bool oppositeGender = false;
@@ -339,7 +365,7 @@ public class Rabbit : MonoBehaviour
 
         return oppositeGender;
     }
-    public bool CheckPreferedGenes(Rabbit targetScript)
+    public bool CheckPreferedGenes(Animal targetScript)
     {
         List<Genes> targetGenes = targetScript.stats.genes;
         // Count positive and negative genes
@@ -356,7 +382,7 @@ public class Rabbit : MonoBehaviour
         return false;
     }
 
-    public bool SignalMating(Transform mate, Burrow burrowToMate, Rabbit mateScript)
+    public bool SignalMating(Transform mate, Home homeToMate, Animal mateScript)
     {
         if (wantsToReproduce && !targetMate)
         {
@@ -365,8 +391,8 @@ public class Rabbit : MonoBehaviour
             if (prefered)
             {
                 targetMate = mate;
-                currentState = RabbitState.GoingToMate;
-                agent.SetDestination(burrowToMate.transform.position);
+                currentState = AnimalState.GoingToMate;
+                agent.SetDestination(homeToMate.transform.position);
                 return true;
             }
             else return false;
@@ -377,18 +403,40 @@ public class Rabbit : MonoBehaviour
         }
     }
     //Only called by the female
-    public List<Genes> GetGeneticAlgorithm()
+    public List<Genes> GetGenetics()
     {
         List<Genes> parentsGenes = new List<Genes>();
 
         parentsGenes.AddRange(stats.genes); //female
 
-        Rabbit mateScript = targetMate.GetComponent<Rabbit>();
+        Animal mateScript = targetMate.GetComponent<Animal>();
         parentsGenes.AddRange(mateScript.stats.genes); //male
 
         return parentsGenes;
     }
-    public void GiveBirth(Burrow parentBurrow)
+    public List<Genes> GetChildsGenetics()
+    {
+        //Genetic Algorithm
+        List<Genes> parentsGenes = GetGenetics();
+        List<Genes> childGenes = new List<Genes>();
+        int numberOfGenesToInherit = Mathf.CeilToInt(parentsGenes.Count / 2f);
+        //Shuffling list
+        List<Genes> shuffledGenes = parentsGenes.Distinct().OrderBy(g => Random.value).ToList();
+
+        foreach (Genes gene in shuffledGenes)
+        {
+            if (childGenes.Count >= numberOfGenesToInherit)
+                break; // Stop once we reach the required amount
+
+            if (!childGenes.Contains(gene))
+            {
+                childGenes.Add(gene);
+            }
+        }
+
+        return childGenes;
+    }
+    public void GiveBirth(Home parentBurrow)
     {
         //get child count
         //do we use Male offspring count + additional count or Female??
@@ -398,7 +446,7 @@ public class Rabbit : MonoBehaviour
         int additionalOffsprings = 0;
         int totalOffspring = 0;
 
-        Rabbit mateScript = targetMate.GetComponent<Rabbit>();
+        Animal mateScript = targetMate.GetComponent<Animal>();
 
         if (parentToPick == 0)
         {
@@ -417,11 +465,11 @@ public class Rabbit : MonoBehaviour
         for (int i = 0; i < totalOffspring; i++)
         {
             //spawn child
-            GameObject rabbitChild = Instantiate(rabbitPrefab, transform.position, Quaternion.identity);
-            Rabbit childScript = rabbitChild.GetComponent<Rabbit>();
+            GameObject child = Instantiate(GetChildPrefabBirth(), transform.position, Quaternion.identity, AnimalStats.Instance.animalHolder.transform);
+            Animal childScript = child.GetComponent<Animal>();
 
             //Set Home
-            childScript.homeBurrow = parentBurrow;
+            childScript.home = parentBurrow;
             //Set Size
             childScript.stats.agedDays = 0;
             childScript.isAdult = false;
@@ -429,44 +477,35 @@ public class Rabbit : MonoBehaviour
             childScript.WakeUpAgeUpdate();
 
             //Genetic Algorithm
-            List<Genes> parentsGenes = GetGeneticAlgorithm();
-            List<Genes> childGenes = new List<Genes>();
-            int numberOfGenesToInherit = Mathf.CeilToInt(parentsGenes.Count / 2f);
-            //Shuffling list
-            List<Genes> shuffledGenes = parentsGenes.Distinct().OrderBy(g => Random.value).ToList();
-            foreach (Genes gene in shuffledGenes)
-            {
-                if (childGenes.Count >= numberOfGenesToInherit)
-                    break; // Stop once we reach the required amount
+            List<Genes> childGenes = GetChildsGenetics();
 
-                if (!childGenes.Contains(gene))
-                {
-                    childGenes.Add(gene);
-                }
-            }
+            //Mutation
+
 
             //Apply genes
             childScript.stats.genes.Clear();
             childScript.stats.genes = childGenes;
 
             //Add child to children list
-            children.Add(rabbitChild);
-            mateScript.children.Add(rabbitChild);
+            children.Add(child);
+            mateScript.children.Add(child);
 
             //Add parent reference to child for debugging
-            childScript.father = targetMate.gameObject;
-            childScript.mother = gameObject;
+            childScript.father = targetMate.gameObject; //dad was the mate
+            childScript.mother = gameObject; //mom is this script
         }
 
-        targetMate = null;
+        //reset target mate
+        mateScript.targetMate = null;
+        targetMate = null; 
     }
 
     //BURROW
     void MakeBurrow()
     {
-        if (homeBurrow != null) return; // Already has a burrow
+        if (home != null) return; // Already has a burrow
 
-        currentState = RabbitState.MakingBurrow;
+        currentState = AnimalState.MakingBurrow;
         Vector3 burrowLocation = transform.position; // Default to current position
 
         Collider[] foodSources = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Food"));
@@ -507,27 +546,27 @@ public class Rabbit : MonoBehaviour
         else
         {
             Debug.LogWarning("Could not find a valid burrow position!");
-            currentState = RabbitState.Wandering; // Avoid softlock
+            currentState = AnimalState.Wandering; // Avoid softlock
         }
     }
     void GoToSleep()
     {
-        if (homeBurrow == null)
+        if (home == null)
         {
             DetectBurrow();
             if (targetBurrow != null)
             {
-                homeBurrow = targetBurrow.GetComponent<Burrow>();
+                home = targetBurrow.GetComponent<Home>();
             }
             else
             {
                 Debug.LogWarning("Failed to find a Burrow to call Home!");
             }
         }
-        else if (homeBurrow != null)
+        else if (home != null)
         {
-            agent.SetDestination(homeBurrow.transform.position);
-            currentState = RabbitState.GoingToSleep;
+            agent.SetDestination(home.transform.position);
+            currentState = AnimalState.GoingToSleep;
         }
     }
     void DetectBurrow()
@@ -554,7 +593,7 @@ public class Rabbit : MonoBehaviour
 
         // Create burrow instantly upon arrival
         GameObject newBurrow = Instantiate(burrowPrefab, position, Quaternion.identity);
-        homeBurrow = newBurrow.GetComponent<Burrow>();
+        home = newBurrow.GetComponent<Home>();
 
         //Should enter burrow after creation
     }
@@ -603,7 +642,7 @@ public class Rabbit : MonoBehaviour
         {
             targetFood = closestFood;
             agent.SetDestination(targetFood.position);
-            currentState = RabbitState.GoingToEat;
+            currentState = AnimalState.GoingToEat;
         }
     }
     void DetectDrink()
@@ -631,20 +670,20 @@ public class Rabbit : MonoBehaviour
         {
             targetWater = closestWater;
             agent.SetDestination(targetWater.position);
-            currentState = RabbitState.GoingToDrink;
+            currentState = AnimalState.GoingToDrink;
         }
     }
     void CheckArrival()
     {
-        if (currentState == RabbitState.GoingToEat && targetFood != null && Vector3.Distance(transform.position, targetFood.position) <= 1.25f)
+        if (currentState == AnimalState.GoingToEat && targetFood != null && Vector3.Distance(transform.position, targetFood.position) <= 1.25f)
         {
-            currentState = RabbitState.Eating;
+            currentState = AnimalState.Eating;
             StartCoroutine(EatRoutine());
         }
-        else if (currentState == RabbitState.GoingToDrink && 
+        else if (currentState == AnimalState.GoingToDrink && 
             (targetWater != null && Vector3.Distance(transform.position, targetWater.position) <= 1.25f))
         {
-            currentState = RabbitState.Drinking;
+            currentState = AnimalState.Drinking;
             StartCoroutine(DrinkRoutine());
         }
     }
@@ -652,11 +691,11 @@ public class Rabbit : MonoBehaviour
     {
         FoodSource foodSource = targetFood?.GetComponent<FoodSource>();
 
-        while (stats.hunger < stats.maxHunger && currentState == RabbitState.Eating && foodSource != null && foodSource.foodAvailable > 0)
+        while (stats.hunger < stats.maxHunger && currentState == AnimalState.Eating && foodSource != null && foodSource.foodAvailable > 0)
         {
             if (detectedWolf != null)
             {
-                currentState = RabbitState.Running;
+                currentState = AnimalState.Running;
                 foodSource.StopEating(); // Stop eating when interrupted
                 yield break;
             }
@@ -673,16 +712,16 @@ public class Rabbit : MonoBehaviour
             yield return null;
         }
 
-        currentState = RabbitState.Wandering;
+        currentState = AnimalState.Wandering;
         foodSource?.StopEating(); // Ensure we reset state
     }
     IEnumerator DrinkRoutine()
     {
-        while (stats.thirst < stats.maxThirst && currentState == RabbitState.Drinking)
+        while (stats.thirst < stats.maxThirst && currentState == AnimalState.Drinking)
         {
             if (detectedWolf != null) // Interrupt drinking if a wolf is detected
             {
-                currentState = RabbitState.Running;
+                currentState = AnimalState.Running;
                 yield break;
             }
 
@@ -690,13 +729,13 @@ public class Rabbit : MonoBehaviour
             yield return null;
         }
 
-        currentState = RabbitState.Wandering;
+        currentState = AnimalState.Wandering;
     }
     void LookAroundWhileEatingOrDrinking()
     {
         if (detectedWolf != null)
         {
-            currentState = RabbitState.Running;
+            currentState = AnimalState.Running;
             return;
         }
 
@@ -738,7 +777,7 @@ public class Rabbit : MonoBehaviour
             if (Vector3.Angle(transform.forward, directionToThreat) < stats.detectionAngle / 2)
             {
                 detectedWolf = threat.transform;
-                currentState = RabbitState.Running;
+                currentState = AnimalState.Running;
                 return;
             }
         }
@@ -748,17 +787,17 @@ public class Rabbit : MonoBehaviour
     {
         if (detectedWolf == null)
         {
-            currentState = RabbitState.Wandering;
+            currentState = AnimalState.Wandering;
             return;
         }
 
-        Vector3 directionToWolf = (detectedWolf.position - transform.position).normalized;
-        float distanceToWolf = Vector3.Distance(transform.position, detectedWolf.position);
+        Vector3 directionToThreat = (detectedWolf.position - transform.position).normalized;
+        float distanceToThreat = Vector3.Distance(transform.position, detectedWolf.position);
 
         // If burrow exists and is safe, run towards it
-        if (homeBurrow != null && distanceToWolf > 5f)
+        if (home != null && distanceToThreat > 5f)
         {
-            agent.SetDestination(homeBurrow.transform.position);
+            agent.SetDestination(home.transform.position);
             return;
         }
 
@@ -782,38 +821,38 @@ public class Rabbit : MonoBehaviour
     {
         if (other == null) return;
 
-        Burrow burrowScript = other.GetComponent<Burrow>();
-        if (burrowScript != null)
+        Home homecript = other.GetComponent<Home>();
+        if (homecript != null)
         {
             float time = 0f;
 
             switch (currentState)
             {
-                case RabbitState.GoingToSleep:
-                    currentState = RabbitState.Sleeping;
+                case AnimalState.GoingToSleep:
+                    currentState = AnimalState.Sleeping;
 
                     timeSlept = Time.time;
 
                     time = (Random.Range(8.5f, 9.5f) * 60f) + (stats.additionalSleepHours * 60f); //6-8 hours + extra sleep hours
-                    burrowScript.EnterBurrowForSleep(this, time);
+                    homecript.EnterBurrowForSleep(this, time);
                     break;
-                case RabbitState.Running:
-                    currentState = RabbitState.Hiding;
+                case AnimalState.Running:
+                    currentState = AnimalState.Hiding;
                     time = stats.waitBeforeLeavingBurrow;
 
-                    burrowScript.EnterBurrow(this, time);
+                    homecript.EnterBurrow(this, time);
                     break;
-                case RabbitState.MakingBurrow:
-                    currentState = RabbitState.DiggingBurrow;
+                case AnimalState.MakingBurrow:
+                    currentState = AnimalState.DiggingBurrow;
                     time = 5f;
 
-                    burrowScript.EnterBurrow(this, time);
+                    homecript.EnterBurrow(this, time);
 
                     //bug fix, some other rabbit made the burrow but this one enters,
-                    homeBurrow = burrowScript;
+                    home = homecript;
                     break;
-                case RabbitState.GoingToMate:
-                    currentState = RabbitState.Mating;
+                case AnimalState.GoingToMate:
+                    currentState = AnimalState.Mating;
 
                     wantsToReproduce = false;
                     stats.reproduceDaysLeft = stats.reproduceCooldownDays;
@@ -821,18 +860,18 @@ public class Rabbit : MonoBehaviour
                     time = 20f;
 
                     //giving birth is called by burrow after 20 seconds
-                    burrowScript.EnterBurrowForMating(this, time);
+                    homecript.EnterBurrowForMating(this, time);
                     break;
             }
         }
     }
 
+    //UI/HUD
     void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         DrawDetectionCone(transform.position, transform.forward, stats.detectionDistance, stats.detectionAngle); 
     }
-
     void DrawDetectionCone(Vector3 position, Vector3 forward, float distance, float angle)
     {
         int segments = 20;
@@ -851,6 +890,30 @@ public class Rabbit : MonoBehaviour
             Vector3 segmentEnd = Quaternion.Euler(0, nextSegmentAngle, 0) * forward * distance;
 
             Gizmos.DrawLine(position + segmentStart, position + segmentEnd);
+        }
+    }
+    public void ToggleUI(bool state)
+    {
+        statsHUD.SetActive(state);
+    }
+    void UpdateOverHeadUI()
+    {
+        //OVER HEAD UI/HUD STATS
+        if (statsHUD.activeSelf == true)
+        {
+            //Update Stats
+        }
+    }
+
+    //Get variables
+    public GameObject GetChildPrefabBirth()
+    {
+        switch(animal)
+        {
+            case AnimalType.Rabbit:
+                return rabbitPrefab;
+            default:
+                return rabbitPrefab;
         }
     }
 }
