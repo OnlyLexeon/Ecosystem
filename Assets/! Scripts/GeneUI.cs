@@ -17,6 +17,7 @@ public class GeneUI : MonoBehaviour
     public TMP_InputField nameInput;
     public TMP_InputField descriptionInput;
     public Positivity positivity;
+    public TMP_InputField probabilityWeightage;
     public Button addModifierButton;
     public Button addGeneButton;
     public Button clearCustomGenes;
@@ -87,6 +88,7 @@ public class GeneUI : MonoBehaviour
         descriptionInput.text = string.Empty;
         positivity = 0;
         positivitySelectedText.text = "Selected: " + "Neutral";
+        probabilityWeightage.text = string.Empty;
 
         // Clear all dropdowns and input fields
         foreach (var dropdown in statModifierDropdowns)
@@ -114,7 +116,7 @@ public class GeneUI : MonoBehaviour
         if (buttonScript)
         {
             buttonScript.nameText.text = gene.name;
-            buttonScript.descriptionText.text = gene.description;
+            buttonScript.descriptionText.text = gene.description + "\nWeightage: " + gene.weightage;
             buttonScript.positivity = gene.positivity;
         }
     }
@@ -240,6 +242,7 @@ public class GeneUI : MonoBehaviour
     {
         string name = nameInput.text;
         string description = descriptionInput.text;
+        string weightage = probabilityWeightage.text;
 
         // Check if name is empty
         if (string.IsNullOrEmpty(name))
@@ -252,6 +255,18 @@ public class GeneUI : MonoBehaviour
         if (string.IsNullOrEmpty(description))
         {
             errorText.text = "Error: Gene description cannot be empty!";
+            return;
+        }
+
+        //Weightatge input
+        if (string.IsNullOrEmpty(weightage))
+        {
+            errorText.text = "Error: Weightage must not be empty! (Set 5 for Default)";
+            return;
+        }
+        if (!int.TryParse(weightage, out int weightageValue))
+        {
+            errorText.text = "Error: Weightage must be a valid number!";
             return;
         }
 
@@ -275,7 +290,7 @@ public class GeneUI : MonoBehaviour
             return;
         }
 
-        GeneManager.Instance.AddNewGene(name, description, positivity, selectedModifiers);
+        GeneManager.Instance.AddNewGene(name, description, positivity, weightageValue, selectedModifiers);
         DisplayGenes();
 
         errorText.text = "";

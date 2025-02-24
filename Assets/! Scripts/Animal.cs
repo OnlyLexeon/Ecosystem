@@ -1,5 +1,6 @@
 using UnityEngine.AI;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using Mono.Cecil.Cil;
 using System.Diagnostics.CodeAnalysis;
@@ -10,6 +11,7 @@ using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Security.Cryptography;
+using TMPro;
 
 public enum AnimalState
 {
@@ -42,29 +44,41 @@ public enum AnimalType
 public class Animal : MonoBehaviour
 {
     [Header("Current")]
+    public string animalName;
+    public AnimalState currentState = AnimalState.Wandering;
     public bool isDead = false;
     public bool wantsToReproduce = false;
     public bool isAdult = false;
 
+    [Header("References* (Ensure none empty)")]
+    [Tooltip("This animal's stat script.")] public Stats stats;
+    [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
+    [Tooltip("Animal's Gene Display Prefab (For OverHeadStats Toggle)")] public GameObject genePrefab;
+
     [Header("Animal Settings")]
     public AnimalType animal;
     [Tooltip("Days taken to fully turn into an Adult.")] public int adultDays = 3;
-
-    [Header("References")]
-    public Stats stats;
-    public AnimalState currentState = AnimalState.Wandering;
-    public GameObject childPrefab;
-    public GameObject statsHUD;
 
     [Header("Family References")]
     public List<GameObject> children;
     public GameObject father;
     public GameObject mother;
 
-    [Header("Rabbit Only")]
+    [Header("Rabbit Only* (Ensure Prefabs)")]
     public Home home;
     public GameObject burrowPrefab;
     [Tooltip("Make Prefab a clone of the Rabbit (If not, the child will be a clone of parent).")] public GameObject rabbitPrefab;
+    public RabbitTypes rabbitType;
+
+    [Header("Stats HUD")]
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI actionText;
+    public TextMeshProUGUI ageText;
+    public TextMeshProUGUI genderText;
+    public Transform genesPanel;
+    public Slider healthSlider;
+    public Slider hungerSlider;
+    public Slider thirstSlider;
 
     private float needsTimer = 0f;
     private NavMeshAgent agent;
@@ -82,11 +96,13 @@ public class Animal : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         stats = GetComponent<Stats>();
 
+        animalName = AnimalNameGet.GetRandomCuteName();
+
         //might be spawned as adult
         if (stats.agedDays >= adultDays) isAdult = true;
 
         //up stats
-        AnimalStats.Instance.PlusRabbitCount();
+        AnimalHolderStats.Instance.PlusRabbitCount();
 
         //Assumes the rabbit was spawned
         if (stats.genes.Count <= 0)
@@ -99,7 +115,9 @@ public class Animal : MonoBehaviour
         }
 
         //Start Updating UI
-        InvokeRepeating(nameof(UpdateOverHeadUI), 1f, 1f);
+        InvokeRepeating(nameof(UpdateOverHeadStats), 1f, 1f);
+        //UI that doesnt require constant updating
+        UpdateOverHeadUI();
     }
 
     void Update()
@@ -200,7 +218,7 @@ public class Animal : MonoBehaviour
         isDead = true;
 
         //update stats
-        AnimalStats.Instance.MinusRabbitCount();
+        AnimalHolderStats.Instance.MinusRabbitCount();
 
         //Spawm a corpse
         //Rabbit corpse will be food source for Fox
@@ -263,7 +281,7 @@ public class Animal : MonoBehaviour
         if (!isAdult)
         {
             //scale
-            float scaleFactor = Mathf.Lerp(0.2f, 0.5f, stats.agedDays / (float)adultDays);
+            float scaleFactor = Mathf.Lerp(0.15f, 0.4f, stats.agedDays / (float)adultDays);
             transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
             if (stats.agedDays >= adultDays) isAdult = true;
@@ -381,7 +399,6 @@ public class Animal : MonoBehaviour
 
         return false;
     }
-
     public bool SignalMating(Transform mate, Home homeToMate, Animal mateScript)
     {
         if (wantsToReproduce && !targetMate)
@@ -402,8 +419,10 @@ public class Animal : MonoBehaviour
             return false;
         }
     }
+    
     //Only called by the female
-    public List<Genes> GetGenetics()
+    //GENETIC ALGORITHM!!
+    public List<Genes> GetParentsGenetics()
     {
         List<Genes> parentsGenes = new List<Genes>();
 
@@ -417,13 +436,26 @@ public class Animal : MonoBehaviour
     public List<Genes> GetChildsGenetics()
     {
         //Genetic Algorithm
-        List<Genes> parentsGenes = GetGenetics();
+        List<Genes> parentsGenes = GetParentsGenetics();
         List<Genes> childGenes = new List<Genes>();
-        int numberOfGenesToInherit = Mathf.CeilToInt(parentsGenes.Count / 2f);
-        //Shuffling list
-        List<Genes> shuffledGenes = parentsGenes.Distinct().OrderBy(g => Random.value).ToList();
+        int numberOfGenesToInherit = Mathf.RoundToInt(parentsGenes.Count / 2f);
 
-        foreach (Genes gene in shuffledGenes)
+        // Weighted List, adds gene multiplied by weight
+        List<Genes> weightedGenes = new List<Genes>();
+        foreach (Genes gene in parentsGenes)
+        {
+            int weight = gene.weightage;
+            for (int i = 0; i < weight; i++)
+            {
+                weightedGenes.Add(gene);
+            }
+        }
+
+        // Random shuffle after weightage
+        weightedGenes = weightedGenes.OrderBy(g => Random.value).ToList();
+
+        // Pick genes from the shuffled list
+        foreach (Genes gene in weightedGenes)
         {
             if (childGenes.Count >= numberOfGenesToInherit)
                 break; // Stop once we reach the required amount
@@ -465,7 +497,7 @@ public class Animal : MonoBehaviour
         for (int i = 0; i < totalOffspring; i++)
         {
             //spawn child
-            GameObject child = Instantiate(GetChildPrefabBirth(), transform.position, Quaternion.identity, AnimalStats.Instance.animalHolder.transform);
+            GameObject child = Instantiate(GetChildPrefabBirth(), transform.position, Quaternion.identity, AnimalHolderStats.Instance.transform);
             Animal childScript = child.GetComponent<Animal>();
 
             //Set Home
@@ -864,6 +896,13 @@ public class Animal : MonoBehaviour
                     break;
             }
         }
+
+        //Water BUG FIX (water target is diagonal thus cant reach:)
+        if (currentState == AnimalState.GoingToDrink && other.gameObject.layer == LayerMask.NameToLayer("Drink"))
+        {
+            currentState = AnimalState.Drinking;
+            StartCoroutine(DrinkRoutine());
+        }
     }
 
     //UI/HUD
@@ -896,12 +935,52 @@ public class Animal : MonoBehaviour
     {
         statsHUD.SetActive(state);
     }
-    void UpdateOverHeadUI()
+    void UpdateOverHeadUI() //UI updated once only
+    {
+        statsHUD.SetActive(true);
+
+        //name 
+        nameText.text = animalName;
+
+        //Personality
+        List<Genes> genes = stats.genes;
+        foreach (Genes gene in genes)
+        {
+            GameObject newPersonality = Instantiate(genePrefab, genesPanel);
+            PersonalityButton buttonScript = newPersonality.GetComponent<PersonalityButton>();
+
+            if (buttonScript)
+            {
+                buttonScript.nameText.text = gene.name;
+                buttonScript.descriptionText.text = gene.description;
+                buttonScript.positivity = gene.positivity;
+            }
+        }
+
+        //Gender
+        genderText.text = "Gender: " + stats.gender.ToString();
+
+        statsHUD.SetActive(false);
+    }
+    public void UpdateOverHeadStats() //updated every second
     {
         //OVER HEAD UI/HUD STATS
         if (statsHUD.activeSelf == true)
         {
             //Update Stats
+
+
+            ageText.text = "Age: " + stats.agedDays.ToString();
+            actionText.text = "Action: " + currentState.ToString();
+
+            healthSlider.maxValue = stats.maxHealth;
+            healthSlider.value = stats.health;
+
+            hungerSlider.maxValue = stats.maxHunger;
+            hungerSlider.value = stats.hunger;
+
+            thirstSlider.maxValue = stats.maxThirst;
+            thirstSlider.value = stats.thirst;
         }
     }
 

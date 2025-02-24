@@ -20,6 +20,7 @@ public class InputHandler : MonoBehaviour
 
     //mode
     public bool isFollowingTarget = false;
+    public bool isOverHeadDebugStats = false;
 
     //pausing
     public float savedTimeScale = 0f;
@@ -36,6 +37,7 @@ public class InputHandler : MonoBehaviour
         Instance = this;
 
         UIManager.Instance.ShowControls(isFollowingTarget);
+        UIManager.Instance.SetDebugModeDisplayUI(isFollowingTarget);
 
         //LINE RENDERER FOR TARGET HUD
         lineRenderer.positionCount = segments + 3; // Start + End + Arc
@@ -65,8 +67,23 @@ public class InputHandler : MonoBehaviour
             TogglePause();
         }
 
+        if (Input.GetKeyDown(KeyCode.Backslash)) // Detects the \ key
+        {
+            Cursor.visible = !Cursor.visible;
+            Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Locked;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Slash)) // Detects the / key
+        {
+            isOverHeadDebugStats = !isOverHeadDebugStats;
+
+            UIManager.Instance.SetDebugModeDisplayUI(!isOverHeadDebugStats);
+            AnimalHolderStats.Instance.ToggleAnimalOverHeadUI(isOverHeadDebugStats);
+            UIManager.Instance.UpdateTargetUI();
+        }
+
+        //Mode switch
         HandleModeSwitch();
-        HandleToggleCursor();
 
         if (isFollowingTarget)
         {
@@ -79,6 +96,7 @@ public class InputHandler : MonoBehaviour
             FreeRoamMode();
         }
 
+        //Using cursor to select target
         HandleTargetSelection();
     }
     
@@ -87,15 +105,7 @@ public class InputHandler : MonoBehaviour
         target = newTarget;
 
         UIManager.Instance.UpdateTargetUI();
-    }
 
-    public void HandleToggleCursor()
-    {
-        if (Input.GetKeyDown(KeyCode.Backslash)) // Detects the \ key
-        {
-            Cursor.visible = !Cursor.visible;
-            Cursor.lockState = Cursor.visible ? CursorLockMode.None : CursorLockMode.Locked;
-        }
     }
 
     void HandleModeSwitch()
@@ -104,6 +114,7 @@ public class InputHandler : MonoBehaviour
         {
             isFollowingTarget = !isFollowingTarget;
             UIManager.Instance.ShowControls(isFollowingTarget);
+            UIManager.Instance.SetDebugModeDisplayUI(!isOverHeadDebugStats);
 
             if (isFollowingTarget && target == null)
             {
@@ -210,6 +221,7 @@ public class InputHandler : MonoBehaviour
         transform.position += moveDirection * movementSpeed * Time.unscaledDeltaTime;
     }
 
+    //Finding/Clicking Targets
     void HandleTargetSelection()
     {
         if (Input.GetMouseButtonDown(0)) // Left click to select target
@@ -220,11 +232,12 @@ public class InputHandler : MonoBehaviour
                 target = hit.transform;
                 isFollowingTarget = true;
 
+                UIManager.Instance.ShowControls(isFollowingTarget);
+                UIManager.Instance.SetDebugModeDisplayUI(!isOverHeadDebugStats);
                 UIManager.Instance.UpdateTargetUI();
             }
         }
     }
-
     void FindClosestTarget()
     {
         Collider[] targets = Physics.OverlapSphere(transform.position, 100f, LayerMask.GetMask("Rabbit", "Wolf")); // or wolf

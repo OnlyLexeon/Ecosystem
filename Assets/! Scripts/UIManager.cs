@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using static Stats;
 using System.Collections.Generic;
+using System.Resources;
 
 public class UIManager : MonoBehaviour
 {
@@ -29,8 +30,10 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI hungerText;
     public TextMeshProUGUI thirstText;
-    public GameObject personalityPrefab;
-    public Transform personalityPanel;
+
+    [Header("Genes Display")]
+    public GameObject genePrefab;
+    public Transform genePanel;
 
     [Header("Stats")]
     public GameObject statsPanel;
@@ -72,6 +75,8 @@ public class UIManager : MonoBehaviour
     public InputHandler cameraScript;
     public DayNightManager timeScript;
 
+    public bool showDebugUI = true;
+
     public static UIManager Instance;
 
     private void Awake()
@@ -110,6 +115,20 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void SetDebugModeDisplayUI(bool state)
+    {
+        showDebugUI = state;
+
+        slidersPanel.SetActive(state);
+        statsPanel.SetActive(state);
+
+        if (cameraScript.target == null)
+        {
+            slidersPanel.SetActive(false);
+            statsPanel.SetActive(false);
+        }
+    }
+
     //Stats = changing variables 
     public void UpdateTargetStats()
     {
@@ -145,21 +164,22 @@ public class UIManager : MonoBehaviour
     //target = personality or target type
     public void UpdateTargetUI()
     {
-        foreach (Transform child in personalityPanel.transform)
+        foreach (Transform child in genePanel.transform)
         {
             Destroy(child.gameObject);
         }
 
-        if (cameraScript.target != null)
+        if (cameraScript.target != null && showDebugUI)
         {
             slidersPanel.SetActive(true);
             statsPanel.SetActive(true);
 
-            string targetName = cameraScript.target.gameObject.layer == LayerMask.NameToLayer("Wolf") ? "Wolf" :
+            string targetType = cameraScript.target.gameObject.layer == LayerMask.NameToLayer("Wolf") ? "Wolf" :
                                 cameraScript.target.gameObject.layer == LayerMask.NameToLayer("Rabbit") ? "Rabbit" :
                                 "Unknown";
+            string targetName = cameraScript.target.GetComponent<Animal>().animalName;
 
-            targetText.text = "Target: " + targetName;
+            targetText.text = "Target: " + targetName + " - " + targetType;
 
             Stats targetStats = cameraScript.target.GetComponent<Stats>();
             if (targetStats)
@@ -168,7 +188,7 @@ public class UIManager : MonoBehaviour
                 List<Genes> genes = targetStats.genes;
                 foreach (Genes gene in genes)
                 {
-                    GameObject newPersonality = Instantiate(personalityPrefab, personalityPanel);
+                    GameObject newPersonality = Instantiate(genePrefab, genePanel);
                     PersonalityButton buttonScript = newPersonality.GetComponent<PersonalityButton>();
 
                     if (buttonScript)
@@ -179,14 +199,10 @@ public class UIManager : MonoBehaviour
                     }
                 }
 
-                //STATS
-                hungerDepletion.text = "Hunger Depletion Rate: " + targetStats.hungerDepletionRate.ToString();
-                thirstDepletion.text = "Thirst Depletion Rate: " + targetStats.thirstDepletionRate.ToString();
-
                 Animal animalScript = cameraScript.target.GetComponent<Animal>();
                 if (animalScript != null)
                 {
-                    UpdateRabbitStats(animalScript);
+                    UpdateAnimalStats(animalScript);
                 }
 
                 //Family Buttons
@@ -218,35 +234,40 @@ public class UIManager : MonoBehaviour
         else dayNightText.text = "NightTime "+ "| " + "Day " + +DayNightManager.Instance.dayNumber;
     }
 
-    public void UpdateRabbitStats(Animal animalScript)
+    public void UpdateAnimalStats(Animal animalScript)
     {
-        detectionRange.text = "Detection Range: " + animalScript.stats.detectionDistance.ToString();
-        detectionRadius.text = "Detection Angle: " + animalScript.stats.detectionAngle.ToString();
+        Stats statScript = animalScript.stats;
 
-        baseSpeed.text = "Base Speed: " + animalScript.stats.baseSpeed.ToString();
-        runSpeed.text = "Run Speed: " + animalScript.stats.runSpeed.ToString();
-        wanderInterval.text = "Wander Interval: " + animalScript.stats.wanderInterval.ToString();
-        wanderMin.text = "Wander Min Distance: " + animalScript.stats.wanderDistanceMin.ToString();
-        wanderMax.text = "Wander Max Distance: " + animalScript.stats.wanderDistanceMax.ToString();
+        detectionRange.text = "Detection Range: " + statScript.detectionDistance.ToString();
+        detectionRadius.text = "Detection Angle: " + statScript.detectionAngle.ToString();
 
-        eatPerSec.text = "Eat/Second: " + animalScript.stats.foodEatPerSecond.ToString();
-        thirstPerSec.text = "Drink/Second: " + animalScript.stats.drinkPerSecond.ToString();
-        needsInterval.text = "Needs Deplete Interval: " + animalScript.stats.needsInterval.ToString();
+        baseSpeed.text = "Base Speed: " + statScript.baseSpeed.ToString();
+        runSpeed.text = "Run Speed: " + statScript.runSpeed.ToString();
+        wanderInterval.text = "Wander Interval: " + statScript.wanderInterval.ToString();
+        wanderMin.text = "Wander Min Distance: " + statScript.wanderDistanceMin.ToString();
+        wanderMax.text = "Wander Max Distance: " + statScript.wanderDistanceMax.ToString();
 
-        baseOffSpring.text = "Base Offspring Count: " + animalScript.stats.baseOffSpringCount.ToString();
-        maxAdditionalOffSpring.text = "Max Random Extra OffSpring: " + animalScript.stats.maxAdditionalOffSpring.ToString();
-        minPositiveGenes.text = "Min Positive Genes: " + animalScript.stats.minPositiveGenesPrefered.ToString();
-        maxNegativeGenes.text = "Max Negative Genes: " + animalScript.stats.maxNegativeGenesPrefered.ToString();
-        reproduceCooldownDays.text = "Reproduce Cooldown (Days): " + animalScript.stats.reproduceCooldownDays.ToString();
-        reproduceDaysLeft.text = "Reproduce Ready (Days Left): " + animalScript.stats.reproduceDaysLeft.ToString();
+        eatPerSec.text = "Eat/Second: " + statScript.foodEatPerSecond.ToString();
+        thirstPerSec.text = "Drink/Second: " + statScript.drinkPerSecond.ToString();
+        needsInterval.text = "Needs Deplete Interval: " + statScript.needsInterval.ToString();
 
-        lookInverval.text = "Look While Eat/Drink Interval: " + animalScript.stats.lookWhileEatingInterval.ToString();
-        lookMinAngle.text = "Look Min Angle: " + animalScript.stats.lookAngleMin.ToString();
-        lookMaxAngle.text = "Look Max Angle: " + animalScript.stats.lookAngleMax.ToString();
+        hungerDepletion.text = "Hunger Depletion Rate: " + statScript.hungerDepletionRate.ToString();
+        thirstDepletion.text = "Thirst Depletion Rate: " + statScript.thirstDepletionRate.ToString();
 
-        additionalSleep.text = "Additional Sleep Hours: " + animalScript.stats.additionalSleepHours.ToString();
+        baseOffSpring.text = "Base Offspring Count: " + statScript.baseOffSpringCount.ToString();
+        maxAdditionalOffSpring.text = "Max Random Extra OffSpring: " + statScript.maxAdditionalOffSpring.ToString();
+        minPositiveGenes.text = "Min Positive Genes: " + statScript.minPositiveGenesPrefered.ToString();
+        maxNegativeGenes.text = "Max Negative Genes: " + statScript.maxNegativeGenesPrefered.ToString();
+        reproduceCooldownDays.text = "Reproduce Cooldown (Days): " + statScript.reproduceCooldownDays.ToString();
+        reproduceDaysLeft.text = "Reproduce Ready (Days Left): " + statScript.reproduceDaysLeft.ToString();
 
-        waitInBurrowTime.text = "Wait in Burrow after Chase Time: " + animalScript.stats.waitBeforeLeavingBurrow.ToString();
+        lookInverval.text = "Look While Eat/Drink Interval: " + statScript.lookWhileEatingInterval.ToString();
+        lookMinAngle.text = "Look Min Angle: " + statScript.lookAngleMin.ToString();
+        lookMaxAngle.text = "Look Max Angle: " + statScript.lookAngleMax.ToString();
+
+        additionalSleep.text = "Additional Sleep Hours: " + statScript.additionalSleepHours.ToString();
+
+        waitInBurrowTime.text = "Wait in Burrow after Chase Time: " + statScript.waitBeforeLeavingBurrow.ToString();
     }
 
     public void PopulateFamilyUI(Transform target)
