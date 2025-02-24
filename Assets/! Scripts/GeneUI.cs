@@ -16,7 +16,7 @@ public class GeneUI : MonoBehaviour
     [Header("Inputs")]
     public TMP_InputField nameInput;
     public TMP_InputField descriptionInput;
-    public int positivity = 0;
+    public Positivity positivity;
     public Button addModifierButton;
     public Button addGeneButton;
     public Button clearCustomGenes;
@@ -118,26 +118,26 @@ public class GeneUI : MonoBehaviour
             buttonScript.positivity = gene.positivity;
         }
     }
-    public void SetPositivity(int value)
+    public void SetPositivity(Positivity value)
     {
         positivity = value;
 
         string positiveValueText = "";
         switch(positivity)
         {
-            case -2:
+            case Positivity.ExtremelyNegative:
                 positiveValueText = "Extremely Negative";
                 break;
-            case -1:
+            case Positivity.Negative:
                 positiveValueText = "Negative";
                 break;
-            case 0:
+            case Positivity.Neutral:
                 positiveValueText = "Neutral";
                 break;
-            case 1:
+            case Positivity.Positive:
                 positiveValueText = "Positive";
                 break;
-            case 2:
+            case Positivity.ExtremelyPositive:
                 positiveValueText = "Extremely Positive";
                 break;
             default:

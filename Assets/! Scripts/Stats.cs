@@ -76,6 +76,7 @@ public class Stats : MonoBehaviour
     public float maxThirst = 100f;
     public float regenAmount = 1f;
     public int reproduceDaysLeft = 3;
+    public int isAdultDays = 3;
 
     [Header("Eat Settings")]
     public float needsInterval = 1f;

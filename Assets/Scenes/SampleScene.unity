@@ -79492,8 +79492,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 994d5780ce5db284bb65485af7451b01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultGenes: []
-  customGenes: []
+  defaultGenes:
+  - name: Lazy
+    description: Moves at a lower max distance when wandering. (-1.5)
+    positivity: 1
+    statModifiers:
+    - statType: 17
+      value: -1.5
+  - name: Adventurer
+    description: Moves at a higher max distance when wandering. (+1.5)
+    positivity: 3
+    statModifiers:
+    - statType: 18
+      value: 1.5
+  - name: Restful
+    description: Increases wander interval. (+2)
+    positivity: 3
+    statModifiers:
+    - statType: 19
+      value: 2
 --- !u!4 &1947985927
 Transform:
   m_ObjectHideFlags: 0

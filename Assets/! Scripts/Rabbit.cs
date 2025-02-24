@@ -343,8 +343,8 @@ public class Rabbit : MonoBehaviour
     {
         List<Genes> targetGenes = targetScript.stats.genes;
         // Count positive and negative genes
-        int positiveGeneCount = targetGenes.Count(g => g.positivity == 1 || g.positivity == 2);
-        int negativeGeneCount = targetGenes.Count(g => g.positivity == -1 || g.positivity == -2);
+        int positiveGeneCount = targetGenes.Count(g => g.positivity == Positivity.Positive || g.positivity == Positivity.ExtremelyPositive);
+        int negativeGeneCount = targetGenes.Count(g => g.positivity == Positivity.Negative || g.positivity == Positivity.ExtremelyNegative);
 
         // Check conditions
         bool meetsPositiveRequirement = positiveGeneCount >= stats.minPositiveGenesPrefered;
@@ -413,6 +413,7 @@ public class Rabbit : MonoBehaviour
 
         totalOffspring = baseOffspringCount + additionalOffsprings;
 
+        //Spawning Rabbits
         for (int i = 0; i < totalOffspring; i++)
         {
             //spawn child
