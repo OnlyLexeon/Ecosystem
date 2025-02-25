@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using UnityEngine;
 
 public class InputHandler : MonoBehaviour
@@ -12,6 +13,8 @@ public class InputHandler : MonoBehaviour
     [Tooltip("Camera distance from target.")] public float distanceFromTarget = 5f;
     [Tooltip("Camera rotation speed around target")] public float rotationSpeed = 100f;
     [Tooltip("Camera movement speed relative to target.")] public float movementSpeed = 5f;
+    public float baseSpeed = 5f;
+    public float fastSpeed = 10f;
 
     [Header("References")]
     //gene
@@ -54,6 +57,12 @@ public class InputHandler : MonoBehaviour
         //NO INPUT HANDLING WHEN DOING GENE
         if (isGenePanelOpen && Input.GetKeyDown(KeyCode.Escape)) ToggleGeneMenu();
         else if (isGenePanelOpen) return;
+
+        //speed
+        if (Input.GetKey(KeyCode.LeftShift))
+            movementSpeed = fastSpeed;
+        else
+            movementSpeed = baseSpeed;
 
         //handle Gene
         if (Input.GetKeyDown(KeyCode.G))
@@ -104,6 +113,17 @@ public class InputHandler : MonoBehaviour
     {
         target = newTarget;
 
+        UIManager.Instance.UpdateTargetUI();
+
+    }
+
+    public void SetTargetAndFollow(Transform newTarget)
+    {
+        SetTarget(newTarget);
+
+        isFollowingTarget = true;
+        UIManager.Instance.ShowControls(isFollowingTarget);
+        UIManager.Instance.SetDebugModeDisplayUI(!isOverHeadDebugStats);
         UIManager.Instance.UpdateTargetUI();
 
     }

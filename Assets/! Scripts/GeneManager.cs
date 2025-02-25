@@ -59,17 +59,14 @@ public class GeneManager : MonoBehaviour
                 new List<StatModifier> {
                     new StatModifier(StatType.ThirstDepletionRate, 0.05f),
                 }));
-
         defaultGenes.Add(new Genes("Retention", "Loses less thirst. (-0.05)", Positivity.Positive, 5,
                 new List<StatModifier> {
                     new StatModifier(StatType.ThirstDepletionRate, -0.05f),
                 }));
-
         defaultGenes.Add(new Genes("IronStomach", "Loses less hunger. (-0.05)", Positivity.Positive, 5,
                 new List<StatModifier> {
                     new StatModifier(StatType.HungerDepletionRate, -0.05f),
                 }));
-
         defaultGenes.Add(new Genes("Hunger", "Loses more hunger. (0.05)", Positivity.Negative, 5,
                 new List<StatModifier> {
                     new StatModifier(StatType.HungerDepletionRate, 0.05f),
@@ -186,6 +183,26 @@ public class GeneManager : MonoBehaviour
                     new StatModifier(StatType.ReproduceCooldownDays, 1f)
                 }));
 
+        //Offspring Values To Pick (Base Offspring + Additional Offspring)
+        defaultGenes.Add(new Genes("SeedDominant", "Increase chance of using this animal's Base/Additional offspring count. (+50%)", Positivity.Neutral, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.DominanceOverChildCount, 50f)
+                }));
+        defaultGenes.Add(new Genes("SeedRecessive", "Decrease chance of using this animal's Base/Additional offspring count. (-50%)", Positivity.Neutral, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.DominanceOverChildCount, -50f)
+                }));
+
+        //Color or Pigment Fur
+        defaultGenes.Add(new Genes("FurDominance", "Increase likeliness of Child inheriting this parent's fur color. (+50%)", Positivity.Neutral, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.FurTypeDominance, 50f),
+                }));
+        defaultGenes.Add(new Genes("RecessiveColor", "Decrease likeliness of Child inheriting this parent's fur color. (-50%)", Positivity.Neutral, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.FurTypeDominance, -50f),
+                }));
+
         //Health
         defaultGenes.Add(new Genes("Strong", "Has more health capacity. (+15)", Positivity.Positive, 5,
                new List<StatModifier> {
@@ -248,10 +265,6 @@ public class GeneManager : MonoBehaviour
                     new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
                 }));
 
-        //Getting Detected/Stealth
-        //new Genes("Quiet", "Less detectable.", 2), //not done
-        //new Genes("Loud", "More detectable.", 0), //not done
-
         //Sleep
         defaultGenes.Add(new Genes("Sleeper", "Sleeps more than normal. (+1)", Positivity.Negative, 5,
             new List<StatModifier> {
@@ -270,7 +283,7 @@ public class GeneManager : MonoBehaviour
                     new StatModifier(StatType.SleepHours, 2f),
                 }));
 
-        ////Needs interval
+        //Needs interval
         defaultGenes.Add(new Genes("HighMetabolism", "Decrease needs depletion interval (-0.25)", Positivity.Negative, 5,
                 new List<StatModifier> {
                     new StatModifier(StatType.NeedsInterval, -0.25f),
@@ -279,6 +292,62 @@ public class GeneManager : MonoBehaviour
             new List<StatModifier> {
                     new StatModifier(StatType.NeedsInterval, 0.25f),
                 }));
+
+        //Mutation
+        defaultGenes.Add(new Genes("MutativeGenes", "Have a higher chance to mutate a gene next generation. (+5%)", Positivity.Neutral, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.GeneMutationChance, 5f),
+                }));
+        defaultGenes.Add(new Genes("Non-Mutagenic", "Have a lower chance to mutate a gene next generation. (-5%)", Positivity.Neutral, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.GeneMutationChance, -5f),
+                }));
+        defaultGenes.Add(new Genes("MutativeGenes(+)", "Have a higher chance to mutate a gene next generation. (+10%)", Positivity.Neutral, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.GeneMutationChance, 10f),
+                }));
+        defaultGenes.Add(new Genes("Non-Mutagenic(-)", "Have a lower chance to mutate a gene next generation. (-10%)", Positivity.Neutral, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.GeneMutationChance, -10f),
+                }));
+
+        //Aging
+        defaultGenes.Add(new Genes("LongLiving", "Lives longer by days. (+1)", Positivity.Positive, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.DaysTillDeath, 1f),
+                }));
+        defaultGenes.Add(new Genes("LongLiving++", "Lives longer by days. (+3)", Positivity.ExtremelyPositive, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.DaysTillDeath, 1f),
+                }));
+        defaultGenes.Add(new Genes("ShortLived", "Lives shorter by days. (-1)", Positivity.Negative, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.DaysTillDeath, -1f),
+                }));
+        defaultGenes.Add(new Genes("ShortLived++", "Lives shorter by days. (-3)", Positivity.ExtremelyNegative, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.DaysTillDeath, -3f),
+                }));
+        defaultGenes.Add(new Genes("LateDeath", "Lives longer into the day before withering away. (+60)", Positivity.Positive, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.MaxTimeTillDeath, 60f),
+                }));
+        defaultGenes.Add(new Genes("LaterDeath++", "Lives longer into the day before withering away. (+180)", Positivity.Positive, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.MaxTimeTillDeath, 180f),
+                }));
+        defaultGenes.Add(new Genes("EarlyDeath", "Lives shorter into the day before withering away. (-60)", Positivity.Negative, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.MinTimeTillDeath, -60f),
+                }));
+        defaultGenes.Add(new Genes("EarlierDeath++", "Lives shorter into the day before withering away. (-180)", Positivity.Negative, 5,
+            new List<StatModifier> {
+                    new StatModifier(StatType.MinTimeTillDeath, -180f),
+                }));
+
+        //Getting Detected/Stealth
+        //new Genes("Quiet", "Less detectable.", 2), //not done
+        //new Genes("Loud", "More detectable.", 0), //not done
     }
     public void LoadCustomGenes()
     {
@@ -366,6 +435,7 @@ public class Genes
         this.name = name;
         this.description = description;
         this.positivity = positivity;
+        this.weightage = weightage;
         this.statModifiers = statModifiers ?? new List<StatModifier>();
     }
 }

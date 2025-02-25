@@ -96,4 +96,15 @@ public class DayNightManager : MonoBehaviour
 
         speedText.text = "x" + currentTimeSpeed.ToString("F1");
     }
+
+    public string GetTimeString()
+    {
+        int minutes = Mathf.FloorToInt(time % 60);
+        int hours = Mathf.FloorToInt(time / 60);
+
+        string timeString = "";
+        timeString = hours.ToString("D2") + ":" + minutes.ToString("D2");
+
+        return timeString;
+    }
 }

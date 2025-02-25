@@ -3,21 +3,28 @@ using UnityEngine;
 public enum RabbitTypes
 {
     White,
-    Gray,
-    Orange,
-    LightGray,
-    Brown,
     Beige,
+    Brown,
+    Gray,
+    LightGray,
+    Orange,
 }
 
 public class Rabbit : MonoBehaviour
 {
     public GameObject white;
-    public GameObject gray;
-    public GameObject orange;
-    public GameObject lightgray;
-    public GameObject brown;
     public GameObject beige;
+    public GameObject brown;
+    public GameObject gray;
+    public GameObject lightgray;
+    public GameObject orange;
+
+    public static Rabbit Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     public GameObject GetRabbitModel(RabbitTypes type)
     {

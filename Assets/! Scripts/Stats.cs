@@ -36,6 +36,7 @@ public enum StatType
     
     //seggs
     Fertile,
+    DominanceOverChildCount,
     BaseOffspringCount,
     MaxAdditionalOffspring,
     MinPositiveGenesPrefered,
@@ -44,6 +45,17 @@ public enum StatType
 
     //Eep
     SleepHours,
+
+    //Color
+    FurTypeDominance,
+
+    //Mutation
+    GeneMutationChance,
+
+    //Aging
+    DaysTillDeath,
+    MinTimeTillDeath,
+    MaxTimeTillDeath,
 }
 
 [System.Serializable]
@@ -75,8 +87,14 @@ public class Stats : MonoBehaviour
     public float maxHunger = 100f;
     public float maxThirst = 100f;
     public float regenAmount = 1f;
-    public int reproduceDaysLeft = 3;
-    public int isAdultDays = 3;
+
+    [Header("Aging Settings")]
+    [Tooltip("Days taken to fully turn into an Adult.")] public int adultDays = 3;
+    [Tooltip("Days taken till Animal Starts Dying of Old Age.")] public int deathDays = 15;
+    [Tooltip("Min Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int minDeathTime = 360; //6am
+    [Tooltip("Max Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int maxDeathTime = 1080; //6pm
+    [Tooltip("Exact Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int deathTime = 0;
+
 
     [Header("Eat Settings")]
     public float needsInterval = 1f;
@@ -108,12 +126,18 @@ public class Stats : MonoBehaviour
     public float additionalSleepHours = 0f;
 
     [Header("Seggs Settings")]
+    public int reproduceDaysLeft = 3;
     public int fertile = 1; // 0 - false 1 - true
     public int baseOffSpringCount = 2;
     public int maxAdditionalOffSpring = 4;
     public int minPositiveGenesPrefered = 2;
     public int maxNegativeGenesPrefered = 2;
     public int reproduceCooldownDays = 3;
+
+    [Header("Birth Settings")]
+    public float furDominance = 100f;
+    public float seedDominance = 100f;
+    public float geneMutationChance = 5f;
 
     public List<Genes> genes = new List<Genes>();
 
@@ -140,6 +164,13 @@ public class Stats : MonoBehaviour
                 genes.Add(randomGenes);
             }
         }
+    }
+
+    public Genes GetARandomGene()
+    {
+        List<Genes> allPersonalities = GeneManager.Instance.GetAllGenes();
+
+        return allPersonalities[Random.Range(0, allPersonalities.Count)];
     }
 
     public void ApplyGenesToStats()
@@ -176,42 +207,54 @@ public class Stats : MonoBehaviour
                     
                     case StatType.SleepHours: additionalSleepHours += modifier.value; break;
 
-                    case StatType.Fertile:
-                        fertile = Mathf.RoundToInt(modifier.value);
-                        break;
+                    case StatType.Fertile: fertile = Mathf.RoundToInt(modifier.value); break; // 1 or 0
                     case StatType.BaseOffspringCount: baseOffSpringCount += Mathf.RoundToInt(modifier.value); break;
                     case StatType.MaxAdditionalOffspring: maxAdditionalOffSpring += Mathf.RoundToInt(modifier.value); break;
                     case StatType.MinPositiveGenesPrefered: minPositiveGenesPrefered += Mathf.RoundToInt(modifier.value); break;
                     case StatType.MaxNegativeGenesPrefered: maxNegativeGenesPrefered += Mathf.RoundToInt(modifier.value); break;
                     case StatType.ReproduceCooldownDays: reproduceCooldownDays += Mathf.RoundToInt(modifier.value); break;
+
+                    case StatType.FurTypeDominance: furDominance += modifier.value; break;
+                    case StatType.DominanceOverChildCount: seedDominance += modifier.value; break;
+
+                    case StatType.GeneMutationChance: geneMutationChance += modifier.value; break;
+
+                    case StatType.DaysTillDeath: deathDays += Mathf.RoundToInt(modifier.value); break;
+                    case StatType.MaxTimeTillDeath: maxDeathTime += Mathf.RoundToInt(modifier.value); break;
+                    case StatType.MinTimeTillDeath: minDeathTime += Mathf.RoundToInt(modifier.value); break;
                 }
             }
         }
 
-        wanderInterval = Mathf.Max(wanderInterval, 1f);
-        wanderDistanceMax = Mathf.Max(wanderDistanceMax, 1);
+        maxHealth = Mathf.Max(maxHealth, 1);
+        maxHunger = Mathf.Max(maxHunger, 1);
+        maxThirst = Mathf.Max(maxThirst, 1);
+        regenAmount = Mathf.Max(regenAmount, 0.1f);
 
-        baseSpeed = Mathf.Max(baseSpeed, 0.75f);
-        runSpeed = Mathf.Max(runSpeed, 1);
-
-        maxHealth = Mathf.Max(maxHealth, 5);
-        thirstDepletionRate = Mathf.Max(thirstDepletionRate, 0.025f);
-        hungerDepletionRate = Mathf.Max(hungerDepletionRate, 0.025f);
-
-        foodEatPerSecond = Mathf.Max(foodEatPerSecond, 0.5f);
-        drinkPerSecond = Mathf.Max(drinkPerSecond, 0.5f);
-        needsInterval = Mathf.Max(needsInterval, 0.25f);
+        needsInterval = Mathf.Max(needsInterval, 0.1f);
+        foodEatPerSecond = Mathf.Max(foodEatPerSecond, 0.1f);
+        drinkPerSecond = Mathf.Max(drinkPerSecond, 0.1f);
+        thirstDepletionRate = Mathf.Max(thirstDepletionRate, 0.01f);
+        hungerDepletionRate = Mathf.Max(hungerDepletionRate, 0.01f);
 
         lookWhileEatingInterval = Mathf.Max(lookWhileEatingInterval, 0.5f);
         waitBeforeLeavingBurrow = Mathf.Max(waitBeforeLeavingBurrow, 0.5f);
-
         detectionDistance = Mathf.Max(detectionDistance, 3f);
 
-        regenAmount = Mathf.Max(regenAmount, 0.2f);
+        baseSpeed = Mathf.Max(baseSpeed, 0.5f);
+        runSpeed = Mathf.Max(runSpeed, 1f);
+        wanderInterval = Mathf.Max(wanderInterval, 0.1f);
+        wanderDistanceMin = Mathf.Max(wanderDistanceMin, 0.1f);
+        wanderDistanceMax = Mathf.Max(wanderDistanceMax, 0.2f);
 
         baseOffSpringCount = Mathf.Max(baseOffSpringCount, 1);
         minPositiveGenesPrefered = Mathf.Max(minPositiveGenesPrefered, 0);
         maxNegativeGenesPrefered = Mathf.Max(maxNegativeGenesPrefered, 0);
+        reproduceCooldownDays = Mathf.Max(reproduceCooldownDays, 0);
+
+        deathDays = Mathf.Max(deathDays, adultDays + 1);
+        maxDeathTime = Mathf.Min(maxDeathTime, 1200); // 8pm
+        minDeathTime = Mathf.Max(minDeathTime, 0); //0 - Start of day
     }
 }
 

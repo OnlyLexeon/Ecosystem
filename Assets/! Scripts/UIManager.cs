@@ -7,11 +7,6 @@ using System.Resources;
 
 public class UIManager : MonoBehaviour
 {
-    public TextMeshProUGUI targetText;
-    public TextMeshProUGUI targetAction;
-    public TextMeshProUGUI targetAge;
-    public TextMeshProUGUI targetGender;
-
     public GameObject followControls;
     public GameObject freeRoamControls;
 
@@ -21,6 +16,18 @@ public class UIManager : MonoBehaviour
     public Button fatherButton;
     public Transform childrenButtonsPanel;
     public GameObject childrenButtonsPrefab;
+
+    [Header("History Panel")]
+    public Transform historyContainer;
+    public GameObject historyEventPrefab;
+    public int maxHistoryCount = 99;
+
+    [Header("About Target")]
+    public TextMeshProUGUI targetText;
+    public TextMeshProUGUI targetSpecies;
+    public TextMeshProUGUI targetAction;
+    public TextMeshProUGUI targetAge;
+    public TextMeshProUGUI targetGender;
 
     [Header("Sliders")]
     public GameObject slidersPanel;
@@ -71,6 +78,12 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI dayNightText;
 
+    [Header("Aging")]
+    public TextMeshProUGUI deathDaysText;
+    public TextMeshProUGUI maxDeathTimeText;
+    public TextMeshProUGUI minDeathTimeText;
+    public TextMeshProUGUI deathTimeText;
+
     [Header("References")]
     public InputHandler cameraScript;
     public DayNightManager timeScript;
@@ -97,6 +110,7 @@ public class UIManager : MonoBehaviour
         familyPanel.SetActive(true);
     }
 
+    //Showing/NotShowing
     public void ShowControls(bool isFollowing)
     {
         if (followControls && freeRoamControls)
@@ -114,7 +128,6 @@ public class UIManager : MonoBehaviour
 
         }
     }
-
     public void SetDebugModeDisplayUI(bool state)
     {
         showDebugUI = state;
@@ -150,7 +163,7 @@ public class UIManager : MonoBehaviour
                 hungerText.text = statScript.hunger.ToString("F2") + "/" + statScript.maxHunger.ToString("F2");
                 thirstText.text = statScript.thirst.ToString("F2") + "/" + statScript.maxThirst.ToString("F2");
 
-                targetAge.text = "Age (Days): " + statScript.agedDays;
+                targetAge.text = "Age (Days): " + statScript.agedDays + " / " + statScript.deathDays;
                 targetGender.text = "Gender: " + statScript.gender.ToString();
             }
             else Debug.LogWarning("No Stats script found!");
@@ -160,8 +173,7 @@ public class UIManager : MonoBehaviour
             if (animalScript != null) targetAction.text = "Action: " + animalScript.currentState.ToString();
         }
     }
-
-    //target = personality or target type
+    //ui = personality or target type
     public void UpdateTargetUI()
     {
         foreach (Transform child in genePanel.transform)
@@ -174,12 +186,15 @@ public class UIManager : MonoBehaviour
             slidersPanel.SetActive(true);
             statsPanel.SetActive(true);
 
+            //Setting Target Information
             string targetType = cameraScript.target.gameObject.layer == LayerMask.NameToLayer("Wolf") ? "Wolf" :
                                 cameraScript.target.gameObject.layer == LayerMask.NameToLayer("Rabbit") ? "Rabbit" :
                                 "Unknown";
             string targetName = cameraScript.target.GetComponent<Animal>().animalName;
 
             targetText.text = "Target: " + targetName + " - " + targetType;
+
+            targetSpecies.text = "Species: " + cameraScript.target.GetComponent<Animal>().GetAnimalSpecies().ToString();
 
             Stats targetStats = cameraScript.target.GetComponent<Stats>();
             if (targetStats)
@@ -194,7 +209,7 @@ public class UIManager : MonoBehaviour
                     if (buttonScript)
                     {
                         buttonScript.nameText.text = gene.name;
-                        buttonScript.descriptionText.text = gene.description;
+                        buttonScript.descriptionText.text = gene.description + "\nWeightage: " + gene.weightage;
                         buttonScript.positivity = gene.positivity;
                     }
                 }
@@ -220,20 +235,14 @@ public class UIManager : MonoBehaviour
             targetGender.text = "Gender: -";
         }
     }
-
     public void UpdateTime()
     {
-        float time = timeScript.time;
-        int minutes = Mathf.FloorToInt(time % 60);
-        int hours = Mathf.FloorToInt(time / 60);
-
-        timeText.text = hours.ToString("D2") + ":" + minutes.ToString("D2");
+        timeText.text = DayNightManager.Instance.GetTimeString();
 
         if (DayNightManager.Instance.isDay)
             dayNightText.text = "DayTime " + "| "  + "Day " + DayNightManager.Instance.dayNumber;
         else dayNightText.text = "NightTime "+ "| " + "Day " + +DayNightManager.Instance.dayNumber;
     }
-
     public void UpdateAnimalStats(Animal animalScript)
     {
         Stats statScript = animalScript.stats;
@@ -268,8 +277,12 @@ public class UIManager : MonoBehaviour
         additionalSleep.text = "Additional Sleep Hours: " + statScript.additionalSleepHours.ToString();
 
         waitInBurrowTime.text = "Wait in Burrow after Chase Time: " + statScript.waitBeforeLeavingBurrow.ToString();
-    }
 
+        deathDaysText.text = "Start Dying at Age (Days): " + statScript.deathDays.ToString();
+        deathTimeText.text = "Time Starts Dying (Decaying): " + statScript.deathTime.ToString();
+        minDeathTimeText.text = "Min Time in Day Decay: " + statScript.minDeathTime.ToString();
+        maxDeathTimeText.text = "Max Time in Day Decay: " + statScript.maxDeathTime.ToString();
+    }
     public void PopulateFamilyUI(Transform target)
     {
         Animal animalScript = target.GetComponent<Animal>();
@@ -319,7 +332,7 @@ public class UIManager : MonoBehaviour
                     TMP_Text buttonText = childButtonObj.GetComponentInChildren<TMP_Text>();
 
                     childButton.onClick.RemoveAllListeners();
-                    AssignButton(childButton, animalScript.children[i].transform);
+                    AssignChildButtonListener(childButton, animalScript.children[i].transform);
 
                     if (animalScript.isDead) buttonText.text = $"Dead {i + 1}";
                     else buttonText.text = $"Child {i + 1}";
@@ -334,9 +347,26 @@ public class UIManager : MonoBehaviour
 
         ResizeUI();
     }
-
-    void AssignButton(Button button, Transform child)
+    void AssignChildButtonListener(Button button, Transform child)
     {
         button.onClick.AddListener(() => InputHandler.Instance.SetTarget(child.transform));
+    }
+
+    //History UI
+    public void AddNewHistory(string text, System.Action onButtonClick = null)
+    {
+        GameObject historyEvent = Instantiate(historyEventPrefab, historyContainer);
+        HistoryEvent historyScript = historyEvent.GetComponent<HistoryEvent>();
+        historyScript.SetHistory(text, onButtonClick);
+
+        ClampHistoryCount();
+    }
+    public void ClampHistoryCount()
+    {
+        while (historyContainer.childCount > maxHistoryCount)
+        {
+            // Destroy the oldest history entry (first child)
+            Destroy(historyContainer.GetChild(0).gameObject);
+        }
     }
 }

@@ -70,6 +70,7 @@
     <Compile Include="Assets\! Scripts\DynamicTextBackground.cs" />
     <Compile Include="Assets\! Scripts\Burrow.cs" />
     <Compile Include="Assets\! Scripts\UIManager.cs" />
+    <Compile Include="Assets\! Scripts\HistoryEvent.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\! Scripts\AnimalHolderStats.cs" />
     <Compile Include="Assets\! Scripts\Rabbit.cs" />

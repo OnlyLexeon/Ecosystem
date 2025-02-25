@@ -2,15 +2,8 @@ using UnityEngine.AI;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using Mono.Cecil.Cil;
-using System.Diagnostics.CodeAnalysis;
-using static Stats;
-using UnityEditorInternal;
 using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using System.Collections.Generic;
-using NUnit.Framework;
-using System.Security.Cryptography;
 using TMPro;
 
 public enum AnimalState
@@ -49,15 +42,18 @@ public class Animal : MonoBehaviour
     public bool isDead = false;
     public bool wantsToReproduce = false;
     public bool isAdult = false;
+    public bool isOld = false;
+    public bool isDying = false;
 
     [Header("References* (Ensure none empty)")]
+    [Tooltip("This animal's Collider component.")] public Collider animalCollider;
     [Tooltip("This animal's stat script.")] public Stats stats;
     [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
     [Tooltip("Animal's Gene Display Prefab (For OverHeadStats Toggle)")] public GameObject genePrefab;
 
     [Header("Animal Settings")]
-    public AnimalType animal;
-    [Tooltip("Days taken to fully turn into an Adult.")] public int adultDays = 3;
+    public AnimalType animalType;
+    
 
     [Header("Family References")]
     public List<GameObject> children;
@@ -66,9 +62,10 @@ public class Animal : MonoBehaviour
 
     [Header("Rabbit Only* (Ensure Prefabs)")]
     public Home home;
-    public GameObject burrowPrefab;
-    [Tooltip("Make Prefab a clone of the Rabbit (If not, the child will be a clone of parent).")] public GameObject rabbitPrefab;
-    public RabbitTypes rabbitType;
+    [Tooltip("Burrow Prefab that spawns when dug.")] public GameObject burrowPrefab;
+    [Tooltip("Make Prefab a clone of the Rabbit (If not, the child will be a clone of parent).")] public GameObject rabbitChildPrefab;
+    [Tooltip("Determines the Rabbit's fur color.")] public RabbitTypes rabbitType;
+    [Tooltip("Reference to 'Model' GameObject in Rabbit GameObject's children in hierarchy.")] public Transform modelHolder;
 
     [Header("Stats HUD")]
     public TextMeshProUGUI nameText;
@@ -79,6 +76,9 @@ public class Animal : MonoBehaviour
     public Slider healthSlider;
     public Slider hungerSlider;
     public Slider thirstSlider;
+    public TextMeshProUGUI healthValueText;
+    public TextMeshProUGUI hungerValueText;
+    public TextMeshProUGUI thirstValueText;
 
     private float needsTimer = 0f;
     private NavMeshAgent agent;
@@ -90,29 +90,40 @@ public class Animal : MonoBehaviour
     private float nextLookTime;
     private float wanderTimer = 0f;
     public float timeSlept = 0f;
+    public bool wasSpawnedByUser = false;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        stats = GetComponent<Stats>();
+        if (!stats) stats = GetComponentInChildren<Stats>();
+        if (!animalCollider) animalCollider = GetComponentInChildren<Collider>();
 
-        animalName = AnimalNameGet.GetRandomCuteName();
+        //NAME APPLY
+        if (string.IsNullOrEmpty(animalName)) animalName = AnimalNameGet.GetRandomCuteName();
 
         //might be spawned as adult
-        if (stats.agedDays >= adultDays) isAdult = true;
+        if (stats.agedDays >= stats.adultDays) isAdult = true;
 
-        //up stats
-        AnimalHolderStats.Instance.PlusRabbitCount();
+        //SPAWNING UP DEBG STATS
+        DoSpawnAddNumberToStats();
 
-        //Assumes the rabbit was spawned
-        if (stats.genes.Count <= 0)
+        //Assumes the rabbit was spawned, not natural
+        //no genes set, age not 0, 
+        if (stats.genes.Count <= 0 && stats.agedDays > 0 && !wasSpawnedByUser)
         {
             Debug.Log("Assigned Genes!");
 
             stats.AssignRandomPersonalities();
             stats.ApplyGenesToStats();
             stats.SetStats();
+
+            //Apply Model Skin
+            rabbitType = (RabbitTypes)Random.Range(0, System.Enum.GetValues(typeof(RabbitTypes)).Length);
+            SetAnimalSkinModel();
         }
+
+        //SET AGE TIME
+        CalculateDeathTime();
 
         //Start Updating UI
         InvokeRepeating(nameof(UpdateOverHeadStats), 1f, 1f);
@@ -130,6 +141,7 @@ public class Animal : MonoBehaviour
         {
             needsTimer = 0f;
             DepleteNeeds();
+            if (isOld) CheckOldAgeDeath();
         }
 
         //Threats
@@ -207,7 +219,8 @@ public class Animal : MonoBehaviour
         //Health Manager
         if (stats.health <= 0)
             Die();
-        else if (!isDead && stats.health < stats.maxHealth
+        else if (!isDead && !isDying
+            && stats.health < stats.maxHealth
             && !isFoodCritical() && !isThirstCritical())
         {
             Regenerate();
@@ -217,12 +230,22 @@ public class Animal : MonoBehaviour
     {
         isDead = true;
 
-        //update stats
-        AnimalHolderStats.Instance.MinusRabbitCount();
+        //DESPAWN/DIE
+        DoDieMinusNumberFromStats();
+
+        //History
+        string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+            $"{animalName} - {animalType} ({rabbitType}) has died!";
+        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+
+        //Disable Collider
+        animalCollider.enabled = false;
+        //Hide model
+        modelHolder.gameObject.SetActive(false);
 
         //Spawm a corpse
         //Rabbit corpse will be food source for Fox
-        //Do not despawn this script object, required for child
+        //Do not despawn this script object, required for child button teleporting
 
         Debug.Log("Dieded");
     }
@@ -230,7 +253,7 @@ public class Animal : MonoBehaviour
     {
         stats.health = Mathf.Min(stats.health + stats.regenAmount, stats.maxHealth);
     }
-    bool isFoodCritical()
+    public bool isFoodCritical()
     {
         if (stats.hunger <= stats.maxHunger * (80f/100f))
         {
@@ -238,7 +261,7 @@ public class Animal : MonoBehaviour
         }
         else return false;
     }
-    bool isThirstCritical()
+    public bool isThirstCritical()
     {
         if (stats.thirst <= stats.maxThirst * (80f / 100f))
         {
@@ -246,7 +269,7 @@ public class Animal : MonoBehaviour
         }
         else return false;
     }
-    bool isHealthCritical()
+    public bool isHealthCritical()
     {
         if (stats.health <= stats.maxHealth / 2)
         {
@@ -254,7 +277,9 @@ public class Animal : MonoBehaviour
         }
         else return false;
     }
+    
 
+    //BEHAVIOR DEFAULT
     void Wander()
     {
         if (currentState != AnimalState.Wandering || agent.pathPending || agent.remainingDistance > 0.5f)
@@ -274,17 +299,44 @@ public class Animal : MonoBehaviour
         }
     }
 
+    //AGING
     public void WakeUpAgeUpdate()
     {
         stats.agedDays++;
 
+        if (!isOld && stats.agedDays >= stats.deathDays)
+        {
+            isOld = true;
+        }
+
         if (!isAdult)
         {
-            //scale
-            float scaleFactor = Mathf.Lerp(0.15f, 0.4f, stats.agedDays / (float)adultDays);
-            transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
+            ScaleChild();
+        }
+    }
+    public void ScaleChild()
+    {
+        //scale
+        float scaleFactor = Mathf.Lerp(0.15f, 0.4f, stats.agedDays / (float)stats.adultDays);
+        transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
-            if (stats.agedDays >= adultDays) isAdult = true;
+        if (stats.agedDays >= stats.adultDays) isAdult = true;
+    }
+    public void CalculateDeathTime()
+    {
+        stats.deathTime = Random.Range(stats.minDeathTime, stats.maxDeathTime);
+    }
+    public void CheckOldAgeDeath()
+    {
+        if (!isDying && stats.deathTime >= DayNightManager.Instance.time)
+        {
+            isDying = true;
+        }
+
+        if (isDying)
+        {
+            stats.health -= 0.5f;
+            Debug.Log("Ouch!");
         }
     }
 
@@ -419,9 +471,55 @@ public class Animal : MonoBehaviour
             return false;
         }
     }
-    
+
     //Only called by the female
     //GENETIC ALGORITHM!!
+    public object DetermineFurInheritance(Animal mateScript)
+    {
+        object motherFur = GetAnimalSpecies();
+        object fatherFur = mateScript.GetAnimalSpecies();
+
+        //Determine WINNER
+        float motherDominance = stats.furDominance;
+        float fatherDominance = mateScript.stats.furDominance;
+
+        return motherDominance >= fatherDominance ? motherFur : fatherFur;
+    }
+    public int DetermineOffSpringCount(Animal mateScript)
+    {
+        // Determine WINNER (Higher seedDominance decides)
+        bool isMom = stats.seedDominance >= mateScript.stats.seedDominance;
+
+        // Calculating Total Offspring
+        int baseOffspringCount = isMom ? stats.baseOffSpringCount : mateScript.stats.baseOffSpringCount;
+        int additionalOffspring = isMom ? Random.Range(0, stats.maxAdditionalOffSpring) : Random.Range(0, mateScript.stats.maxAdditionalOffSpring);
+
+        return baseOffspringCount + additionalOffspring;
+    }
+    public List<Genes> DetermineMutation(Animal mateScript, List<Genes> childGenes, Animal childScript)
+    {
+        //Should mutate?
+        float mutationChance = Mathf.Clamp(stats.geneMutationChance + mateScript.stats.geneMutationChance, 0, 100);
+        bool mutationHappens = Random.Range(0f, 100f) < mutationChance;
+
+        if (mutationHappens)
+        {
+            //Random gene
+            Genes mutatedGene = stats.GetARandomGene();
+
+            // Apply mutation
+            int randomIndex = Random.Range(0, childGenes.Count);
+            Genes tempGene = childGenes[randomIndex];
+            childGenes[randomIndex] = mutatedGene;
+
+            //History
+            string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+                $"{childScript.animalName} - {childScript.animalType} ({childScript.rabbitType}) has mutated genetically with chance {mutationChance}! Replaced Gene: {tempGene.name} | Mutated Into: {mutatedGene.name}";
+            UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(childScript.transform));
+        }
+
+        return childGenes;
+    }
     public List<Genes> GetParentsGenetics()
     {
         List<Genes> parentsGenes = new List<Genes>();
@@ -470,28 +568,15 @@ public class Animal : MonoBehaviour
     }
     public void GiveBirth(Home parentBurrow)
     {
-        //get child count
-        //do we use Male offspring count + additional count or Female??
-        //0-male 1-female
-        int parentToPick = Random.Range(0, 2); //0 or 1
-        int baseOffspringCount = 0;
-        int additionalOffsprings = 0;
-        int totalOffspring = 0;
-
         Animal mateScript = targetMate.GetComponent<Animal>();
 
-        if (parentToPick == 0)
-        {
-            baseOffspringCount = mateScript.stats.baseOffSpringCount;
-            additionalOffsprings = Random.Range(0, mateScript.stats.maxAdditionalOffSpring);
-        }
-        else
-        {
-            baseOffspringCount = stats.baseOffSpringCount;
-            additionalOffsprings = Random.Range(0, stats.maxAdditionalOffSpring);
-        }
+        //OFF SPRING COUNT
+        int totalOffspring = DetermineOffSpringCount(mateScript);
 
-        totalOffspring = baseOffspringCount + additionalOffsprings;
+        //History
+        string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+            $"{animalName} - {animalType} ({rabbitType}) has given birth to {totalOffspring} children!";
+        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Spawning Rabbits
         for (int i = 0; i < totalOffspring; i++)
@@ -500,20 +585,24 @@ public class Animal : MonoBehaviour
             GameObject child = Instantiate(GetChildPrefabBirth(), transform.position, Quaternion.identity, AnimalHolderStats.Instance.transform);
             Animal childScript = child.GetComponent<Animal>();
 
+            //INITIALIZE CHILD DEFAULTS
+            childScript.animalName = AnimalNameGet.GetRandomCuteName();
             //Set Home
             childScript.home = parentBurrow;
             //Set Size
             childScript.stats.agedDays = 0;
             childScript.isAdult = false;
             childScript.timeSlept = Time.time;
-            childScript.WakeUpAgeUpdate();
+            childScript.ScaleChild(); //set size
+            //Set Fur Color
+            object furColor = DetermineFurInheritance(mateScript); //object - because can be RabbitType, WolfType use object as common var
+            childScript.SetAnimalSkinModel(furColor);
 
-            //Genetic Algorithm
+            //GENETIC ALGORITHM!!
+            //Determine genes
             List<Genes> childGenes = GetChildsGenetics();
-
             //Mutation
-
-
+            childGenes = DetermineMutation(mateScript, childGenes, childScript);
             //Apply genes
             childScript.stats.genes.Clear();
             childScript.stats.genes = childGenes;
@@ -849,6 +938,7 @@ public class Animal : MonoBehaviour
         }
     }
 
+    //COLLISION
     private void OnTriggerStay(Collider other)
     {
         if (other == null) return;
@@ -968,31 +1058,101 @@ public class Animal : MonoBehaviour
         if (statsHUD.activeSelf == true)
         {
             //Update Stats
-
-
             ageText.text = "Age: " + stats.agedDays.ToString();
             actionText.text = "Action: " + currentState.ToString();
 
             healthSlider.maxValue = stats.maxHealth;
             healthSlider.value = stats.health;
-
             hungerSlider.maxValue = stats.maxHunger;
             hungerSlider.value = stats.hunger;
-
             thirstSlider.maxValue = stats.maxThirst;
             thirstSlider.value = stats.thirst;
+
+            healthValueText.text = stats.health.ToString("F2");
+            hungerValueText.text = stats.hunger.ToString("F2");
+            thirstValueText.text = stats.thirst.ToString("F2");
         }
     }
 
-    //Get variables
+    //DIFFERENT ANIMALS, DIFFERENT CALCS, BEHAVIOR, FUNCTIONS
     public GameObject GetChildPrefabBirth()
     {
-        switch(animal)
+        switch(animalType)
         {
             case AnimalType.Rabbit:
-                return rabbitPrefab;
+                return rabbitChildPrefab;
             default:
-                return rabbitPrefab;
+                return rabbitChildPrefab;
+        }
+    }
+    public object GetAnimalSpecies()
+    {
+        switch(animalType)
+        {
+            case AnimalType.Rabbit:
+                return rabbitType;
+            case AnimalType.Wolf:
+                return rabbitType;
+            default:
+                return null;
+        }
+    }
+    public void DoSpawnAddNumberToStats()
+    {
+        switch (animalType)
+        {
+            case AnimalType.Rabbit:
+                AnimalHolderStats.Instance.PlusRabbitCount();
+                break;
+            default:
+                break;
+        }
+    }
+    public void DoDieMinusNumberFromStats()
+    {
+        switch (animalType)
+        {
+            case AnimalType.Rabbit:
+                AnimalHolderStats.Instance.MinusRabbitCount();
+                break;
+            default:
+                break;
+        }
+    }
+    public void SetAnimalSkinModel()
+    {
+        ClearModelHolderChild();
+
+        switch (animalType)
+        {
+            case AnimalType.Rabbit:
+                Instantiate(Rabbit.Instance.GetRabbitModel(rabbitType), modelHolder);
+                break;
+            default:
+                break;
+        }
+    }
+    public void SetAnimalSkinModel(object furType)
+    {
+        ClearModelHolderChild();
+
+        switch (animalType)
+        {
+            case AnimalType.Rabbit:
+                if (furType is RabbitTypes rabbitFur)
+                    Instantiate(Rabbit.Instance.GetRabbitModel(rabbitFur), modelHolder);
+                else
+                    Debug.LogError("Invalid fur type passed to SetAnimalSkinModel!");
+                break;
+            default:
+                break;
+        }
+    }
+    public void ClearModelHolderChild()
+    {
+        foreach (Transform child in modelHolder)
+        {
+            Destroy(child.gameObject);
         }
     }
 }
