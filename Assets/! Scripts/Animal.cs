@@ -116,13 +116,15 @@ public class Animal : MonoBehaviour
             Debug.Log("Assigned Genes!");
 
             stats.AssignRandomPersonalities();
-            stats.ApplyGenesToStats();
-            stats.SetStats();
 
             //Apply Model Skin
             rabbitType = (RabbitTypes)Random.Range(0, System.Enum.GetValues(typeof(RabbitTypes)).Length);
             SetAnimalSkinModel();
         }
+
+        //APPLY STATS + GENES
+        stats.ApplyGenesToStats();
+        stats.SetStats();
 
         //SET AGE TIME
         CalculateDeathTime();
@@ -212,12 +214,25 @@ public class Animal : MonoBehaviour
         stats.hunger = Mathf.Max(stats.hunger, 0);
         stats.thirst = Mathf.Max(stats.thirst, 0);
 
-        if (stats.hunger <= 0 || stats.thirst <= 0)
+        if (stats.hunger <= 0)
         {
-            stats.health -= 0.5f;
-            Debug.Log("Ouch!");
+            stats.health -= 0.2f;
+
+            //History
+            string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+                $"{animalName} - {animalType} ({rabbitType}) has taken damage by Hunger!";
+            UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
         }
-        
+        if (stats.thirst <= 0)
+        {
+            stats.health -= 0.25f;
+
+            //History
+            string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+                $"{animalName} - {animalType} ({rabbitType}) has taken damage by Thirst!";
+            UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+        }
+
         //Health Manager
         if (stats.health <= 0)
             Die();
@@ -362,7 +377,7 @@ public class Animal : MonoBehaviour
     }
     void DetectMate()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, gameObject.layer); //same species
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, 1 << gameObject.layer); //same species
 
         Transform closestMate = null;
         float closestDistance = Mathf.Infinity;
@@ -408,9 +423,11 @@ public class Animal : MonoBehaviour
             if (mateScript != null)
             {
                 bool mateFound = mateScript.SignalMating(transform, home, this);
-                
+                Debug.Log("Signalling!");
+
                 if (mateFound)
                 {
+                    Debug.Log("Success Mating Now");
                     currentState = AnimalState.GoingToMate;
                     agent.SetDestination(home.transform.position);
                 }
@@ -485,7 +502,14 @@ public class Animal : MonoBehaviour
         float motherDominance = stats.furDominance;
         float fatherDominance = mateScript.stats.furDominance;
 
-        return motherDominance >= fatherDominance ? motherFur : fatherFur;
+        // Calculate total dominance for probability scaling
+        float totalDominance = motherDominance + fatherDominance;
+
+        // Generate a random float between 0 and totalDominance
+        float randomValue = UnityEngine.Random.Range(0f, totalDominance);
+
+        // Pick based on weighted probability
+        return randomValue < motherDominance ? motherFur : fatherFur;
     }
     public int DetermineOffSpringCount(Animal mateScript)
     {
@@ -1143,7 +1167,10 @@ public class Animal : MonoBehaviour
         {
             case AnimalType.Rabbit:
                 if (furType is RabbitTypes rabbitFur)
+                {
                     Instantiate(Rabbit.Instance.GetRabbitModel(rabbitFur), modelHolder);
+                    rabbitType = rabbitFur;
+                }
                 else
                     Debug.LogError("Invalid fur type passed to SetAnimalSkinModel!");
                 break;

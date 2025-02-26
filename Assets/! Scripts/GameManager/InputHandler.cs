@@ -64,6 +64,12 @@ public class InputHandler : MonoBehaviour
         else
             movementSpeed = baseSpeed;
 
+        //Handle Set Time to 1
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            DayNightManager.Instance.SetSpeed(1);
+        }
+
         //handle Gene
         if (Input.GetKeyDown(KeyCode.G))
         {
@@ -75,6 +81,12 @@ public class InputHandler : MonoBehaviour
         {
             TogglePause();
         }
+
+        //handle arrow keys
+        if (Input.GetKey(KeyCode.LeftArrow))
+            DayNightManager.Instance.UpSpeed(-0.1f);
+        else if (Input.GetKey(KeyCode.RightArrow))
+            DayNightManager.Instance.UpSpeed(0.1f);
 
         if (Input.GetKeyDown(KeyCode.Backslash)) // Detects the \ key
         {
@@ -223,15 +235,19 @@ public class InputHandler : MonoBehaviour
 
     void FreeRoamMode()
     {
-        float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * 0.05f;
-        float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed * 0.05f;
+        //Mouse Turning
+        if (Input.GetKey(KeyCode.Mouse1)) // Right-click
+        {
+            float mouseX = Input.GetAxis("Mouse X") * rotationSpeed * 0.05f;
+            float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed * 0.05f;
+            yaw += mouseX;
+            pitch -= mouseY;
+            pitch = Mathf.Clamp(pitch, -80f, 80f);
+            transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+        }
+        
 
-        yaw += mouseX;
-        pitch -= mouseY;
-        pitch = Mathf.Clamp(pitch, -80f, 80f);
-
-        transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
-
+        //Moving
         Vector3 moveDirection = Vector3.zero;
         if (Input.GetKey(KeyCode.W)) moveDirection += transform.forward;
         if (Input.GetKey(KeyCode.S)) moveDirection -= transform.forward;

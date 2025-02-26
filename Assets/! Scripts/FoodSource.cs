@@ -44,6 +44,8 @@ public class FoodSource : MonoBehaviour
 
                 if (foodAvailable >= minFoodToEat)
                     canEat = true;  // Enable eating when food is enough
+
+                UpdateFoodSourceModel();
             }
         }
     }
@@ -69,7 +71,7 @@ public class FoodSource : MonoBehaviour
             isBeingEaten = false;
         }
 
-
+        UpdateFoodSourceModel();
 
         return foodTaken;
     }

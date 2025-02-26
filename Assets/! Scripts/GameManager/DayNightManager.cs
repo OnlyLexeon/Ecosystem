@@ -74,27 +74,40 @@ public class DayNightManager : MonoBehaviour
         skyboxMaterial.SetFloat("_Exposure", exposure);
     }
 
-    public void UpSpeed()
+    public void UpSpeed() //for buttons
     {
         currentTimeSpeed = Mathf.Min(currentTimeSpeed + timeIncrement, maxTimeScale);
-
         Time.timeScale = currentTimeSpeed;
-
-        speedText.text = "x" + currentTimeSpeed.ToString("F1");
+        UpdateSpeed();
+    }
+    public void DownSpeed() //for buttons
+    {
+        currentTimeSpeed = Mathf.Max(currentTimeSpeed - timeIncrement, minTimeScale);
+        Time.timeScale = currentTimeSpeed;
+        UpdateSpeed();
+    }
+    public void UpSpeed(float value)
+    {
+        currentTimeSpeed = Mathf.Min(currentTimeSpeed + value, maxTimeScale);
+        Time.timeScale = currentTimeSpeed;
+        UpdateSpeed();
+    }
+    public void DownSpeed(float value)
+    {
+        currentTimeSpeed = Mathf.Max(currentTimeSpeed - value, minTimeScale);
+        Time.timeScale = currentTimeSpeed;
+        UpdateSpeed();
     }
 
     public void UpdateSpeed()
     {
         speedText.text = "x" + Time.timeScale.ToString("F1");
     }
-
-    public void DownSpeed()
+    public void SetSpeed(float value)
     {
-        currentTimeSpeed = Mathf.Max(currentTimeSpeed - timeIncrement, minTimeScale);
-
+        currentTimeSpeed = 1;
         Time.timeScale = currentTimeSpeed;
-
-        speedText.text = "x" + currentTimeSpeed.ToString("F1");
+        UpdateSpeed();
     }
 
     public string GetTimeString()

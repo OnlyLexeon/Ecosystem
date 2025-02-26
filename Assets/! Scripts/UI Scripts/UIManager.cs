@@ -343,8 +343,8 @@ public class UIManager : MonoBehaviour
                     childButton.onClick.RemoveAllListeners();
                     AssignChildButtonListener(childButton, animalScript.children[i].transform);
 
-                    if (animalScript.isDead) buttonText.text = $"Dead {i + 1}";
-                    else buttonText.text = $"Child {i + 1}";
+                    if (animalScript.isDead) buttonText.text = $"Dead";
+                    else buttonText.text = $"{animalScript.children[i].GetComponent<Animal>().animalName}";
                 }
             }
             else

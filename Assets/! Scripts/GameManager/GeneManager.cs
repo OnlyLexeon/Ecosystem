@@ -318,7 +318,7 @@ public class GeneManager : MonoBehaviour
                 }));
         defaultGenes.Add(new Genes("LongLiving++", "Lives longer by days. (+3)", Positivity.ExtremelyPositive, 5,
             new List<StatModifier> {
-                    new StatModifier(StatType.DaysTillDeath, 1f),
+                    new StatModifier(StatType.DaysTillDeath, 3f),
                 }));
         defaultGenes.Add(new Genes("ShortLived", "Lives shorter by days. (-1)", Positivity.Negative, 5,
             new List<StatModifier> {

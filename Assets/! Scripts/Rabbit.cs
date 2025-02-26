@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum RabbitTypes
@@ -28,6 +29,13 @@ public class Rabbit : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        // Ensure rabbitPrefab is loaded only ONCE
+        if (rabbitPrefab == null)
+        {
+            rabbitPrefab = Resources.Load<GameObject>("Prefabs/Rabbit"); // Adjust the path
+            if (rabbitPrefab) Debug.Log("Rabbit prefab loaded successfully.");
+        }
     }
 
     public GameObject GetRabbitModel(RabbitTypes type)
