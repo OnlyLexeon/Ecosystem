@@ -409,16 +409,16 @@ MonoBehaviour:
   isAdult: 0
   isOld: 0
   isDying: 0
+  animalType: 0
+  home: {fileID: 0}
+  foodTypeEdible: 0000000001000000
   animalCollider: {fileID: 1030173366427357893}
   stats: {fileID: 5322848338293705964}
   statsHUD: {fileID: 6481906710248654743}
   genePrefab: {fileID: 8468673657133802829, guid: a9321f6600dae864abca9ab8e5b20479, type: 3}
-  animalType: 0
   children: []
   father: {fileID: 0}
   mother: {fileID: 0}
-  home: {fileID: 0}
-  burrowPrefab: {fileID: 6033719048836278259, guid: 36927acf63382554eb7e325af482cb06, type: 3}
   rabbitType: 0
   modelHolder: {fileID: 224112274778744170}
   nameText: {fileID: 6102981510786223958}

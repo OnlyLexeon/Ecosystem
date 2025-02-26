@@ -71,6 +71,11 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI reproduceCooldownDays;
     public TextMeshProUGUI reproduceDaysLeft;
 
+    [Header("Chances")]
+    public TextMeshProUGUI offSpringDominanceText;
+    public TextMeshProUGUI furDominanceText;
+    public TextMeshProUGUI mutationChanceText;
+
     [Header("Sleep")]
     public TextMeshProUGUI additionalSleep;
 
@@ -269,6 +274,10 @@ public class UIManager : MonoBehaviour
         maxNegativeGenes.text = "Max Negative Genes: " + statScript.maxNegativeGenesPrefered.ToString();
         reproduceCooldownDays.text = "Reproduce Cooldown (Days): " + statScript.reproduceCooldownDays.ToString();
         reproduceDaysLeft.text = "Reproduce Ready (Days Left): " + statScript.reproduceDaysLeft.ToString();
+
+        offSpringDominanceText.text = "Dominance Over Child Count: " + statScript.seedDominance.ToString() + "%";
+        furDominanceText.text = "Dominance Over Fur Gene: " + statScript.furDominance.ToString() + "%";
+        mutationChanceText.text = "Children Mutation Chance: " + statScript.geneMutationChance.ToString() + "%";
 
         lookInverval.text = "Look While Eat/Drink Interval: " + statScript.lookWhileEatingInterval.ToString();
         lookMinAngle.text = "Look Min Angle: " + statScript.lookAngleMin.ToString();
