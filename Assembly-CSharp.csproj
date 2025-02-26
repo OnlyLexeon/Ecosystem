@@ -61,23 +61,25 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.34f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\! Scripts\GeneUI.cs" />
-    <Compile Include="Assets\! Scripts\DayNightManager.cs" />
+    <Compile Include="Assets\! Scripts\Quality Scripts\DynamicTextBackground.cs" />
+    <Compile Include="Assets\! Scripts\Quality Scripts\RandomRotation.cs" />
+    <Compile Include="Assets\! Scripts\UI Scripts\GeneUI.cs" />
+    <Compile Include="Assets\! Scripts\GameManager\InputHandler.cs" />
+    <Compile Include="Assets\! Scripts\Quality Scripts\Billboard.cs" />
+    <Compile Include="Assets\! Scripts\WorldStats.cs" />
     <Compile Include="Assets\! Scripts\AnimalNameGet.cs" />
-    <Compile Include="Assets\! Scripts\GeneManager.cs" />
-    <Compile Include="Assets\! Scripts\InputHandler.cs" />
-    <Compile Include="Assets\! Scripts\PersonalityButton.cs" />
-    <Compile Include="Assets\! Scripts\DynamicTextBackground.cs" />
+    <Compile Include="Assets\! Scripts\UI Scripts\UIManager.cs" />
     <Compile Include="Assets\! Scripts\Burrow.cs" />
-    <Compile Include="Assets\! Scripts\UIManager.cs" />
-    <Compile Include="Assets\! Scripts\HistoryEvent.cs" />
+    <Compile Include="Assets\! Scripts\UI Scripts\HistoryEvent.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
-    <Compile Include="Assets\! Scripts\AnimalHolderStats.cs" />
+    <Compile Include="Assets\! Scripts\Environment.cs" />
+    <Compile Include="Assets\! Scripts\GameManager\DayNightManager.cs" />
+    <Compile Include="Assets\! Scripts\UI Scripts\PersonalityButton.cs" />
     <Compile Include="Assets\! Scripts\Rabbit.cs" />
     <Compile Include="Assets\! Scripts\Animal.cs" />
-    <Compile Include="Assets\! Scripts\Billboard.cs" />
     <Compile Include="Assets\! Scripts\Stats.cs" />
     <Compile Include="Assets\! Scripts\FoodSource.cs" />
+    <Compile Include="Assets\! Scripts\GameManager\GeneManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

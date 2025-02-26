@@ -12,12 +12,16 @@ public enum RabbitTypes
 
 public class Rabbit : MonoBehaviour
 {
+    [Header("Models")]
     public GameObject white;
     public GameObject beige;
     public GameObject brown;
     public GameObject gray;
     public GameObject lightgray;
     public GameObject orange;
+
+    [Header("Prefabs")]
+    public GameObject rabbitPrefab;
 
     public static Rabbit Instance;
 

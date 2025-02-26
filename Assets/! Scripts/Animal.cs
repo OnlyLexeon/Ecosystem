@@ -45,25 +45,27 @@ public class Animal : MonoBehaviour
     public bool isOld = false;
     public bool isDying = false;
 
-    [Header("References* (Ensure none empty)")]
-    [Tooltip("This animal's Collider component.")] public Collider animalCollider;
-    [Tooltip("This animal's stat script.")] public Stats stats;
-    [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
-    [Tooltip("Animal's Gene Display Prefab (For OverHeadStats Toggle)")] public GameObject genePrefab;
-
     [Header("Animal Settings")]
     public AnimalType animalType;
-    
+    public Home home;
 
+    [Header("Animal Settings* (!Set This!)")]
+    public List<FoodType> foodTypeEdible;
+
+    [Header("References")]
+    [Tooltip("This animal's Collider component.")] public Collider animalCollider;
+    [Tooltip("This animal's stat script.")] public Stats stats;
+
+    [Header("References* (Ensure none empty)")]
+    [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
+    [Tooltip("Animal's Gene Display Prefab (For OverHeadStats Toggle)")] public GameObject genePrefab;
+    
     [Header("Family References")]
     public List<GameObject> children;
     public GameObject father;
     public GameObject mother;
 
-    [Header("Rabbit Only* (Ensure Prefabs)")]
-    public Home home;
-    [Tooltip("Burrow Prefab that spawns when dug.")] public GameObject burrowPrefab;
-    [Tooltip("Make Prefab a clone of the Rabbit (If not, the child will be a clone of parent).")] public GameObject rabbitChildPrefab;
+    [Header("Rabbit Only")]
     [Tooltip("Determines the Rabbit's fur color.")] public RabbitTypes rabbitType;
     [Tooltip("Reference to 'Model' GameObject in Rabbit GameObject's children in hierarchy.")] public Transform modelHolder;
 
@@ -582,7 +584,7 @@ public class Animal : MonoBehaviour
         for (int i = 0; i < totalOffspring; i++)
         {
             //spawn child
-            GameObject child = Instantiate(GetChildPrefabBirth(), transform.position, Quaternion.identity, AnimalHolderStats.Instance.transform);
+            GameObject child = Instantiate(GetChildPrefabBirth(), transform.position, Quaternion.identity, WorldStats.Instance.transform);
             Animal childScript = child.GetComponent<Animal>();
 
             //INITIALIZE CHILD DEFAULTS
@@ -713,7 +715,7 @@ public class Animal : MonoBehaviour
         }
 
         // Create burrow instantly upon arrival
-        GameObject newBurrow = Instantiate(burrowPrefab, position, Quaternion.identity);
+        GameObject newBurrow = Instantiate(Environment.Instance.burrowPrefab, position, Quaternion.identity);
         home = newBurrow.GetComponent<Home>();
 
         //Should enter burrow after creation
@@ -732,8 +734,8 @@ public class Animal : MonoBehaviour
         return position;
     }
 
-    
-    //FOOD + DRINK
+
+    // FOOD + DRINK
     void DetectFood()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Food"));
@@ -747,7 +749,7 @@ public class Animal : MonoBehaviour
             if (Vector3.Angle(transform.forward, directionToResource) < stats.detectionAngle / 2)
             {
                 FoodSource food = hit.GetComponent<FoodSource>();
-                if (food != null && food.foodAvailable >= food.minFoodToEat)
+                if (food != null && food.foodAvailable >= food.minFoodToEat && foodTypeEdible.Contains(food.foodType))
                 {
                     float distance = Vector3.Distance(transform.position, hit.transform.position);
                     if (distance < closestDistance)
@@ -766,6 +768,7 @@ public class Animal : MonoBehaviour
             currentState = AnimalState.GoingToEat;
         }
     }
+
     void DetectDrink()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Drink"));
@@ -1080,9 +1083,9 @@ public class Animal : MonoBehaviour
         switch(animalType)
         {
             case AnimalType.Rabbit:
-                return rabbitChildPrefab;
+                return Rabbit.Instance.rabbitPrefab;
             default:
-                return rabbitChildPrefab;
+                return Rabbit.Instance.rabbitPrefab;
         }
     }
     public object GetAnimalSpecies()
@@ -1102,7 +1105,7 @@ public class Animal : MonoBehaviour
         switch (animalType)
         {
             case AnimalType.Rabbit:
-                AnimalHolderStats.Instance.PlusRabbitCount();
+                WorldStats.Instance.PlusRabbitCount();
                 break;
             default:
                 break;
@@ -1113,13 +1116,13 @@ public class Animal : MonoBehaviour
         switch (animalType)
         {
             case AnimalType.Rabbit:
-                AnimalHolderStats.Instance.MinusRabbitCount();
+                WorldStats.Instance.MinusRabbitCount();
                 break;
             default:
                 break;
         }
     }
-    public void SetAnimalSkinModel()
+    public void SetAnimalSkinModel() //spawning
     {
         ClearModelHolderChild();
 
@@ -1132,7 +1135,7 @@ public class Animal : MonoBehaviour
                 break;
         }
     }
-    public void SetAnimalSkinModel(object furType)
+    public void SetAnimalSkinModel(object furType) //give birth
     {
         ClearModelHolderChild();
 

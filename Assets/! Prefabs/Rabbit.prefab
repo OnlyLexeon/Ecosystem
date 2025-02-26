@@ -383,8 +383,8 @@ MonoBehaviour:
   fertile: 1
   baseOffSpringCount: 2
   maxAdditionalOffSpring: 4
-  minPositiveGenesPrefered: 2
-  maxNegativeGenesPrefered: 2
+  minPositiveGenesPrefered: 1
+  maxNegativeGenesPrefered: 1
   reproduceCooldownDays: 3
   furDominance: 100
   seedDominance: 100
@@ -419,7 +419,6 @@ MonoBehaviour:
   mother: {fileID: 0}
   home: {fileID: 0}
   burrowPrefab: {fileID: 6033719048836278259, guid: 36927acf63382554eb7e325af482cb06, type: 3}
-  rabbitChildPrefab: {fileID: 1151711369364588460, guid: 793c527ccb749274086531bbb1719ed1, type: 3}
   rabbitType: 0
   modelHolder: {fileID: 224112274778744170}
   nameText: {fileID: 6102981510786223958}
