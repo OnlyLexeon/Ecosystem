@@ -23,8 +23,11 @@ public class DayNightManager : MonoBehaviour
     public int dayNumber = 1;
     private const float dayDuration = 1440f; // 24 hours * 60 minutes
 
-    public bool isDay => time >= 360f && time < 1200f; // 6:00 AM to 8:00 PM
-    public bool isNight => !isDay;
+    [Header("Day/Night")]
+    public bool isDay;
+    public bool isNight;
+    public float dayTime = 360f;
+    public float nightTime = 1200f;
 
     void Awake()
     {
@@ -41,7 +44,14 @@ public class DayNightManager : MonoBehaviour
         {
             time = 0f;
             dayNumber++;
+
+            //New Day
+            System.GC.Collect();
         }
+
+        //Set day/night bools
+        isDay = time >= 360f && time < 1200f;
+        isNight = !isDay;
 
         UpdateLighting();
         UpdateSkybox();

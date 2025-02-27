@@ -69,10 +69,11 @@
     <Compile Include="Assets\! Scripts\WorldStats.cs" />
     <Compile Include="Assets\! Scripts\AnimalNameGet.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\UIManager.cs" />
-    <Compile Include="Assets\! Scripts\Burrow.cs" />
+    <Compile Include="Assets\! Scripts\Quality Scripts\ButtonCleanup.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\HistoryEvent.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\! Scripts\Environment.cs" />
+    <Compile Include="Assets\! Scripts\Home.cs" />
     <Compile Include="Assets\! Scripts\GameManager\DayNightManager.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\PersonalityButton.cs" />
     <Compile Include="Assets\! Scripts\Rabbit.cs" />

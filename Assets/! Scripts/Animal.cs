@@ -601,7 +601,7 @@ public class Animal : MonoBehaviour
 
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-            $"{animalName} - {animalType} ({rabbitType}) has given birth to {totalOffspring} children!";
+            $"{animalName} - {animalType} ({rabbitType}) has given birth to {totalOffspring} children! Father: {mateScript.animalName}";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Spawning Rabbits
