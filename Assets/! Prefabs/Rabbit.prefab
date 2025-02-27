@@ -369,8 +369,8 @@ MonoBehaviour:
   lookAngleMin: 30
   lookAngleMax: 90
   waitBeforeLeavingBurrow: 10
-  detectionDistance: 6
-  detectionAngle: 90
+  detectionDistance: 7
+  detectionAngle: 100
   baseSpeed: 1.5
   runSpeed: 3.5
   wanderDistanceMin: 2
@@ -383,8 +383,8 @@ MonoBehaviour:
   fertile: 1
   baseOffSpringCount: 2
   maxAdditionalOffSpring: 4
-  minPositiveGenesPrefered: 1
-  maxNegativeGenesPrefered: 1
+  minPositiveGenesPrefered: 2
+  maxNegativeGenesPrefered: 3
   reproduceCooldownDays: 3
   furDominance: 100
   seedDominance: 100
@@ -432,7 +432,6 @@ MonoBehaviour:
   healthValueText: {fileID: 8692799725329430948}
   hungerValueText: {fileID: 2811097628200726827}
   thirstValueText: {fileID: 3796437238515423306}
-  timeSlept: 0
   wasSpawnedByUser: 0
 --- !u!195 &6372509079974295027
 NavMeshAgent:

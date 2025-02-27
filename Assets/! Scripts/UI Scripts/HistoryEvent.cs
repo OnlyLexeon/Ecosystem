@@ -21,4 +21,9 @@ public class HistoryEvent : MonoBehaviour
         // Force layout rebuild to adjust size
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
     }
+
+    private void OnDestroy()
+    {
+        eventButton.onClick.RemoveAllListeners();
+    }
 }

@@ -91,7 +91,10 @@ public class Animal : MonoBehaviour
     private Transform detectedWolf;
     private float nextLookTime;
     private float wanderTimer = 0f;
-    public float timeSlept = 0f;
+    private Vector3 randomDirection; // Cached to avoid new allocation each frame
+    private NavMeshHit navHit;
+    private RaycastHit groundHit;
+    private float timeSlept = 0f;
     public bool wasSpawnedByUser = false;
 
     void Start()
@@ -304,15 +307,16 @@ public class Animal : MonoBehaviour
 
         wanderTimer = 0f;
 
-        Vector3 randomDirection = Random.insideUnitSphere * Random.Range(stats.wanderDistanceMin, stats.wanderDistanceMax);
-        randomDirection += transform.position;
+        // Get random position
+        randomDirection = transform.position + (Random.insideUnitSphere * Random.Range(stats.wanderDistanceMin, stats.wanderDistanceMax));
+
+        // Adjust to land
         randomDirection = AdjustPositionToLand(randomDirection);
 
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomDirection, out hit, Random.Range(stats.wanderDistanceMin, stats.wanderDistanceMax), NavMesh.AllAreas))
+        // Check NavMesh
+        if (NavMesh.SamplePosition(randomDirection, out navHit, stats.wanderDistanceMax, NavMesh.AllAreas))
         {
-            agent.SetDestination(hit.position);
-
+            agent.SetDestination(navHit.position);
         }
     }
 
@@ -746,18 +750,17 @@ public class Animal : MonoBehaviour
     }
     Vector3 AdjustPositionToLand(Vector3 position)
     {
-        RaycastHit hit;
-        if (Physics.Raycast(new Vector3(position.x, 10f, position.z), Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Land")))
+        // Reuse RaycastHit instead of creating new
+        if (Physics.Raycast(new Vector3(position.x, 10f, position.z), Vector3.down, out groundHit, Mathf.Infinity, LayerMask.GetMask("Land")))
         {
-            position.y = hit.point.y; // Adjust to land surface
+            position.y = groundHit.point.y; // Adjust to land surface
         }
         else
         {
-            Debug.LogWarning("No land found for burrow placement! Using default Y.");
+            Debug.LogWarning("No land found! Using default Y.");
         }
         return position;
     }
-
 
     // FOOD + DRINK
     void DetectFood()

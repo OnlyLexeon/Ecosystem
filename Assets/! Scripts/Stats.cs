@@ -108,8 +108,8 @@ public class Stats : MonoBehaviour
     public float waitBeforeLeavingBurrow = 10f;
 
     [Header("Detect Settings")]
-    public float detectionDistance = 6f;
-    public float detectionAngle = 90f;
+    public float detectionDistance = 7f;
+    public float detectionAngle = 100f;
 
     [Header("Move Settings")]
     public float baseSpeed = 1.5f;
@@ -131,7 +131,7 @@ public class Stats : MonoBehaviour
     public int baseOffSpringCount = 2;
     public int maxAdditionalOffSpring = 4;
     public int minPositiveGenesPrefered = 2;
-    public int maxNegativeGenesPrefered = 2;
+    public int maxNegativeGenesPrefered = 3;
     public int reproduceCooldownDays = 3;
 
     [Header("Birth Settings")]
