@@ -126,13 +126,13 @@ public class Stats : MonoBehaviour
     public float additionalSleepHours = 0f;
 
     [Header("Seggs Settings")]
-    public int reproduceDaysLeft = 3;
+    public int reproduceDaysLeft = 2; // a dynamic value
     public int fertile = 1; // 0 - false 1 - true
-    public int baseOffSpringCount = 2;
-    public int maxAdditionalOffSpring = 4;
+    public int baseOffSpringCount = 3;
+    public int maxAdditionalOffSpring = 6;
     public int minPositiveGenesPrefered = 2;
     public int maxNegativeGenesPrefered = 3;
-    public int reproduceCooldownDays = 3;
+    public int reproduceCooldownDays = 2; // fixed
 
     [Header("Birth Settings")]
     public float furDominance = 100f;

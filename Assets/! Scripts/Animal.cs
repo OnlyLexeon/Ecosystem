@@ -427,11 +427,9 @@ public class Animal : MonoBehaviour
             if (mateScript != null)
             {
                 bool mateFound = mateScript.SignalMating(transform, home, this);
-                Debug.Log("Signalling!");
 
                 if (mateFound)
                 {
-                    Debug.Log("Success Mating Now");
                     currentState = AnimalState.GoingToMate;
                     agent.SetDestination(home.transform.position);
                 }
@@ -544,7 +542,7 @@ public class Animal : MonoBehaviour
 
             //History
             string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                $"{childScript.animalName} - {childScript.animalType} ({childScript.rabbitType}) has mutated genetically with chance {mutationChance}! Replaced Gene: {tempGene.name} | Mutated Into: {mutatedGene.name}";
+                $"{childScript.animalName} - {childScript.animalType} ({childScript.rabbitType}) has mutated genetically with chance {mutationChance}%! Replaced Gene: {tempGene.name} | Mutated Into: {mutatedGene.name}";
             UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(childScript.transform));
         }
 
@@ -755,10 +753,7 @@ public class Animal : MonoBehaviour
         {
             position.y = groundHit.point.y; // Adjust to land surface
         }
-        else
-        {
-            Debug.LogWarning("No land found! Using default Y.");
-        }
+
         return position;
     }
 
@@ -795,7 +790,6 @@ public class Animal : MonoBehaviour
             currentState = AnimalState.GoingToEat;
         }
     }
-
     void DetectDrink()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Drink"));
@@ -826,13 +820,13 @@ public class Animal : MonoBehaviour
     }
     void CheckArrival()
     {
-        if (currentState == AnimalState.GoingToEat && targetFood != null && Vector3.Distance(transform.position, targetFood.position) <= 1.25f)
+        if (currentState == AnimalState.GoingToEat && targetFood != null && Vector3.Distance(transform.position, targetFood.position) <= 1.5f)
         {
             currentState = AnimalState.Eating;
             StartCoroutine(EatRoutine());
         }
         else if (currentState == AnimalState.GoingToDrink && 
-            (targetWater != null && Vector3.Distance(transform.position, targetWater.position) <= 1.25f))
+            (targetWater != null && Vector3.Distance(transform.position, targetWater.position) <= 1.5f))
         {
             currentState = AnimalState.Drinking;
             StartCoroutine(DrinkRoutine());
@@ -1054,6 +1048,12 @@ public class Animal : MonoBehaviour
     public void ToggleUI(bool state)
     {
         statsHUD.SetActive(state);
+
+        //if (state)
+        //{
+        //    UpdateOverHeadUI();
+        //    UpdateOverHeadStats();
+        //}
     }
     void UpdateOverHeadUI() //UI updated once only
     {

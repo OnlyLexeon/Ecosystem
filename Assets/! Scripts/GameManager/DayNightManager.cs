@@ -98,13 +98,13 @@ public class DayNightManager : MonoBehaviour
     }
     public void UpSpeed(float value)
     {
-        currentTimeSpeed = Mathf.Min(currentTimeSpeed + value, maxTimeScale);
+        currentTimeSpeed = Mathf.Clamp(currentTimeSpeed + value, minTimeScale, maxTimeScale);
         Time.timeScale = currentTimeSpeed;
         UpdateSpeed();
     }
     public void DownSpeed(float value)
     {
-        currentTimeSpeed = Mathf.Max(currentTimeSpeed - value, minTimeScale);
+        currentTimeSpeed = Mathf.Clamp(currentTimeSpeed - value, minTimeScale, maxTimeScale);
         Time.timeScale = currentTimeSpeed;
         UpdateSpeed();
     }
