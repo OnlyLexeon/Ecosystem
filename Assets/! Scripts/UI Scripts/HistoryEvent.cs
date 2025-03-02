@@ -7,23 +7,32 @@ public class HistoryEvent : MonoBehaviour
     [SerializeField] public TextMeshProUGUI eventText;
     [SerializeField] public Button eventButton;
 
+    private System.Action currentAction;
+
     public void SetHistory(string historyText, System.Action onButtonClick = null)
     {
         eventText.text = historyText;
 
-        // Ensure the button's click event is set
-        eventButton.onClick.RemoveAllListeners();
-        if (onButtonClick != null)
+        // Avoid RemoveAllListeners() and use a local reference instead
+        if (currentAction != null)
         {
-            eventButton.onClick.AddListener(() => onButtonClick.Invoke());
+            eventButton.onClick.RemoveListener(currentAction.Invoke);
         }
 
-        // Force layout rebuild to adjust size
-        LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
+        currentAction = onButtonClick;
+
+        if (currentAction != null)
+        {
+            eventButton.onClick.AddListener(currentAction.Invoke);
+        }
     }
 
     private void OnDestroy()
     {
-        eventButton.onClick.RemoveAllListeners();
+        if (currentAction != null)
+        {
+            eventButton.onClick.RemoveListener(currentAction.Invoke);
+            Debug.LogWarning("Listener Removed");
+        }
     }
 }

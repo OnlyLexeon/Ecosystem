@@ -132,7 +132,7 @@ public class Animal : MonoBehaviour
         CalculateDeathTime();
 
         //Start Updating UI
-        InvokeRepeating(nameof(UpdateOverHeadStats), 2f * Time.unscaledTime, 1f);
+        InvokeRepeating(nameof(UpdateOverHeadStats), 2f, 1f);
         //UI that doesnt require constant updating
         UpdateOverHeadUI();
     }
@@ -1099,7 +1099,7 @@ public class Animal : MonoBehaviour
     public void UpdateOverHeadStats() //updated every second
     {
         //OVER HEAD UI/HUD STATS
-        if (statsHUD.activeSelf == true)
+        if (statsHUD.activeSelf == true && !isDead)
         {
             //Update Stats
             ageText.text = "Age: " + stats.agedDays.ToString();

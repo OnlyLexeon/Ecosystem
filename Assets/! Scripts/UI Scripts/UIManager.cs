@@ -371,23 +371,19 @@ public class UIManager : MonoBehaviour
 
         ClampHistoryCount();
     }
+ 
     public void ClampHistoryCount()
     {
-        if (historyContainer.childCount > maxHistoryCount)
+        int excess = historyContainer.childCount - maxHistoryCount;
+
+        // Limit the number of deletions per frame (prevents freezing)
+        for (int i = 0; i < excess; i++)
         {
             Transform firstChild = historyContainer.GetChild(0);
-            if (firstChild == null) return;  // Avoid potential null references
-
-            if (firstChild.TryGetComponent<HistoryEvent>(out HistoryEvent historyEventScript))
-            {
-                historyEventScript.eventButton.onClick.RemoveAllListeners();
-            }
-            else
-            {
-                Debug.LogWarning("No Button component found!");
-            }
+            if (firstChild == null) return;
 
             Destroy(firstChild.gameObject);
+            Debug.LogWarning("Deleted Button");
         }
     }
 }
