@@ -302,12 +302,12 @@ public class InputHandler : MonoBehaviour
         {
             savedTimeScale = Time.timeScale;
             Time.timeScale = 0;
-            DayNightManager.Instance.UpdateSpeed();
+            DayNightManager.Instance.UpdateSpeedText();
         }
         else
         {
             Time.timeScale = savedTimeScale;
-            DayNightManager.Instance.UpdateSpeed();
+            DayNightManager.Instance.UpdateSpeedText();
         }
     }
 

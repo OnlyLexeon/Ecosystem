@@ -88,36 +88,45 @@ public class DayNightManager : MonoBehaviour
     {
         currentTimeSpeed = Mathf.Min(currentTimeSpeed + timeIncrement, maxTimeScale);
         Time.timeScale = currentTimeSpeed;
-        UpdateSpeed();
+        UpdateSpeedText();
     }
     public void DownSpeed() //for buttons
     {
         currentTimeSpeed = Mathf.Max(currentTimeSpeed - timeIncrement, minTimeScale);
         Time.timeScale = currentTimeSpeed;
-        UpdateSpeed();
+        UpdateSpeedText();
     }
     public void UpSpeed(float value)
     {
         currentTimeSpeed = Mathf.Clamp(currentTimeSpeed + value, minTimeScale, maxTimeScale);
         Time.timeScale = currentTimeSpeed;
-        UpdateSpeed();
+        UpdateSpeedText();
     }
     public void DownSpeed(float value)
     {
         currentTimeSpeed = Mathf.Clamp(currentTimeSpeed - value, minTimeScale, maxTimeScale);
         Time.timeScale = currentTimeSpeed;
-        UpdateSpeed();
+        UpdateSpeedText();
     }
 
-    public void UpdateSpeed()
+    public void UpdateSpeedText()
     {
-        speedText.text = "x" + Time.timeScale.ToString("F1");
+        if (Time.timeScale == 0)
+        {
+            speedText.text = "Paused";
+            speedText.fontSize = 20;
+        }
+        else
+        {
+            speedText.text = "x" + Time.timeScale.ToString("F1");
+            speedText.fontSize = 26;
+        }
     }
     public void SetSpeed(float value)
     {
         currentTimeSpeed = 1;
         Time.timeScale = currentTimeSpeed;
-        UpdateSpeed();
+        UpdateSpeedText();
     }
 
     public string GetTimeString()
