@@ -12,13 +12,18 @@ public class FoodSource : MonoBehaviour
     [Header("References")]
     public Transform modelHolder;
 
-    [Header("Food Settings")]
+    [Header("Food Settings* (Edit these!)")]
     public FoodType foodType;
-    public bool canEat = false;
-    public float foodAvailable = 0f;
     public float minFoodToEat = 10f;
     public float maxFood = 25f;
     public float foodReplenishedPerSecond = 0.1f;
+    [Header("Food Settings (Instant?)")]
+    [Tooltip("Animals that eat this will instantly gain 'instantFood' amount of food.")] public bool instantConsumable = false;
+    public float instantFood = 0f;
+
+    [Header("Food Stats (Debug)")]
+    public bool canEat = false;
+    public float foodAvailable = 0f;
 
     private float beingEatenTime = 2f;  // Delay before replenishing starts
     private float beingEatenTimer = 0f;
@@ -27,6 +32,8 @@ public class FoodSource : MonoBehaviour
     private void Start()
     {
         foodAvailable = maxFood / 2f;
+
+        if (instantConsumable) canEat = true;
     }
 
     void Update()
@@ -52,28 +59,35 @@ public class FoodSource : MonoBehaviour
 
     public float ConsumeFood(float amount)
     {
-        if (foodAvailable <= 0) return 0f;
-
-        beingEatenTimer = 0f; // Reset timer when eaten
-        isBeingEaten = true;  // Mark as being eaten
-
-        float foodTaken = Mathf.Min(amount, foodAvailable);
-        foodAvailable -= foodTaken;
-
-        // Disable eating if food drops below minFoodToEat
-        if (foodAvailable < minFoodToEat)
-            canEat = false;
-
-        // If food is empty, stop eating and reset state
-        if (foodAvailable <= 0)
+        if (instantConsumable)
         {
-            foodAvailable = 0;
-            isBeingEaten = false;
+            return instantFood;
         }
+        else
+        {
+            if (foodAvailable <= 0) return 0f;
 
-        UpdateFoodSourceModel();
+            beingEatenTimer = 0f; // Reset timer when eaten
+            isBeingEaten = true;  // Mark as being eaten
 
-        return foodTaken;
+            float foodTaken = Mathf.Min(amount, foodAvailable);
+            foodAvailable -= foodTaken;
+
+            // Disable eating if food drops below minFoodToEat
+            if (foodAvailable < minFoodToEat)
+                canEat = false;
+
+            // If food is empty, stop eating and reset state
+            if (foodAvailable <= 0)
+            {
+                foodAvailable = 0;
+                isBeingEaten = false;
+            }
+
+            UpdateFoodSourceModel();
+
+            return foodTaken;
+        }
     }
 
     public void StopEating()

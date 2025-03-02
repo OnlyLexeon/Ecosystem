@@ -11,7 +11,7 @@ public class Home : MonoBehaviour
     //ENTERING
     public void EnterBurrow(Animal animal, float time) //hiding/making home
     {
-        Debug.Log("Burrow Entered!");
+        //Debug.Log("Burrow Entered!");
 
         animalInside.Add(animal);
         animal.gameObject.SetActive(false);
@@ -19,7 +19,7 @@ public class Home : MonoBehaviour
     }
     public void EnterBurrowForSleep(Animal animal, float time) //update age+horny
     {
-        Debug.Log("Sleeping in Burrow!");
+        //Debug.Log("Sleeping in Burrow!");
 
         animalInside.Add(animal);
         animal.gameObject.SetActive(false);
@@ -27,7 +27,11 @@ public class Home : MonoBehaviour
     }
     public void EnterBurrowForMating(Animal animal, float time) //mate, give birth
     {
-        Debug.Log("Burrow For Seggs!");
+        //Debug.Log("Burrow For Seggs!");
+
+        string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+                $"{animal.animalName} - {animal.animalType} ({animal.rabbitType}) entered a burrow to mate <3";
+        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         animalInside.Add(animal);
         animal.gameObject.SetActive(false);

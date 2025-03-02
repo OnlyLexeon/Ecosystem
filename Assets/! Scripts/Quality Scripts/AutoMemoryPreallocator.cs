@@ -7,9 +7,16 @@ public class AutoMemoryPreallocator : MonoBehaviour
 
     void Start()
     {
-        int allocationSize = gbToAllocate * 1024 * 1024 * 1024; // Convert GB to bytes
-        preallocatedMemory = new byte[allocationSize];
+        try
+        {
+            int allocationSize = gbToAllocate * 1024 * 1024 * 1024; // Convert GB to bytes
+            preallocatedMemory = new byte[allocationSize];
 
-        Debug.Log($"Preallocated {gbToAllocate}GB of memory at startup.");
+            Debug.Log($"[Success] Preallocated {gbToAllocate}GB of memory at startup.");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[Failure] Memory allocation failed: {e.Message}");
+        }
     }
 }

@@ -373,10 +373,21 @@ public class UIManager : MonoBehaviour
     }
     public void ClampHistoryCount()
     {
-        while (historyContainer.childCount > maxHistoryCount)
+        if (historyContainer.childCount > maxHistoryCount)
         {
-            // Destroy the oldest history entry (first child)
-            Destroy(historyContainer.GetChild(0).gameObject);
+            Transform firstChild = historyContainer.GetChild(0);
+            if (firstChild == null) return;  // Avoid potential null references
+
+            if (firstChild.TryGetComponent<HistoryEvent>(out HistoryEvent historyEventScript))
+            {
+                historyEventScript.eventButton.onClick.RemoveAllListeners();
+            }
+            else
+            {
+                Debug.LogWarning("No Button component found!");
+            }
+
+            Destroy(firstChild.gameObject);
         }
     }
 }

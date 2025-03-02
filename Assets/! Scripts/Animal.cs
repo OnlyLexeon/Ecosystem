@@ -36,6 +36,15 @@ public enum AnimalType
 
 public class Animal : MonoBehaviour
 {
+    [Header("Animal Settings* (!Set This!)")]
+    public List<FoodType> foodTypeEdible;
+    public AnimalType animalType;
+    public List<LayerMask> predators;
+
+    [Header("References* (Ensure none empty)")]
+    [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
+    [Tooltip("Animal's Gene Display Prefab (For OverHeadStats Toggle)")] public GameObject genePrefab;
+
     [Header("Current")]
     public string animalName;
     public AnimalState currentState = AnimalState.Wandering;
@@ -45,21 +54,11 @@ public class Animal : MonoBehaviour
     public bool isOld = false;
     public bool isDying = false;
 
-    [Header("Animal Settings")]
-    public AnimalType animalType;
-    public Home home;
-
-    [Header("Animal Settings* (!Set This!)")]
-    public List<FoodType> foodTypeEdible;
-
-    [Header("References")]
+    [Header("References (Auto)")]
     [Tooltip("This animal's Collider component.")] public Collider animalCollider;
     [Tooltip("This animal's stat script.")] public Stats stats;
+    public Home home;
 
-    [Header("References* (Ensure none empty)")]
-    [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
-    [Tooltip("Animal's Gene Display Prefab (For OverHeadStats Toggle)")] public GameObject genePrefab;
-    
     [Header("Family References")]
     public List<GameObject> children;
     public GameObject father;
@@ -88,7 +87,7 @@ public class Animal : MonoBehaviour
     private Transform targetWater;
     private Transform targetBurrow;
     private Transform targetMate;
-    private Transform detectedWolf;
+    private Transform detectedPredator;
     private float nextLookTime;
     private float wanderTimer = 0f;
     private Vector3 randomDirection; // Cached to avoid new allocation each frame
@@ -133,7 +132,7 @@ public class Animal : MonoBehaviour
         CalculateDeathTime();
 
         //Start Updating UI
-        InvokeRepeating(nameof(UpdateOverHeadStats), 1f, 1f);
+        InvokeRepeating(nameof(UpdateOverHeadStats), 2f * Time.unscaledTime, 1f);
         //UI that doesnt require constant updating
         UpdateOverHeadUI();
     }
@@ -166,8 +165,8 @@ public class Animal : MonoBehaviour
         if (DayNightManager.Instance.isNight)
         {
             //BUG FIX: rabbits sleeping twice in a night
-            //Add cooldown for sleeping: 12 hours
-            if ((Time.time - timeSlept) >= (12f * 60f))
+            //Add cooldown for sleeping: 13 hours
+            if ((Time.time - timeSlept) >= (13f * 60f))
             {
                 GoToSleep();
                 return; //stop all activity below
@@ -183,14 +182,16 @@ public class Animal : MonoBehaviour
 
                 if (isFoodCritical()) DetectFood();
                 if (isThirstCritical()) DetectDrink();
-                if (stats.fertile == 1 && wantsToReproduce && !isThirstCritical() && !isFoodCritical() && !isHealthCritical() && !targetMate)
-                {
-                    DetectMate();
-                }
-
-                if (detectedWolf == null && home == null && currentState != AnimalState.MakingBurrow)
+                
+                //Make Burrow
+                if (detectedPredator == null && home == null && currentState != AnimalState.MakingBurrow)
                 {
                     MakeBurrow();
+                }
+                //Find Mates
+                if (detectedPredator == null && stats.fertile == 1 && wantsToReproduce && !isThirstCritical() && !isFoodCritical() && !isHealthCritical() && !targetMate)
+                {
+                    DetectMate();
                 }
                 break;
             case AnimalState.GoingToEat:
@@ -620,7 +621,7 @@ public class Animal : MonoBehaviour
             //Set Size
             childScript.stats.agedDays = 0;
             childScript.isAdult = false;
-            childScript.timeSlept = Time.time;
+            childScript.timeSlept = timeSlept;
             childScript.ScaleChild(); //set size
             //Set Fur Color
             object furColor = DetermineFurInheritance(mateScript); //object - because can be RabbitType, WolfType use object as common var
@@ -838,7 +839,7 @@ public class Animal : MonoBehaviour
 
         while (stats.hunger < stats.maxHunger && currentState == AnimalState.Eating && foodSource != null && foodSource.foodAvailable > 0)
         {
-            if (detectedWolf != null)
+            if (detectedPredator != null)
             {
                 currentState = AnimalState.Running;
                 foodSource.StopEating(); // Stop eating when interrupted
@@ -864,7 +865,7 @@ public class Animal : MonoBehaviour
     {
         while (stats.thirst < stats.maxThirst && currentState == AnimalState.Drinking)
         {
-            if (detectedWolf != null) // Interrupt drinking if a wolf is detected
+            if (detectedPredator != null) // Interrupt drinking if a wolf is detected
             {
                 currentState = AnimalState.Running;
                 yield break;
@@ -878,7 +879,7 @@ public class Animal : MonoBehaviour
     }
     void LookAroundWhileEatingOrDrinking()
     {
-        if (detectedWolf != null)
+        if (detectedPredator != null)
         {
             currentState = AnimalState.Running;
             return;
@@ -913,31 +914,44 @@ public class Animal : MonoBehaviour
     //THREATS
     void DetectThreats()
     {
-        Collider[] threats = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Wolf"));
-        detectedWolf = null;
+        int predatorLayerMask = 0;
+        foreach (LayerMask mask in predators)
+        {
+            predatorLayerMask |= mask.value; // Combine all layer masks
+        }
+
+        Collider[] threats = Physics.OverlapSphere(transform.position, stats.detectionDistance, predatorLayerMask);
+        detectedPredator = null;
+        float closestDistance = Mathf.Infinity;
 
         foreach (Collider threat in threats)
         {
             Vector3 directionToThreat = (threat.transform.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, directionToThreat) < stats.detectionAngle / 2)
+            float distanceToThreat = Vector3.Distance(transform.position, threat.transform.position);
+
+            if (Vector3.Angle(transform.forward, directionToThreat) < stats.detectionAngle / 2 && distanceToThreat < closestDistance)
             {
-                detectedWolf = threat.transform;
-                currentState = AnimalState.Running;
-                return;
+                detectedPredator = threat.transform;
+                closestDistance = distanceToThreat;
             }
         }
-        detectedWolf = null;
+
+        if (detectedPredator != null)
+        {
+            currentState = AnimalState.Running;
+        }
     }
+
     void RunAway()
     {
-        if (detectedWolf == null)
+        if (detectedPredator == null)
         {
             currentState = AnimalState.Wandering;
             return;
         }
 
-        Vector3 directionToThreat = (detectedWolf.position - transform.position).normalized;
-        float distanceToThreat = Vector3.Distance(transform.position, detectedWolf.position);
+        Vector3 directionToThreat = (detectedPredator.position - transform.position).normalized;
+        float distanceToThreat = Vector3.Distance(transform.position, detectedPredator.position);
 
         // If burrow exists and is safe, run towards it
         if (home != null && distanceToThreat > 5f)
@@ -947,7 +961,7 @@ public class Animal : MonoBehaviour
         }
 
         // If no burrow or Wolf is too close, run in the opposite direction
-        Vector3 escapeDirection = (transform.position - detectedWolf.position).normalized;
+        Vector3 escapeDirection = (transform.position - detectedPredator.position).normalized;
         Vector3 escapeTarget = transform.position + escapeDirection * stats.detectionDistance;
 
         // Ensure the escape target is valid
@@ -1003,7 +1017,7 @@ public class Animal : MonoBehaviour
                     wantsToReproduce = false;
                     stats.reproduceDaysLeft = stats.reproduceCooldownDays;
 
-                    time = 20f;
+                    time = 30f;
 
                     //giving birth is called by burrow after 20 seconds
                     homecript.EnterBurrowForMating(this, time);

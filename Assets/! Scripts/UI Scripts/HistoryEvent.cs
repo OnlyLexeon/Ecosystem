@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class HistoryEvent : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI eventText;
-    [SerializeField] private Button eventButton;
+    [SerializeField] public TextMeshProUGUI eventText;
+    [SerializeField] public Button eventButton;
 
     public void SetHistory(string historyText, System.Action onButtonClick = null)
     {

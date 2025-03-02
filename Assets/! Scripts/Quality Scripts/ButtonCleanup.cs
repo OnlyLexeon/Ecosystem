@@ -12,7 +12,7 @@ public class ButtonCleanup : MonoBehaviour
 
     void OnDestroy()
     {
-        if (button != null)
+        if (button)
         {
             button.onClick.RemoveAllListeners();
             Debug.Log("Cleaned Up Listener");
