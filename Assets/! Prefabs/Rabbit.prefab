@@ -381,7 +381,7 @@ MonoBehaviour:
   additionalSleepHours: 0
   reproduceDaysLeft: 2
   fertile: 1
-  baseOffSpringCount: 3
+  baseOffSpringCount: 2
   maxAdditionalOffSpring: 6
   minPositiveGenesPrefered: 2
   maxNegativeGenesPrefered: 3
@@ -402,6 +402,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f59198866933754eb81111c30811385, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  foodTypeEdible: 0000000001000000
+  animalType: 0
+  predators: []
+  statsHUD: {fileID: 6481906710248654743}
+  genePrefab: {fileID: 8468673657133802829, guid: a9321f6600dae864abca9ab8e5b20479, type: 3}
   animalName: 
   currentState: 2
   isDead: 0
@@ -409,13 +414,9 @@ MonoBehaviour:
   isAdult: 0
   isOld: 0
   isDying: 0
-  animalType: 0
-  home: {fileID: 0}
-  foodTypeEdible: 0000000001000000
   animalCollider: {fileID: 1030173366427357893}
   stats: {fileID: 5322848338293705964}
-  statsHUD: {fileID: 6481906710248654743}
-  genePrefab: {fileID: 8468673657133802829, guid: a9321f6600dae864abca9ab8e5b20479, type: 3}
+  home: {fileID: 0}
   children: []
   father: {fileID: 0}
   mother: {fileID: 0}

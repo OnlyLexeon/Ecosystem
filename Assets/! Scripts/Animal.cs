@@ -94,6 +94,7 @@ public class Animal : MonoBehaviour
     private NavMeshHit navHit;
     private RaycastHit groundHit;
     private float timeSlept = 0f;
+    private bool takenDamage = false;
     public bool wasSpawnedByUser = false;
 
     void Start()
@@ -222,19 +223,29 @@ public class Animal : MonoBehaviour
         {
             stats.health -= 0.2f;
 
-            //History
-            string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                $"{animalName} - {animalType} ({rabbitType}) has taken damage by Hunger!";
-            UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+            if (!takenDamage)
+            {
+                takenDamage = true;
+
+                //History
+                string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+                    $"{animalName} - {animalType} ({rabbitType}) has taken damage by Hunger!";
+                UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+            }
         }
         if (stats.thirst <= 0)
         {
             stats.health -= 0.25f;
 
-            //History
-            string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                $"{animalName} - {animalType} ({rabbitType}) has taken damage by Thirst!";
-            UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+            if (!takenDamage)
+            {
+                takenDamage = true;
+
+                //History
+                string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+                    $"{animalName} - {animalType} ({rabbitType}) has taken damage by Thirst!";
+                UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+            }
         }
 
         //Health Manager
@@ -244,6 +255,7 @@ public class Animal : MonoBehaviour
             && stats.health < stats.maxHealth
             && !isFoodCritical() && !isThirstCritical())
         {
+            takenDamage = false;
             Regenerate();
         }
     }
@@ -482,6 +494,7 @@ public class Animal : MonoBehaviour
             if (prefered)
             {
                 targetMate = mate;
+                targetBurrow = homeToMate.transform;
                 currentState = AnimalState.GoingToMate;
                 agent.SetDestination(homeToMate.transform.position);
                 return true;
@@ -981,8 +994,8 @@ public class Animal : MonoBehaviour
     {
         if (other == null) return;
 
-        Home homecript = other.GetComponent<Home>();
-        if (homecript != null)
+        Home homeScript = other.GetComponent<Home>();
+        if (homeScript != null)
         {
             float time = 0f;
 
@@ -994,33 +1007,36 @@ public class Animal : MonoBehaviour
                     timeSlept = Time.time;
 
                     time = (Random.Range(8.5f, 9.5f) * 60f) + (stats.additionalSleepHours * 60f); //6-8 hours + extra sleep hours
-                    homecript.EnterBurrowForSleep(this, time);
+                    homeScript.EnterBurrowForSleep(this, time);
                     break;
                 case AnimalState.Running:
                     currentState = AnimalState.Hiding;
                     time = stats.waitBeforeLeavingBurrow;
 
-                    homecript.EnterBurrow(this, time);
+                    homeScript.EnterBurrow(this, time);
                     break;
                 case AnimalState.MakingBurrow:
                     currentState = AnimalState.DiggingBurrow;
                     time = 5f;
 
-                    homecript.EnterBurrow(this, time);
+                    homeScript.EnterBurrow(this, time);
 
                     //bug fix, some other rabbit made the burrow but this one enters,
-                    home = homecript;
+                    home = homeScript;
                     break;
                 case AnimalState.GoingToMate:
-                    currentState = AnimalState.Mating;
+                    if (homeScript.GetComponent<Home>() == targetBurrow)
+                    {
+                        currentState = AnimalState.Mating;
 
-                    wantsToReproduce = false;
-                    stats.reproduceDaysLeft = stats.reproduceCooldownDays;
+                        wantsToReproduce = false;
+                        stats.reproduceDaysLeft = stats.reproduceCooldownDays;
 
-                    time = 30f;
+                        time = 30f;
 
-                    //giving birth is called by burrow after 20 seconds
-                    homecript.EnterBurrowForMating(this, time);
+                        //giving birth is called by burrow after 20 seconds
+                        homeScript.EnterBurrowForMating(this, time);
+                    }
                     break;
             }
         }
