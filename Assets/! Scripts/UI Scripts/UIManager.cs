@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI targetSpecies;
     public TextMeshProUGUI targetAction;
     public TextMeshProUGUI targetAge;
+    public TextMeshProUGUI targetGeneration;
     public TextMeshProUGUI targetGender;
 
     [Header("Sliders")]
@@ -39,6 +40,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI thirstText;
 
     [Header("Genes Display")]
+    public TextMeshProUGUI geneCountText;
     public GameObject genePrefab;
     public Transform genePanel;
 
@@ -147,7 +149,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    //Stats = changing variables 
+    //UpdateTargetStats sets things constantly
     public void UpdateTargetStats()
     {
         if (cameraScript.target != null && statsPanel.activeSelf)
@@ -178,7 +180,8 @@ public class UIManager : MonoBehaviour
             if (animalScript != null) targetAction.text = "Action: " + animalScript.currentState.ToString();
         }
     }
-    //ui = personality or target type
+
+    //UpdateTargetUI sets ui once every new target
     public void UpdateTargetUI()
     {
         foreach (Transform child in genePanel.transform)
@@ -191,21 +194,28 @@ public class UIManager : MonoBehaviour
             slidersPanel.SetActive(true);
             statsPanel.SetActive(true);
 
-            //Setting Target Information
-            string targetType = cameraScript.target.gameObject.layer == LayerMask.NameToLayer("Wolf") ? "Wolf" :
-                                cameraScript.target.gameObject.layer == LayerMask.NameToLayer("Rabbit") ? "Rabbit" :
-                                "Unknown";
-            string targetName = cameraScript.target.GetComponent<Animal>().animalName;
+            Transform target = cameraScript.target;
+            Animal targetAnimalScript = target.GetComponent<Animal>();
+            Stats targetStats = cameraScript.target.GetComponent<Stats>();
 
+            //Setting Target Information
+            string targetType = targetAnimalScript.animalType.ToString();
+            string targetName = targetAnimalScript.animalName;
             targetText.text = "Target: " + targetName + " - " + targetType;
 
-            targetSpecies.text = "Species: " + cameraScript.target.GetComponent<Animal>().GetAnimalSpecies().ToString();
+            targetSpecies.text = "Species: " + targetAnimalScript.GetAnimalSpecies().ToString();
 
-            Stats targetStats = cameraScript.target.GetComponent<Stats>();
+            targetGeneration.text = "Generation: " + targetStats.generation;
+
+            //GENES
             if (targetStats)
             {
-                //Personality
                 List<Genes> genes = targetStats.genes;
+
+                //Text
+                geneCountText.text = "Genes (" + genes.Count + ") :";
+
+                //Gene Buttons
                 foreach (Genes gene in genes)
                 {
                     GameObject newPersonality = Instantiate(genePrefab, genePanel);
@@ -235,8 +245,10 @@ public class UIManager : MonoBehaviour
             statsPanel.SetActive(false);
 
             targetText.text = "Target: None";
+            targetSpecies.text = "Species: -";
             targetAction.text = "Action: -";
             targetAge.text = "Age: -";
+            targetGeneration.text = "Generation: -";
             targetGender.text = "Gender: -";
         }
     }
@@ -248,6 +260,8 @@ public class UIManager : MonoBehaviour
             dayNightText.text = "DayTime " + "| "  + "Day " + DayNightManager.Instance.dayNumber;
         else dayNightText.text = "NightTime "+ "| " + "Day " + +DayNightManager.Instance.dayNumber;
     }
+
+    //UpdateAnimalStats runs once called by UpdateTargetUI
     public void UpdateAnimalStats(Animal animalScript)
     {
         Stats statScript = animalScript.stats;

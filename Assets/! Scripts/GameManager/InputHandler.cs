@@ -99,7 +99,7 @@ public class InputHandler : MonoBehaviour
             isOverHeadDebugStats = !isOverHeadDebugStats;
 
             UIManager.Instance.SetDebugModeDisplayUI(!isOverHeadDebugStats);
-            WorldStats.Instance.ToggleAnimalOverHeadUI(isOverHeadDebugStats);
+            AnimalContainer.Instance.ToggleAnimalOverHeadUI(isOverHeadDebugStats);
             UIManager.Instance.UpdateTargetUI();
         }
 

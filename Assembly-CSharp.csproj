@@ -65,24 +65,25 @@
     <Compile Include="Assets\! Scripts\Quality Scripts\DynamicTextBackground.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\RandomRotation.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\AutoMemoryPreallocator.cs" />
+    <Compile Include="Assets\! Scripts\Animal\AnimalNameGet.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\GeneUI.cs" />
     <Compile Include="Assets\! Scripts\GameManager\InputHandler.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\Billboard.cs" />
-    <Compile Include="Assets\! Scripts\WorldStats.cs" />
-    <Compile Include="Assets\! Scripts\AnimalNameGet.cs" />
+    <Compile Include="Assets\! Scripts\GameManager\WorldStats.cs" />
     <Compile Include="Assets\! Scripts\GameManager\TerminationCondition.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\UIManager.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\ButtonCleanup.cs" />
+    <Compile Include="Assets\! Scripts\Animal\Stats.cs" />
+    <Compile Include="Assets\! Scripts\Animal\Rabbit.cs" />
+    <Compile Include="Assets\! Scripts\Animal\Animal.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\HistoryEvent.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\! Scripts\Environment.cs" />
     <Compile Include="Assets\! Scripts\Home.cs" />
     <Compile Include="Assets\! Scripts\GameManager\DayNightManager.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\PersonalityButton.cs" />
-    <Compile Include="Assets\! Scripts\Rabbit.cs" />
-    <Compile Include="Assets\! Scripts\Animal.cs" />
-    <Compile Include="Assets\! Scripts\Stats.cs" />
     <Compile Include="Assets\! Scripts\FoodSource.cs" />
+    <Compile Include="Assets\! Scripts\UI Scripts\AnimalContainer.cs" />
     <Compile Include="Assets\! Scripts\GameManager\GeneManager.cs" />
   </ItemGroup>
   <ItemGroup>
