@@ -136,11 +136,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modelHolder: {fileID: 3316166840762998527}
   foodType: 0
+  minFoodToEat: 15
+  maxFood: 60
+  foodReplenishedPerSecond: 0.2
+  instantConsumable: 0
+  instantFood: 0
   canEat: 0
   foodAvailable: 0
-  minFoodToEat: 10
-  maxFood: 25
-  foodReplenishedPerSecond: 0.1
 --- !u!135 &5940460506226367523
 SphereCollider:
   m_ObjectHideFlags: 0

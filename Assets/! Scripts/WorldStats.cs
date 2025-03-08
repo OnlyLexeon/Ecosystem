@@ -37,7 +37,7 @@ public class WorldStats : MonoBehaviour
         foreach (Transform child in transform)
         {
             Animal childAnimalScript = child.GetComponent<Animal>();
-            if (childAnimalScript != null)
+            if (childAnimalScript != null && !childAnimalScript.isDead)
             {
                 childAnimalScript.ToggleUI(state);
             }
