@@ -54,6 +54,12 @@ public class InputHandler : MonoBehaviour
 
     void Update()
     {
+        //handle pause
+        if (Input.GetKeyDown(KeyCode.Escape) && !isGenePanelOpen)
+        {
+            TogglePause();
+        }
+
         //NO INPUT HANDLING WHEN DOING GENE
         if (isGenePanelOpen && Input.GetKeyDown(KeyCode.Escape)) ToggleGeneMenu();
         else if (isGenePanelOpen) return;
@@ -74,12 +80,6 @@ public class InputHandler : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
         {
             ToggleGeneMenu();
-        }
-
-        //handle pause
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
         }
 
         //handle arrow keys

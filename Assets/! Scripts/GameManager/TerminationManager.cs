@@ -15,7 +15,7 @@ public enum TerminationConditionType
 public class TerminationManager : MonoBehaviour
 {
     [Header("'_' Symbol means Set Value Below (Condition)")]
-    public List<TerminationCondition> terminationConditions = new List<TerminationCondition>();
+    public TerminationCondition terminationCondition;
 
     public static TerminationManager Instance;
 
@@ -26,34 +26,31 @@ public class TerminationManager : MonoBehaviour
 
     public bool CheckTermination()
     {
-        foreach (var condition in terminationConditions)
+        switch (terminationCondition.conditionType)
         {
-            switch (condition.conditionType)
-            {
-                case TerminationConditionType.SurvivedTillOldAge:
-                    if (CheckSurvivedTillOldAge(condition.targetAnimalType))
-                        return true;
-                    break;
+            case TerminationConditionType.SurvivedTillOldAge:
+                if (CheckSurvivedTillOldAge(terminationCondition.targetAnimalType))
+                    return true;
+                break;
 
-                case TerminationConditionType.GenerationReached_:
-                    if (CheckGenerationCount(condition.targetAnimalType, condition.generationReachedThreshold))
-                        return true;
-                    break;
+            case TerminationConditionType.GenerationReached_:
+                if (CheckGenerationCount(terminationCondition.targetAnimalType, terminationCondition.generationReachedThreshold))
+                    return true;
+                break;
 
-                case TerminationConditionType.NumberOfAnimals_:
-                    if (CheckNumberOfAnimals(condition.targetAnimalType, condition.numberOfAnimalsThreshold))
-                        return true;
-                    break;
+            case TerminationConditionType.NumberOfAnimals_:
+                if (CheckNumberOfAnimals(terminationCondition.targetAnimalType, terminationCondition.numberOfAnimalsThreshold))
+                    return true;
+                break;
 
-                case TerminationConditionType.PerfectIndividual:
-                    if (CheckAnyAnimalWithAllPositiveGenes(condition.targetAnimalType))
-                        return true;
-                    break;
-                case TerminationConditionType.Extinction:
-                    if (CheckExtinction(condition.targetAnimalType))
-                        return true;
-                    break;
-            }
+            case TerminationConditionType.PerfectIndividual:
+                if (CheckAnyAnimalWithAllPositiveGenes(terminationCondition.targetAnimalType))
+                    return true;
+                break;
+            case TerminationConditionType.Extinction:
+                if (CheckExtinction(terminationCondition.targetAnimalType))
+                    return true;
+                break;
         }
 
         return false;
@@ -62,7 +59,7 @@ public class TerminationManager : MonoBehaviour
     private bool CheckSurvivedTillOldAge(AnimalType animalType)
     {
         // Check if any animal of the given type has reached old age
-        foreach (GameObject child in AnimalContainer.Instance.transform)
+        foreach (Transform child in AnimalContainer.Instance.transform)
         {
             Animal childScript = child.GetComponent<Animal>();
             if (childScript != null && childScript.animalType == animalType && childScript.stats.agedDays >= childScript.stats.deathDays)
