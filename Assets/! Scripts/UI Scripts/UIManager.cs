@@ -199,11 +199,11 @@ public class UIManager : MonoBehaviour
             Stats targetStats = cameraScript.target.GetComponent<Stats>();
 
             //Setting Target Information
-            string targetType = targetAnimalScript.animalType.ToString();
+            string targetType = targetAnimalScript.animalType.animalName.ToString();
             string targetName = targetAnimalScript.animalName;
             targetText.text = "Target: " + targetName + " - " + targetType;
 
-            targetSpecies.text = "Species: " + targetAnimalScript.GetAnimalSpecies().ToString();
+            targetSpecies.text = "Fur Type: " + targetAnimalScript.furType.furName.ToString();
 
             targetGeneration.text = "Generation: " + targetStats.generation;
 

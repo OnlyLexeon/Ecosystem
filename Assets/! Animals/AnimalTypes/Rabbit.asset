@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586db1e57c09cd145907efa98ed50ebf, type: 3}
+  m_Name: Rabbit
+  m_EditorClassIdentifier: 
+  animalName: Rabbit
+  furTypes:
+  - {fileID: 11400000, guid: 7438abf9ea5e12b4b9efc8ba9b4fee1e, type: 2}
+  - {fileID: 11400000, guid: 3c6a0b4e518a37b44a685a55c08b8fa8, type: 2}
+  - {fileID: 11400000, guid: fef3688603c2e8f4aaa4bff0b9e44e6e, type: 2}
+  - {fileID: 11400000, guid: 99b417d35bc84b3499b4ed970401194c, type: 2}
+  - {fileID: 11400000, guid: df4823c31a8a1564ea05d62928c3500e, type: 2}
+  - {fileID: 11400000, guid: 9af28dd224056b347a31b8658a1dde3b, type: 2}
+  animalPrefab: {fileID: 1151711369364588460, guid: c6677f50628037e41a90b08217477666, type: 3}

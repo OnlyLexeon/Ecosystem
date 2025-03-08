@@ -47,6 +47,10 @@ public class DayNightManager : MonoBehaviour
 
             //New Day
             System.GC.Collect();
+
+            //Check Termination Condition
+            if (TerminationManager.Instance) TerminationManager.Instance.CheckTermination();
+            else Debug.LogWarning("No Termination Condition Set!");
         }
 
         //Set day/night bools
@@ -122,9 +126,9 @@ public class DayNightManager : MonoBehaviour
             speedText.fontSize = 26;
         }
     }
-    public void SetSpeed(float value)
+    public void PauseTime()
     {
-        currentTimeSpeed = 1;
+        currentTimeSpeed = 0;
         Time.timeScale = currentTimeSpeed;
         UpdateSpeedText();
     }

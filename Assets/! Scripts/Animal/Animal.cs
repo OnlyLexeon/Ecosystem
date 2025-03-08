@@ -28,15 +28,9 @@ public enum AnimalState
     Mating,
 }
 
-public enum AnimalType
-{
-    Rabbit,
-    Wolf,
-}
-
 public class Animal : MonoBehaviour
 {
-    [Header("Animal Settings* (!Set This!)")]
+    [Header("Animal Settings* (!!Set This!!)")]
     public List<FoodType> foodTypeEdible;
     public AnimalType animalType;
     public List<LayerMask> predators;
@@ -59,14 +53,12 @@ public class Animal : MonoBehaviour
     [Tooltip("This animal's stat script.")] public Stats stats;
     public Home home;
     [Tooltip("Reference to 'Model' GameObject in Rabbit GameObject's children in hierarchy.")] public Transform modelHolder;
+    [Tooltip("Determine Animal Fur Color")] public FurType furType;
 
     [Header("Family References (Auto)")]
     public List<GameObject> children;
     public GameObject father;
     public GameObject mother;
-
-    [Header("Rabbit Only")]
-    [Tooltip("Determines the Rabbit's fur color.")] public RabbitTypes rabbitType;
     
     [Header("Stats HUD")]
     public TextMeshProUGUI nameText;
@@ -123,7 +115,8 @@ public class Animal : MonoBehaviour
             stats.AssignRandomPersonalities();
 
             //Apply Model Skin
-            rabbitType = (RabbitTypes)Random.Range(0, System.Enum.GetValues(typeof(RabbitTypes)).Length);
+            furType = animalType.furTypes[Random.Range(0, animalType.furTypes.Count)];
+
             SetAnimalSkinModel();
         }
 
@@ -231,7 +224,7 @@ public class Animal : MonoBehaviour
 
                 //History
                 string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                    $"{animalName} - {animalType} ({rabbitType}) has taken damage by Hunger!";
+                    $"{animalName} - {animalType} ({furType}) has taken damage by Hunger!";
                 UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
             }
         }
@@ -245,7 +238,7 @@ public class Animal : MonoBehaviour
 
                 //History
                 string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                    $"{animalName} - {animalType} ({rabbitType}) has taken damage by Thirst!";
+                    $"{animalName} - {animalType} ({furType}) has taken damage by Thirst!";
                 UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
             }
         }
@@ -270,7 +263,7 @@ public class Animal : MonoBehaviour
 
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-            $"{animalName} - {animalType} ({rabbitType}) has died!";
+            $"{animalName} - {animalType} ({furType}) has died!";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Disable Collider
@@ -473,10 +466,9 @@ public class Animal : MonoBehaviour
     }
     public bool CheckPreferedGenes(Animal targetScript)
     {
-        List<Genes> targetGenes = targetScript.stats.genes;
         // Count positive and negative genes
-        int positiveGeneCount = targetGenes.Count(g => g.positivity == Positivity.Positive || g.positivity == Positivity.ExtremelyPositive);
-        int negativeGeneCount = targetGenes.Count(g => g.positivity == Positivity.Negative || g.positivity == Positivity.ExtremelyNegative);
+        int positiveGeneCount = targetScript.stats.GetPositiveGenesCount();
+        int negativeGeneCount = targetScript.stats.GetNegativeGenesCount();
 
         // Check conditions
         bool meetsPositiveRequirement = positiveGeneCount >= stats.minPositiveGenesPrefered;
@@ -511,10 +503,10 @@ public class Animal : MonoBehaviour
 
     //Only called by the female
     //GENETIC ALGORITHM!!
-    public object DetermineFurInheritance(Animal mateScript)
+    public FurType DetermineFurInheritance(Animal mateScript)
     {
-        object motherFur = GetAnimalSpecies();
-        object fatherFur = mateScript.GetAnimalSpecies();
+        FurType motherFur = GetAnimalSpecies();
+        FurType fatherFur = mateScript.GetAnimalSpecies();
 
         //Determine WINNER
         float motherDominance = stats.furDominance;
@@ -558,7 +550,7 @@ public class Animal : MonoBehaviour
 
             //History
             string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                $"{childScript.animalName} - {childScript.animalType} ({childScript.rabbitType}) has mutated genetically with chance {mutationChance}%! Replaced Gene: {tempGene.name} | Mutated Into: {mutatedGene.name}";
+                $"{childScript.animalName} - {childScript.animalType} ({childScript.furType}) has mutated genetically with chance {mutationChance}%! Replaced Gene: {tempGene.name} | Mutated Into: {mutatedGene.name}";
             UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(childScript.transform));
         }
 
@@ -619,7 +611,7 @@ public class Animal : MonoBehaviour
 
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-            $"{animalName} - {animalType} ({rabbitType}) has given birth to {totalOffspring} children! Father: {mateScript.animalName}";
+            $"{animalName} - {animalType} ({furType}) has given birth to {totalOffspring} children! Father: {mateScript.animalName}";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Spawning Rabbits
@@ -639,7 +631,7 @@ public class Animal : MonoBehaviour
             childScript.isAdult = false;
             childScript.timeSlept = timeSlept;
             //Set Fur Color
-            object furColor = DetermineFurInheritance(mateScript); //object - because can be RabbitType, WolfType use object as common var
+            FurType furColor = DetermineFurInheritance(mateScript); //object - because can be RabbitType, WolfType use object as common var
             childScript.SetAnimalSkinModel(furColor);
 
             //GENETIC ALGORITHM!!
@@ -1144,100 +1136,45 @@ public class Animal : MonoBehaviour
     //DIFFERENT ANIMALS, DIFFERENT CALCS, BEHAVIOR, FUNCTIONS
     public GameObject GetChildPrefabBirth()
     {
-        switch(animalType)
-        {
-            case AnimalType.Rabbit:
-                return Rabbit.Instance.rabbitPrefab;
-            default:
-                return Rabbit.Instance.rabbitPrefab;
-        }
+        return animalType?.animalPrefab;
     }
-    public object GetAnimalSpecies()
+    public FurType GetAnimalSpecies()
     {
-        switch(animalType)
-        {
-            case AnimalType.Rabbit:
-                return rabbitType;
-            case AnimalType.Wolf:
-                return rabbitType;
-            default:
-                return null;
-        }
+        return furType;
     }
     public void DoSpawnAddNumberToStats()
     {
-        switch (animalType)
-        {
-            case AnimalType.Rabbit:
-                WorldStats.Instance.PlusRabbitCount();
-                break;
-            default:
-                break;
-        }
+        WorldStats.Instance.PlusAnimalCount(animalType.animalName);
     }
+
     public void DoDieMinusNumberFromStats()
     {
-        switch (animalType)
-        {
-            case AnimalType.Rabbit:
-                WorldStats.Instance.MinusRabbitCount();
-                break;
-            default:
-                break;
-        }
+        WorldStats.Instance.MinusAnimalCount(animalType.animalName);
     }
-    public void SetAnimalSkinModel() //spawning
-    {
-        ClearModelHolderChild();
 
-        switch (animalType)
-        {
-            case AnimalType.Rabbit:
-                Instantiate(Rabbit.Instance.GetRabbitModel(rabbitType), modelHolder);
-                break;
-            default:
-                break;
-        }
-    }
-    public void SetAnimalSkinModel(object furType) //give birth
-    {
-        ClearModelHolderChild();
-
-        switch (animalType)
-        {
-            case AnimalType.Rabbit:
-                if (furType is RabbitTypes rabbitFur)
-                {
-                    Instantiate(Rabbit.Instance.GetRabbitModel(rabbitFur), modelHolder);
-                    rabbitType = rabbitFur;
-                }
-                else
-                    Debug.LogError("Invalid fur type passed to SetAnimalSkinModel!");
-                break;
-            default:
-                break;
-        }
-    }
     public void CheckAnimalGeneration()
     {
-        switch (animalType)
-        {
-            case AnimalType.Rabbit:
-                WorldStats.Instance.CheckRabbitGeneration(stats.generation);
-                break;
-            default:
-                break;
-        }
+        WorldStats.Instance.CheckAnimalGeneration(animalType.animalName, stats.generation, this);
+    }
+    public void SetAnimalSkinModel()
+    {
+        ClearModelHolderChild();
+        if (furType?.model != null)
+            Instantiate(furType.model, modelHolder);
+    }
+    public void SetAnimalSkinModel(FurType newFurType)
+    {
+        ClearModelHolderChild();
+        furType = newFurType;
+        if (furType?.model != null)
+            Instantiate(furType.model, modelHolder);
     }
 
-
     //OTHER FUNCTIONS
-    public void ClearModelHolderChild()
+    private void ClearModelHolderChild()
     {
         foreach (Transform child in modelHolder)
-        {
             Destroy(child.gameObject);
-        }
     }
     Transform FindFirstChildWithTag(Transform parent, string tag)
     {

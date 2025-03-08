@@ -67,7 +67,7 @@ public class InputHandler : MonoBehaviour
         //Handle Set Time to 1
         if (Input.GetKeyDown(KeyCode.P))
         {
-            DayNightManager.Instance.SetSpeed(1);
+            DayNightManager.Instance.PauseTime();
         }
 
         //handle Gene

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
@@ -257,6 +258,17 @@ public class Stats : MonoBehaviour
         maxDeathTime = Mathf.Min(maxDeathTime, 1200); // 8pm
         minDeathTime = Mathf.Max(minDeathTime, 0); //0 - Start of day
     }
+
+    public int GetPositiveGenesCount()
+    {
+        return genes.Count(g => g.positivity == Positivity.Positive || g.positivity == Positivity.ExtremelyPositive);
+    }
+
+    public int GetNegativeGenesCount()
+    {
+        return genes.Count(g => g.positivity == Positivity.Negative || g.positivity == Positivity.ExtremelyNegative);
+    }
+
 }
 
 public enum Gender

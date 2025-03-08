@@ -6,56 +6,77 @@ using TMPro;
 
 public class WorldStats : MonoBehaviour
 {
-    [Header("Rabbit")]
-    public int rabbitCount;
-    public int rabbitTotalGenes;
-    public int rabbitPositiveGenes;
-    public int rabbitNegativeGenes;
-    public int rabbitGeneration;
-
     public static WorldStats Instance;
+
+    public Animal animalHighestGeneration;
 
     private void Awake()
     {
         Instance = this;
     }
 
-    public void CheckRabbitGeneration(int value)
+    // Dictionary to store animal stats dynamically
+    public Dictionary<string, AnimalWorldStats> animalStats = new Dictionary<string, AnimalWorldStats>();
+
+
+    // Get or create stats for a given animal type
+    private AnimalWorldStats GetAnimalStats(string animalType)
     {
-        if (value > rabbitGeneration)
+        if (!animalStats.ContainsKey(animalType))
         {
-            rabbitGeneration = value;
+            animalStats[animalType] = new AnimalWorldStats();
+        }
+        return animalStats[animalType];
+    }
 
+    // Increment the count of an animal type
+    public void PlusAnimalCount(string animalType)
+    {
+        GetAnimalStats(animalType).count++;
+    }
 
+    // Decrement the count of an animal type
+    public void MinusAnimalCount(string animalType)
+    {
+        GetAnimalStats(animalType).count--;
+    }
+
+    // Update generation if a higher generation is found
+    public void CheckAnimalGeneration(string animalType, int generation, Animal _animalHighestGeneration)
+    {
+        var stats = GetAnimalStats(animalType);
+        if (generation > stats.generation)
+        {
+            stats.generation = generation;
+            animalHighestGeneration = _animalHighestGeneration;
         }
     }
 
-    public void PlusRabbitCount()
+    // Get the count of a specific animal type
+    public int GetAnimalCount(string animalType)
     {
-        rabbitCount++;
+        return GetAnimalStats(animalType).count;
     }
 
-    public void MinusRabbitCount()
+    public int GetAnimalGeneration(string animalType)
     {
-        rabbitCount--;
+        return GetAnimalStats(animalType).generation;
     }
 
-<<<<<<< Updated upstream:Assets/! Scripts/WorldStats.cs
-    public void ToggleAnimalOverHeadUI(bool state)
+    public Animal GetAnimalWithHighestGeneration()
     {
-        isAnimalOverHeadUIEnabled = state;
-
-        foreach (Transform child in transform)
-        {
-            Animal childAnimalScript = child.GetComponent<Animal>();
-            if (childAnimalScript != null && !childAnimalScript.isDead)
-            {
-                childAnimalScript.ToggleUI(state);
-            }
-        }
-
+        return animalHighestGeneration;
     }
-=======
-    
->>>>>>> Stashed changes:Assets/! Scripts/GameManager/WorldStats.cs
 }
+
+// Structure to store stats for each animal type
+[System.Serializable]
+public class AnimalWorldStats
+{
+    public int count;
+    public int totalGenes;
+    public int positiveGenes;
+    public int negativeGenes;
+    public int generation;
+}
+

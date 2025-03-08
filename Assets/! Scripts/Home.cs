@@ -30,7 +30,7 @@ public class Home : MonoBehaviour
         //Debug.Log("Burrow For Seggs!");
 
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                $"{animal.animalName} - {animal.animalType} ({animal.rabbitType}) entered a burrow to mate <3";
+                $"{animal.animalName} - {animal.animalType} ({animal.furType}) entered a burrow to mate <3";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(animal.transform));
 
         animalInside.Add(animal);
