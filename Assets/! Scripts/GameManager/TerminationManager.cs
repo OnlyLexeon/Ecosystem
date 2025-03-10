@@ -68,7 +68,7 @@ public class TerminationManager : MonoBehaviour
                 DayNightManager.Instance.PauseTime();
                 //History
                 string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                    $"Termination Condition Reached!\n{childScript.animalName} - {childScript.animalType} ({childScript.furType}) has Survived till Old Age! Current Age: {childScript.stats.agedDays}/{childScript.stats.deathDays}";
+                    $"Termination Condition Reached!\n{childScript.animalName} - {childScript.animalType.ToString()} ({childScript.furType.ToString()}) has Survived till Old Age! Current Age: {childScript.stats.agedDays}/{childScript.stats.deathDays}";
                 UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(childScript.transform));
 
                 return true;

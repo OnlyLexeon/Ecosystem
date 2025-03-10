@@ -45,8 +45,8 @@ public class DayNightManager : MonoBehaviour
             time = 0f;
             dayNumber++;
 
-            //New Day
-            System.GC.Collect();
+            //Age all animals by 1
+            AnimalContainer.Instance.UpdateAllAnimalAges();
 
             //Check Termination Condition
             if (TerminationManager.Instance) TerminationManager.Instance.CheckTermination();
@@ -129,6 +129,12 @@ public class DayNightManager : MonoBehaviour
     public void PauseTime()
     {
         currentTimeSpeed = 0;
+        Time.timeScale = currentTimeSpeed;
+        UpdateSpeedText();
+    }
+    public void SetTime(float value)
+    {
+        currentTimeSpeed = value;
         Time.timeScale = currentTimeSpeed;
         UpdateSpeedText();
     }

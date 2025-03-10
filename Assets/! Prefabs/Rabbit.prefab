@@ -359,7 +359,7 @@ MonoBehaviour:
   maxThirst: 100
   regenAmount: 1
   adultDays: 3
-  deathDays: 15
+  deathDays: 4
   minDeathTime: 360
   maxDeathTime: 1080
   deathTime: 0
@@ -436,6 +436,7 @@ MonoBehaviour:
   healthValueText: {fileID: 8692799725329430948}
   hungerValueText: {fileID: 2811097628200726827}
   thirstValueText: {fileID: 3796437238515423306}
+  toMateBurrow: {fileID: 0}
   wasSpawnedByUser: 0
 --- !u!195 &6372509079974295027
 NavMeshAgent:

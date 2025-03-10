@@ -3,32 +3,44 @@
   "WorkspaceRootPath": "D:\\admin\\Downloads\\Ecosystem\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\animal\\animal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\animal\\animal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|d:\\admin\\downloads\\ecosystem\\assets\\! scripts\\animal\\furtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\animal\\furtype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\gamemanager\\inputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\gamemanager\\inputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|d:\\admin\\downloads\\ecosystem\\assets\\! scripts\\animal\\animaltype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\animal\\animaltype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|d:\\admin\\downloads\\ecosystem\\assets\\! scripts\\gamemanager\\terminationmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\gamemanager\\terminationmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\gamemanager\\terminationmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|d:\\admin\\downloads\\ecosystem\\assets\\! scripts\\animal\\animal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\animal\\animal.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\ui scripts\\animalcontainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\ui scripts\\animalcontainer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\gamemanager\\daynightmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\gamemanager\\daynightmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\gamemanager\\worldstats.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\gamemanager\\worldstats.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|d:\\admin\\downloads\\ecosystem\\assets\\! scripts\\home.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\home.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\animal\\stats.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\animal\\stats.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\gamemanager\\daynightmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\gamemanager\\daynightmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\gamemanager\\inputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\gamemanager\\inputhandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|D:\\admin\\Downloads\\Ecosystem\\assets\\! scripts\\gamemanager\\worldstats.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6B7F7012-FCB1-9818-61F7-E09BA0898AE9}|Assembly-CSharp.csproj|solutionrelative:assets\\! scripts\\gamemanager\\worldstats.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,8 +50,47 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FurType.cs",
+              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\FurType.cs",
+              "RelativeDocumentMoniker": "Assets\\! Scripts\\Animal\\FurType.cs",
+              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\FurType.cs",
+              "RelativeToolTip": "Assets\\! Scripts\\Animal\\FurType.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAABCAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-10T12:17:56.792Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AnimalType.cs",
+              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\AnimalType.cs",
+              "RelativeDocumentMoniker": "Assets\\! Scripts\\Animal\\AnimalType.cs",
+              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\AnimalType.cs",
+              "RelativeToolTip": "Assets\\! Scripts\\Animal\\AnimalType.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-10T12:17:29.551Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Animal.cs",
+              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\Animal.cs",
+              "RelativeDocumentMoniker": "Assets\\! Scripts\\Animal\\Animal.cs",
+              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\Animal.cs",
+              "RelativeToolTip": "Assets\\! Scripts\\Animal\\Animal.cs",
+              "ViewState": "AQIAAFoBAAAAAAAAAIAywGgBAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-08T06:46:29.938Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 2,
@@ -48,65 +99,66 @@
               "RelativeDocumentMoniker": "Assets\\! Scripts\\GameManager\\TerminationManager.cs",
               "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\TerminationManager.cs",
               "RelativeToolTip": "Assets\\! Scripts\\GameManager\\TerminationManager.cs",
-              "ViewState": "AQIAAAwAAAAAAAAAAAAqwC8AAAAgAAAA",
+              "ViewState": "AQIAACsAAAAAAAAAAAAgwE4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-08T07:10:58.031Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "InputHandler.cs",
-              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\InputHandler.cs",
-              "RelativeDocumentMoniker": "Assets\\! Scripts\\GameManager\\InputHandler.cs",
-              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\InputHandler.cs",
-              "RelativeToolTip": "Assets\\! Scripts\\GameManager\\InputHandler.cs",
-              "ViewState": "AQIAAEsAAAAAAAAAAAAYwFkAAAAAAAAA",
+              "DocumentIndex": 5,
+              "Title": "Home.cs",
+              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Home.cs",
+              "RelativeDocumentMoniker": "Assets\\! Scripts\\Home.cs",
+              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Home.cs",
+              "RelativeToolTip": "Assets\\! Scripts\\Home.cs",
+              "ViewState": "AQIAABgAAAAAAAAAAAAowDMAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-08T05:54:30.46Z",
+              "WhenOpened": "2025-03-10T12:05:29.989Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Animal.cs",
-              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\Animal.cs",
-              "RelativeDocumentMoniker": "Assets\\! Scripts\\Animal\\Animal.cs",
-              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\Animal.cs",
-              "RelativeToolTip": "Assets\\! Scripts\\Animal\\Animal.cs",
-              "ViewState": "AQIAAPADAAAAAAAAAAAAAAYEAABCAAAA",
+              "DocumentIndex": 7,
+              "Title": "DayNightManager.cs",
+              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\DayNightManager.cs",
+              "RelativeDocumentMoniker": "Assets\\! Scripts\\GameManager\\DayNightManager.cs",
+              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\DayNightManager.cs",
+              "RelativeToolTip": "Assets\\! Scripts\\GameManager\\DayNightManager.cs",
+              "ViewState": "AQIAABMAAAAAAAAAAAAwwDIAAAApAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-08T06:46:29.938Z",
+              "WhenOpened": "2025-03-08T05:54:30.467Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "AnimalContainer.cs",
               "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\UI Scripts\\AnimalContainer.cs",
               "RelativeDocumentMoniker": "Assets\\! Scripts\\UI Scripts\\AnimalContainer.cs",
               "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\UI Scripts\\AnimalContainer.cs",
               "RelativeToolTip": "Assets\\! Scripts\\UI Scripts\\AnimalContainer.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "ViewState": "AQIAAAoAAAAAAAAAAAAgwCMAAAAuAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-08T06:43:17.459Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "DayNightManager.cs",
-              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\DayNightManager.cs",
-              "RelativeDocumentMoniker": "Assets\\! Scripts\\GameManager\\DayNightManager.cs",
-              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\DayNightManager.cs",
-              "RelativeToolTip": "Assets\\! Scripts\\GameManager\\DayNightManager.cs",
-              "ViewState": "AQIAABIAAAAAAAAAAAAIwDQAAABDAAAA",
+              "DocumentIndex": 8,
+              "Title": "InputHandler.cs",
+              "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\InputHandler.cs",
+              "RelativeDocumentMoniker": "Assets\\! Scripts\\GameManager\\InputHandler.cs",
+              "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\InputHandler.cs",
+              "RelativeToolTip": "Assets\\! Scripts\\GameManager\\InputHandler.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAFgAAAAcAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-08T05:54:30.467Z"
+              "WhenOpened": "2025-03-08T05:54:30.46Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "WorldStats.cs",
               "DocumentMoniker": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\GameManager\\WorldStats.cs",
               "RelativeDocumentMoniker": "Assets\\! Scripts\\GameManager\\WorldStats.cs",
@@ -124,9 +176,10 @@
               "RelativeDocumentMoniker": "Assets\\! Scripts\\Animal\\Stats.cs",
               "ToolTip": "D:\\admin\\Downloads\\Ecosystem\\Assets\\! Scripts\\Animal\\Stats.cs",
               "RelativeToolTip": "Assets\\! Scripts\\Animal\\Stats.cs",
-              "ViewState": "AQIAAIUAAAAAAAAAAAAwwAUBAAAkAAAA",
+              "ViewState": "AQIAALsAAAAAAAAAAAAuwAUBAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-08T06:46:38.173Z"
+              "WhenOpened": "2025-03-08T06:46:38.173Z",
+              "EditorCaption": ""
             }
           ]
         }

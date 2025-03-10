@@ -78,7 +78,7 @@ public class Animal : MonoBehaviour
     private Transform targetFood;
     private Transform targetWater;
     private Transform targetBurrow;
-    private Transform toMateBurrow;
+    public Transform toMateBurrow;
     private Transform targetMate;
     private Transform detectedPredator;
     private float nextLookTime;
@@ -225,7 +225,7 @@ public class Animal : MonoBehaviour
 
                 //History
                 string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                    $"{animalName} - {animalType.animalName} ({furType.furName}) has taken damage by Hunger!";
+                    $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has taken damage by Hunger!";
                 UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
             }
         }
@@ -239,7 +239,7 @@ public class Animal : MonoBehaviour
 
                 //History
                 string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                    $"{animalName} - {animalType.animalName} ({furType.furName}) has taken damage by Thirst!";
+                    $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has taken damage by Thirst!";
                 UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
             }
         }
@@ -264,7 +264,7 @@ public class Animal : MonoBehaviour
 
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-            $"{animalName} - {animalType.animalName} ({furType.furName}) has died!";
+            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has died!";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Disable Collider
@@ -330,7 +330,7 @@ public class Animal : MonoBehaviour
     }
 
     //AGING
-    public void WakeUpAgeUpdate()
+    public void UpdateAge()
     {
         stats.agedDays++;
 
@@ -358,7 +358,7 @@ public class Animal : MonoBehaviour
     }
     public void CheckOldAgeDeath()
     {
-        if (!isDying && stats.deathTime >= DayNightManager.Instance.time)
+        if (!isDying && stats.deathTime >= DayNightManager.Instance.time && DayNightManager.Instance.isDay)
         {
             isDying = true;
         }
@@ -552,7 +552,7 @@ public class Animal : MonoBehaviour
 
             //History
             string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                $"{childScript.animalName} - {childScript.animalType.animalName} ({childScript.furType.furName}) has mutated genetically with chance {mutationChance}%! Replaced Gene: {tempGene.name} | Mutated Into: {mutatedGene.name}";
+                $"{childScript.animalName} - {childScript.animalType.animalName.ToString()} ({childScript.furType.furName.ToString()}) has mutated genetically with chance {mutationChance}%! Replaced Gene: {tempGene.name} | Mutated Into: {mutatedGene.name}";
             UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(childScript.transform));
         }
 
@@ -613,7 +613,7 @@ public class Animal : MonoBehaviour
 
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-            $"{animalName} - {animalType} ({furType}) has given birth to {totalOffspring} children! Father: {mateScript.animalName}";
+            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has given birth to {totalOffspring} children! Father: {mateScript.animalName}";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Spawning Rabbits
@@ -1028,7 +1028,7 @@ public class Animal : MonoBehaviour
                     break;
 
                 case AnimalState.GoingToMate:
-                    if (other.GetComponent<Home>() == toMateBurrow)
+                    if (homeScript.transform == toMateBurrow)
                     {
                         currentState = AnimalState.Mating;
 

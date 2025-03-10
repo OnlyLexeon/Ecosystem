@@ -25,4 +25,16 @@ public class AnimalContainer : MonoBehaviour
         }
 
     }
+
+    public void UpdateAllAnimalAges()
+    {
+        foreach (Transform child in transform)
+        {
+            Animal childAnimalScript = child.GetComponent<Animal>();
+            if (childAnimalScript != null)
+            {
+                childAnimalScript.UpdateAge();
+            }
+        }
+    }
 }

@@ -21,6 +21,10 @@ public class InputHandler : MonoBehaviour
     [Tooltip("is Gene panel open?")] public bool isGenePanelOpen = false;
     [Tooltip("Reference to Gene Menu in Canvas.")] public GameObject genePanel;
 
+    //world stats
+    [Tooltip("is World Stats panel open?")] public bool isWorldStatsOpen = false;
+    [Tooltip("Reference to World Stats in Canvas.")] public GameObject worldStats;
+
     //mode
     public bool isFollowingTarget = false;
     public bool isOverHeadDebugStats = false;
@@ -55,14 +59,15 @@ public class InputHandler : MonoBehaviour
     void Update()
     {
         //handle pause
-        if (Input.GetKeyDown(KeyCode.Escape) && !isGenePanelOpen)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            TogglePause();
+            if (!isGenePanelOpen && !isWorldStatsOpen) TogglePause();
+            else if (isGenePanelOpen) ToggleGeneMenu();
+            else if (isWorldStatsOpen) ToggleWorldStats();
         }
 
         //NO INPUT HANDLING WHEN DOING GENE
-        if (isGenePanelOpen && Input.GetKeyDown(KeyCode.Escape)) ToggleGeneMenu();
-        else if (isGenePanelOpen) return;
+        if (isGenePanelOpen || isWorldStatsOpen) return;
 
         //speed
         if (Input.GetKey(KeyCode.LeftShift))
@@ -73,13 +78,18 @@ public class InputHandler : MonoBehaviour
         //Handle Set Time to 1
         if (Input.GetKeyDown(KeyCode.P))
         {
-            DayNightManager.Instance.PauseTime();
+            DayNightManager.Instance.SetTime(1f);
         }
 
         //handle Gene
         if (Input.GetKeyDown(KeyCode.G))
         {
             ToggleGeneMenu();
+        }
+        //handle World Stats
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            ToggleWorldStats();
         }
 
         //handle arrow keys
@@ -311,6 +321,12 @@ public class InputHandler : MonoBehaviour
         }
     }
 
+    public void ToggleWorldStats()
+    {
+        isWorldStatsOpen = !isWorldStatsOpen;
+
+        worldStats.SetActive(isWorldStatsOpen);
+    }
     public void ToggleGeneMenu()
     {
         isGenePanelOpen = !isGenePanelOpen;

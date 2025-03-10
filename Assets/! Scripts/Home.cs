@@ -50,7 +50,6 @@ public class Home : MonoBehaviour
         if (isSlept == true)
         {
             animal.WakeUpCheckHorniness();
-            animal.WakeUpAgeUpdate();
         }
     }
 
