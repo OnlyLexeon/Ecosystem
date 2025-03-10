@@ -79,9 +79,9 @@ public class TerminationManager : MonoBehaviour
 
     private bool CheckGenerationCount(AnimalType animalType, int generationThreshold)
     {
-        int currentGeneration = WorldStats.Instance.GetAnimalGeneration(animalType.animalName);
+        int currentGeneration = WorldStats.Instance.GetAnimalGeneration(animalType);
+        Animal animal = WorldStats.Instance.GetAnimalWithHighestGeneration(animalType);
 
-        Animal animal = WorldStats.Instance.GetAnimalWithHighestGeneration();
         if (animal != null && currentGeneration >= generationThreshold)
         {
             //HISTORYT EVENT
@@ -98,7 +98,7 @@ public class TerminationManager : MonoBehaviour
 
     private bool CheckNumberOfAnimals(AnimalType animalType, int countThreshold)
     {
-        int count = WorldStats.Instance.GetAnimalCount(animalType.animalName);
+        int count = WorldStats.Instance.GetAnimalCount(animalType);
 
         if (count >= countThreshold)
         {
@@ -135,7 +135,7 @@ public class TerminationManager : MonoBehaviour
 
     private bool CheckExtinction(AnimalType animalType)
     {
-        int count = WorldStats.Instance.GetAnimalCount(animalType.ToString());
+        int count = WorldStats.Instance.GetAnimalCount(animalType);
         if (count == 0)
         {
             //HISTORYT EVENT

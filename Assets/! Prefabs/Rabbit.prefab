@@ -359,9 +359,9 @@ MonoBehaviour:
   maxThirst: 100
   regenAmount: 1
   adultDays: 3
-  deathDays: 4
-  minDeathTime: 360
-  maxDeathTime: 1080
+  deathDays: 12
+  minDeathTime: 480
+  maxDeathTime: 960
   deathTime: 0
   needsInterval: 1
   foodEatPerSecond: 2

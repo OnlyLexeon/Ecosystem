@@ -26,7 +26,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 4932
+  controlID: 10415
   draggingID: 0
 --- !u!114 &2
 MonoBehaviour:
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_MinSize: {x: 100, y: 100}
   m_MaxSize: {x: 8096, y: 16192}
   vertical: 1
-  controlID: 4909
+  controlID: 10416
   draggingID: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -761,9 +761,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -15.5, y: -0.00029999018, z: -31.5}
+    m_Target: {x: 32.996246, y: -16.355223, z: -42.74686}
     speed: 2
-    m_Value: {x: 20.237335, y: 3.6623497, z: -19.997515}
+    m_Value: {x: 32.99624, y: -16.355217, z: -42.746838}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -809,13 +809,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.13026631, y: 0.7762423, z: -0.17057963, w: -0.59280264}
+    m_Target: {x: 0.088315524, y: 0.8476001, z: -0.14926231, w: 0.5015313}
     speed: 2
-    m_Value: {x: -0.1302641, y: 0.7762292, z: -0.17057674, w: -0.59279263}
+    m_Value: {x: 0.082829356, y: 0.85464424, z: -0.1439026, w: 0.49194983}
   m_Size:
     m_Target: 35.782505
     speed: 2
-    m_Value: 1.3557143
+    m_Value: 35.782505
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1734,8 +1734,8 @@ MonoBehaviour:
     y: 428
     width: 982
     height: 505
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 201, y: 226}
+  m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 2}
   m_Panes:
   - {fileID: 2}
@@ -1760,8 +1760,8 @@ MonoBehaviour:
     y: 0
     width: 246
     height: 933
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 226}
+  m_MaxSize: {x: 4002, y: 4026}
   m_ActualView: {fileID: 9}
   m_Panes:
   - {fileID: 9}
@@ -1806,9 +1806,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 62db0000
-      m_LastClickedID: 56162
-      m_ExpandedIDs: e25ca1fc78c74efea0c84efeaec84efebcd256fed2d256fee61658fefc1658fe1438feffd23afeff4abdfeff56bdfeff62f7feff6af7feff32fbfeff3efbfeff8a16ffff8e16ffff9616ffffaa64ffffae64ffffb664ffff1672ffff1e72ffff2272ffffd2b8ffffdeb8ffff20fbffff1eac000016ae000018af0000d2b500002cb900007cbe0000bac00000c4c20000f2c4000068c5000028c900008cc90000c2cf000084d80000ead8000036da000060dc000014dd00008ce10000a6e200001ee40000cce500001ee6000054e60000d8e9000018ea000088eb0000c8ec000010ee0000
+      m_SelectedIDs: 9ca70000
+      m_LastClickedID: 42908
+      m_ExpandedIDs: e25ca1fc78c74efea0c84efeaec84efebcd256fed2d256fee61658fefc1658fe1438feffd23afeff4abdfeff62f7feff6af7feff32fbfeff8a16ffff8e16ffff9616ffffaa64ffffae64ffffb664ffff1672ffff1e72ffff2272ffffd2b8ffff20fbffff1eac000016ae000018af0000d2b500002cb900007cbe0000bac0000016c10000c4c20000f2c4000068c500008cc90000c2cf000084d80000ead8000036da000060dc000014dd00008ce10000a6e200001ee40000cce500001ee6000054e60000d8e9000018ea000088eb0000c8ec000010ee0000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1906,7 +1906,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/! Scripts/Animal
+    - Assets/! Scripts/GameManager
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1916,15 +1916,15 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/! Scripts/Animal
+  - Assets/! Scripts/GameManager
   m_LastFoldersGridSize: -1
   m_LastProjectPath: D:\admin\Downloads\Ecosystem
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 42f40000
-    m_LastClickedID: 62530
+    m_SelectedIDs: 44f40000
+    m_LastClickedID: 62532
     m_ExpandedIDs: 00000000e6f30000e8f30000eaf3000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1980,8 +1980,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 62db0000
-    m_LastClickedInstanceID: 56162
+    m_SelectedInstanceIDs: 9ca70000
+    m_LastClickedInstanceID: 42908
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: 
     m_RenameOverlay:

@@ -104,8 +104,7 @@ public class Animal : MonoBehaviour
         ScaleChild();
         if (stats.agedDays >= stats.adultDays) isAdult = true;
 
-        //SPAWNING UP DEBG STATS
-        DoSpawnAddNumberToStats();
+        
 
         //Assumes the rabbit was spawned, not natural
         //no genes set, age not 0, 
@@ -124,6 +123,12 @@ public class Animal : MonoBehaviour
         //APPLY STATS + GENES
         stats.ApplyGenesToStats();
         stats.SetStats();
+
+        //WORLD STATS
+        stats.UpdateWorldStatsGenes(animalType);
+        //SPAWNING DEBUG STATS
+        DoSpawnAddNumberToStats();
+        CheckAnimalGeneration();
 
         //SET AGE TIME
         CalculateDeathTime();
@@ -186,7 +191,7 @@ public class Animal : MonoBehaviour
                     MakeBurrow();
                 }
                 //Find Mates
-                if (detectedPredator == null && stats.fertile == 1 && wantsToReproduce && !isThirstCritical() && !isFoodCritical() && !isHealthCritical() && !targetMate)
+                if (detectedPredator == null && stats.fertile == 1 && wantsToReproduce && !isThirstCritical() && !isFoodCritical() && !isHealthCritical() && !targetMate && DayNightManager.Instance.isDay)
                 {
                     DetectMate();
                 }
@@ -613,14 +618,14 @@ public class Animal : MonoBehaviour
 
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has given birth to {totalOffspring} children! Father: {mateScript.animalName}";
+            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has given birth to {totalOffspring} children! Father: {mateScript.animalName} | Generation: {stats.generation + 1}";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Spawning Rabbits
         for (int i = 0; i < totalOffspring; i++)
         {
             //spawn child
-            GameObject child = Instantiate(GetChildPrefabBirth(), transform.position, Quaternion.identity, WorldStats.Instance.transform);
+            GameObject child = Instantiate(GetChildPrefabBirth(), transform.position, Quaternion.identity, AnimalContainer.Instance.transform);
             Animal childScript = child.GetComponent<Animal>();
 
             //INITIALIZE CHILD DEFAULTS
@@ -1084,11 +1089,11 @@ public class Animal : MonoBehaviour
     {
         statsHUD.SetActive(state);
 
-        //if (state)
-        //{
-        //    UpdateOverHeadUI();
-        //    UpdateOverHeadStats();
-        //}
+        if (state)
+        {
+            UpdateOverHeadUI();
+            UpdateOverHeadStats();
+        }
     }
     void UpdateOverHeadUI() //UI updated once only
     {
@@ -1151,17 +1156,17 @@ public class Animal : MonoBehaviour
     }
     public void DoSpawnAddNumberToStats()
     {
-        WorldStats.Instance.PlusAnimalCount(animalType.animalName);
+        WorldStats.Instance.PlusAnimalCount(animalType);
     }
 
     public void DoDieMinusNumberFromStats()
     {
-        WorldStats.Instance.MinusAnimalCount(animalType.animalName);
+        WorldStats.Instance.MinusAnimalCount(animalType);
     }
 
     public void CheckAnimalGeneration()
     {
-        WorldStats.Instance.CheckAnimalGeneration(animalType.animalName, stats.generation, this);
+        WorldStats.Instance.CheckAnimalGeneration(animalType, stats.generation, this);
     }
     public void SetAnimalSkinModel()
     {

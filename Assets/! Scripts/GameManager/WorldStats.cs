@@ -1,72 +1,94 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.IO;
-using UnityEditor.Animations;
-using TMPro;
 
 public class WorldStats : MonoBehaviour
 {
     public static WorldStats Instance;
-
-    public Animal animalHighestGeneration;
 
     private void Awake()
     {
         Instance = this;
     }
 
-    // Dictionary to store animal stats dynamically
-    public Dictionary<string, AnimalWorldStats> animalStats = new Dictionary<string, AnimalWorldStats>();
-
+    // List to store animal stats in a way Unity can serialize
+    public List<AnimalWorldStatsEntry> animalStatsList = new List<AnimalWorldStatsEntry>();
 
     // Get or create stats for a given animal type
-    private AnimalWorldStats GetAnimalStats(string animalType)
+    private AnimalWorldStatsEntry GetAnimalStatsEntry(AnimalType animalType)
     {
-        if (!animalStats.ContainsKey(animalType))
+        var entry = animalStatsList.Find(e => e.animalType == animalType);
+        if (entry == null)
         {
-            animalStats[animalType] = new AnimalWorldStats();
+            entry = new AnimalWorldStatsEntry { animalType = animalType, stats = new AnimalWorldStats() };
+            animalStatsList.Add(entry);
         }
-        return animalStats[animalType];
+        return entry;
+    }
+
+    private AnimalWorldStats GetAnimalStats(AnimalType animalType)
+    {
+        return GetAnimalStatsEntry(animalType).stats;
     }
 
     // Increment the count of an animal type
-    public void PlusAnimalCount(string animalType)
+    public void PlusAnimalCount(AnimalType animalType)
     {
         GetAnimalStats(animalType).count++;
     }
 
     // Decrement the count of an animal type
-    public void MinusAnimalCount(string animalType)
+    public void MinusAnimalCount(AnimalType animalType)
     {
         GetAnimalStats(animalType).count--;
     }
 
     // Update generation if a higher generation is found
-    public void CheckAnimalGeneration(string animalType, int generation, Animal _animalHighestGeneration)
+    public void CheckAnimalGeneration(AnimalType animalType, int generation, Animal _animalHighestGeneration)
     {
-        var stats = GetAnimalStats(animalType);
-        if (generation > stats.generation)
+        var entry = GetAnimalStatsEntry(animalType);
+        if (generation > entry.stats.generation)
         {
-            stats.generation = generation;
-            animalHighestGeneration = _animalHighestGeneration;
+            entry.stats.generation = generation;
+            entry.generationHighestAnimal = _animalHighestGeneration;
+
+            //Instantly Termination Condition Check
+            TerminationManager.Instance.CheckTermination();
         }
     }
 
     // Get the count of a specific animal type
-    public int GetAnimalCount(string animalType)
+    public int GetAnimalCount(AnimalType animalType)
     {
         return GetAnimalStats(animalType).count;
     }
 
-    public int GetAnimalGeneration(string animalType)
+    public int GetAnimalGeneration(AnimalType animalType)
     {
         return GetAnimalStats(animalType).generation;
     }
 
-    public Animal GetAnimalWithHighestGeneration()
+    public Animal GetAnimalWithHighestGeneration(AnimalType animalType)
     {
-        return animalHighestGeneration;
+        return GetAnimalStatsEntry(animalType).generationHighestAnimal;
     }
+
+    public void UpdateGeneStats(AnimalType animalType, int positiveGenes, int negativeGenes, int neutralGenes)
+    {
+        int totalToAdd = positiveGenes + negativeGenes + neutralGenes;
+
+        GetAnimalStats(animalType).totalGenes += totalToAdd;
+        GetAnimalStats(animalType).positiveGenes += positiveGenes;
+        GetAnimalStats(animalType).negativeGenes += negativeGenes;
+    }
+}
+
+// Serializable wrapper for Unity to show in the Inspector
+[System.Serializable]
+public class AnimalWorldStatsEntry
+{
+    public AnimalType animalType;
+    public Animal generationHighestAnimal;
+    public AnimalWorldStats stats;
 }
 
 // Structure to store stats for each animal type
@@ -79,4 +101,3 @@ public class AnimalWorldStats
     public int negativeGenes;
     public int generation;
 }
-

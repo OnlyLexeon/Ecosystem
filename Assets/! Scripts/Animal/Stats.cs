@@ -93,8 +93,8 @@ public class Stats : MonoBehaviour
     [Header("Aging Settings")]
     [Tooltip("Days taken to fully turn into an Adult.")] public int adultDays = 3;
     [Tooltip("Days taken till Animal Starts Dying of Old Age.")] public int deathDays = 15;
-    [Tooltip("Min Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int minDeathTime = 360; //6am
-    [Tooltip("Max Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int maxDeathTime = 1080; //6pm
+    [Tooltip("Min Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int minDeathTime = 470; //8am
+    [Tooltip("Max Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int maxDeathTime = 960; //4pm
     [Tooltip("Exact Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int deathTime = 0;
 
 
@@ -259,6 +259,18 @@ public class Stats : MonoBehaviour
         minDeathTime = Mathf.Max(minDeathTime, 0); //0 - Start of day
     }
 
+    public void UpdateWorldStatsGenes(AnimalType animalType)
+    {
+        foreach (Genes gene in genes)
+        {
+            int positiveGenes = GetPositiveGenesCount();
+            int negativeGenes = GetNegativeGenesCount();
+            int neutralGenes = GetNeutralGenesCount();
+
+            WorldStats.Instance.UpdateGeneStats(animalType, positiveGenes, negativeGenes, neutralGenes);
+        }
+    }
+
     public int GetPositiveGenesCount()
     {
         return genes.Count(g => g.positivity == Positivity.Positive || g.positivity == Positivity.ExtremelyPositive);
@@ -267,6 +279,11 @@ public class Stats : MonoBehaviour
     public int GetNegativeGenesCount()
     {
         return genes.Count(g => g.positivity == Positivity.Negative || g.positivity == Positivity.ExtremelyNegative);
+    }
+
+    public int GetNeutralGenesCount()
+    {
+        return genes.Count(g => g.positivity == Positivity.Neutral);
     }
 
 }
