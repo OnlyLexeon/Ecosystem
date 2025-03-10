@@ -93,7 +93,7 @@ public class Stats : MonoBehaviour
     [Header("Aging Settings")]
     [Tooltip("Days taken to fully turn into an Adult.")] public int adultDays = 3;
     [Tooltip("Days taken till Animal Starts Dying of Old Age.")] public int deathDays = 15;
-    [Tooltip("Min Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int minDeathTime = 470; //8am
+    [Tooltip("Min Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int minDeathTime = 460; //8am
     [Tooltip("Max Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int maxDeathTime = 960; //4pm
     [Tooltip("Exact Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int deathTime = 0;
 
@@ -110,7 +110,7 @@ public class Stats : MonoBehaviour
     public float waitBeforeLeavingBurrow = 10f;
 
     [Header("Detect Settings")]
-    public float detectionDistance = 10f;
+    public float detectionDistance = 12f;
     public float detectionAngle = 110f;
 
     [Header("Move Settings")]

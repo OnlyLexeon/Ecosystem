@@ -275,6 +275,7 @@ public class Animal : MonoBehaviour
 
         //DESPAWN/DIE
         DoDieMinusNumberFromStats();
+        WorldStats.Instance.UpdateGeneStats(animalType, -stats.GetPositiveGenesCount(), -stats.GetNegativeGenesCount(), -stats.GetNeutralGenesCount());
 
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +

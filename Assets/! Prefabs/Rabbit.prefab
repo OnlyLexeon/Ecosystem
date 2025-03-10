@@ -359,8 +359,8 @@ MonoBehaviour:
   maxThirst: 100
   regenAmount: 1
   adultDays: 3
-  deathDays: 12
-  minDeathTime: 480
+  deathDays: 15
+  minDeathTime: 460
   maxDeathTime: 960
   deathTime: 0
   needsInterval: 1
@@ -370,7 +370,7 @@ MonoBehaviour:
   lookAngleMin: 30
   lookAngleMax: 90
   waitBeforeLeavingBurrow: 10
-  detectionDistance: 10
+  detectionDistance: 12
   detectionAngle: 110
   baseSpeed: 1.5
   runSpeed: 3.5

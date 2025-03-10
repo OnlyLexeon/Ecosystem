@@ -118,13 +118,14 @@ public class TerminationManager : MonoBehaviour
         foreach (Transform child in AnimalContainer.Instance.transform)
         {
             Animal childScript = child.GetComponent<Animal>();
-            if (childScript != null && childScript.animalType == animalType && childScript.stats.GetNegativeGenesCount() == 0)
+            if (childScript != null && childScript.animalType == animalType
+                && childScript.stats.GetPositiveGenesCount() == childScript.stats.genes.Count)
             {
                 //HISTORYT EVENT
                 DayNightManager.Instance.PauseTime();
                 //History
                 string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-                    $"Termination Condition Reached!\n{childScript.animalName} - {childScript.animalType} ({childScript.furType}) has achieved peak fitness! Number of Positive Genes: {childScript.stats.GetPositiveGenesCount()} positive /{childScript.stats.genes.Count} genes";
+                    $"Termination Condition Reached!\n{childScript.animalName} - {childScript.animalType} ({childScript.furType}) has achieved peak fitness! Number of Positive Genes: {childScript.stats.GetPositiveGenesCount()}/{childScript.stats.genes.Count} genes";
                 UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(childScript.transform));
 
                 return true;
