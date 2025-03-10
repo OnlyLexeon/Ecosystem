@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 1311849084552433166}
   m_Layer: 7
   m_Name: Water
-  m_TagString: Untagged
+  m_TagString: Drink
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -139,7 +139,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.2, y: 1.2, z: 1.2}
+  m_Size: {x: 1.4, y: 1.4, z: 1.4}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &6106955787454055974
 PrefabInstance:
@@ -192,6 +192,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 94622150ac959714594c11bce6773efc, type: 3}
       propertyPath: m_Name
       value: waterblock
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 94622150ac959714594c11bce6773efc, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: 94622150ac959714594c11bce6773efc, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 2123188841849297358}
   m_Layer: 8
   m_Name: Bush
-  m_TagString: Untagged
+  m_TagString: Bush
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -243,6 +243,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: fd4f840baaab49342ba2e4b5d671f2b1, type: 3}
       propertyPath: m_Name
       value: bush3
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fd4f840baaab49342ba2e4b5d671f2b1, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: fd4f840baaab49342ba2e4b5d671f2b1, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

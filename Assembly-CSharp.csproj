@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\! Scripts\Quality Scripts\GCManager.cs" />
+    <Compile Include="Assets\! Scripts\GameManager\MapGenerator.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\DynamicTextBackground.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\RandomRotation.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\AutoMemoryPreallocator.cs" />

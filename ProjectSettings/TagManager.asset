@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 3
   tags:
   - Model
+  - Bush
+  - Land
+  - Drink
   layers:
   - Default
   - TransparentFX
@@ -16,7 +19,7 @@ TagManager:
   - Drink
   - Food
   - Rabbit
-  - Wolf
+  - Fox
   - Burrow
   - 
   - 
@@ -35,9 +38,9 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - DeadTertiary
+  - DeadSecondary
+  - DeadPrimary
   m_SortingLayers:
   - name: Default
     uniqueID: 0

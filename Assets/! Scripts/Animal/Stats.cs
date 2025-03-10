@@ -110,8 +110,8 @@ public class Stats : MonoBehaviour
     public float waitBeforeLeavingBurrow = 10f;
 
     [Header("Detect Settings")]
-    public float detectionDistance = 7f;
-    public float detectionAngle = 100f;
+    public float detectionDistance = 10f;
+    public float detectionAngle = 110f;
 
     [Header("Move Settings")]
     public float baseSpeed = 1.5f;

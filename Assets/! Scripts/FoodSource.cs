@@ -4,7 +4,11 @@ public enum FoodType
 {
     Berries,
     Carrots,
-    DeadRabbit,
+
+    //Animals
+    Primary,
+    Seconary,
+    Tertiary,
 }
 
 public class FoodSource : MonoBehaviour
@@ -14,10 +18,13 @@ public class FoodSource : MonoBehaviour
 
     [Header("Food Settings* (Edit these!)")]
     public FoodType foodType;
+
+    [Header("(Non Instant)")]
     public float minFoodToEat = 10f;
     public float maxFood = 25f;
     public float foodReplenishedPerSecond = 0.1f;
-    [Header("Food Settings (Instant?)")]
+
+    [Header("(Instant?)")]
     [Tooltip("Animals that eat this will instantly gain 'instantFood' amount of food.")] public bool instantConsumable = false;
     public float instantFood = 0f;
 

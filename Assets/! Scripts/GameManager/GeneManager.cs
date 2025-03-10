@@ -236,8 +236,18 @@ public class GeneManager : MonoBehaviour
                     new StatModifier(StatType.DetectionAngle, -20f),
                     new StatModifier(StatType.DetectionDistance, -0.75f)
                 }));
-        defaultGenes.Add(new Genes("Shortsight", "Detection range significantly reduced. (-1.5)", Positivity.ExtremelyNegative, 5,
+        defaultGenes.Add(new Genes("Impaired", "Detection range significantly reduced. (-1.5)", Positivity.ExtremelyNegative, 5,
                 new List<StatModifier> {
+                    new StatModifier(StatType.DetectionDistance, -1.5f),
+                }));
+        defaultGenes.Add(new Genes("Fixated", "Detection range significantly increased (+1.5), but radius significantly decreased. (-40)", Positivity.Neutral, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.DetectionAngle, -40f),
+                    new StatModifier(StatType.DetectionDistance, 1.5f),
+                }));
+        defaultGenes.Add(new Genes("Shortsighted", "Detection range significantly decreased (-1.5), but radius significantly increased. (+40)", Positivity.Neutral, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.DetectionAngle, 40f),
                     new StatModifier(StatType.DetectionDistance, -1.5f),
                 }));
 

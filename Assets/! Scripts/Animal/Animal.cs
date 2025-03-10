@@ -31,9 +31,10 @@ public enum AnimalState
 public class Animal : MonoBehaviour
 {
     [Header("Animal Settings* (!!Set This!!)")]
-    public List<FoodType> foodTypeEdible;
+    [Tooltip("Animals this animal will approach to snack on.")] public List<FoodType> foodTypeEdible;
     public AnimalType animalType;
-    public List<LayerMask> predators;
+    [Tooltip("Animals this animal will Run Away From)")] public List<LayerMask> predators;
+    [Tooltip("Animals this animal will Hunt)")]  public List<LayerMask> prey;
 
     [Header("References* (Ensure none empty)")]
     [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
@@ -104,8 +105,6 @@ public class Animal : MonoBehaviour
         ScaleChild();
         if (stats.agedDays >= stats.adultDays) isAdult = true;
 
-        
-
         //Assumes the rabbit was spawned, not natural
         //no genes set, age not 0, 
         if (stats.genes.Count <= 0 && stats.agedDays > 0 && !wasSpawnedByUser)
@@ -142,6 +141,16 @@ public class Animal : MonoBehaviour
     void Update()
     {
         if (isDead) return;
+
+        if (!agent.isOnNavMesh)
+        {
+            SnapToNavMesh();
+        }
+
+        if (!agent.isOnNavMesh)
+        {
+            return;
+        }
 
         //NEEDS DEPLETION
         if (needsTimer <= stats.needsInterval) needsTimer += Time.deltaTime;
@@ -699,7 +708,7 @@ public class Animal : MonoBehaviour
         }
         else
         {
-            // Pick a random spot if no food is found
+            // Wanders to find a food spot
             burrowLocation += Random.insideUnitSphere * 5f;
         }
 
@@ -790,7 +799,7 @@ public class Animal : MonoBehaviour
             if (Vector3.Angle(transform.forward, directionToResource) < stats.detectionAngle / 2)
             {
                 FoodSource food = hit.GetComponent<FoodSource>();
-                if (food != null && food.foodAvailable >= food.minFoodToEat && foodTypeEdible.Contains(food.foodType))
+                if (food != null && foodTypeEdible.Contains(food.foodType) && food.foodAvailable >= food.minFoodToEat)
                 {
                     float distance = Vector3.Distance(transform.position, hit.transform.position);
                     if (distance < closestDistance)
@@ -839,13 +848,14 @@ public class Animal : MonoBehaviour
     }
     void CheckArrival()
     {
-        if (currentState == AnimalState.GoingToEat && targetFood != null && Vector3.Distance(transform.position, targetFood.position) <= 1.5f)
+        if (currentState == AnimalState.GoingToEat && 
+            targetFood != null && Vector3.Distance(transform.position, targetFood.position) <= 2)
         {
             currentState = AnimalState.Eating;
             StartCoroutine(EatRoutine());
         }
         else if (currentState == AnimalState.GoingToDrink && 
-            (targetWater != null && Vector3.Distance(transform.position, targetWater.position) <= 1.5f))
+            targetWater != null && Vector3.Distance(transform.position, targetWater.position) <= 2f)
         {
             currentState = AnimalState.Drinking;
             StartCoroutine(DrinkRoutine());
@@ -1059,6 +1069,16 @@ public class Animal : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Water BUG FIX (water target is diagonal thus cant reach:)
+        if (currentState == AnimalState.GoingToDrink && collision.gameObject.layer == LayerMask.NameToLayer("Drink"))
+        {
+            currentState = AnimalState.Drinking;
+            StartCoroutine(DrinkRoutine());
+        }
+    }
+
     //UI/HUD
     void OnDrawGizmos()
     {
@@ -1088,12 +1108,6 @@ public class Animal : MonoBehaviour
     public void ToggleUI(bool state)
     {
         statsHUD.SetActive(state);
-
-        if (state)
-        {
-            UpdateOverHeadUI();
-            UpdateOverHeadStats();
-        }
     }
     void UpdateOverHeadUI() //UI updated once only
     {
@@ -1148,7 +1162,11 @@ public class Animal : MonoBehaviour
     //DIFFERENT ANIMALS, DIFFERENT CALCS, BEHAVIOR, FUNCTIONS
     public GameObject GetChildPrefabBirth()
     {
-        return animalType?.animalPrefab;
+        return animalType?.animalSpawnPrefab;
+    }
+    public GameObject GetCorpsePrefabBirth()
+    {
+        return animalType?.animalDeadPrefab;
     }
     public FurType GetAnimalSpecies()
     {
@@ -1183,6 +1201,24 @@ public class Animal : MonoBehaviour
     }
 
     //OTHER FUNCTIONS
+    void SnapToNavMesh()
+    {
+        //Fix TP bug
+        targetWater = null;
+        targetFood = null;
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(agent.transform.position, out hit, Mathf.Infinity, NavMesh.AllAreas))
+        {
+            agent.Warp(hit.position); // Move agent to the nearest valid position
+            Debug.Log("Agent snapped to NavMesh at: " + hit.position);
+        }
+        else
+        {
+            Debug.LogWarning("No valid NavMesh position found nearby!");
+        }
+    }
+
     private void ClearModelHolderChild()
     {
         foreach (Transform child in modelHolder)

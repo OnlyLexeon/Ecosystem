@@ -25,6 +25,11 @@ public class HistoryEvent : MonoBehaviour
         {
             eventButton.onClick.AddListener(currentAction.Invoke);
         }
+        else // is null
+        {
+            eventButton.interactable = false;
+            eventButton.gameObject.SetActive(false);
+        }
     }
 
     private void OnDestroy()
