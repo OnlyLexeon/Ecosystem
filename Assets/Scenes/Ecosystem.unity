@@ -446,22 +446,28 @@ MonoBehaviour:
   waterScale: 0.045
   waterThreshold: 0.55
   bushes:
-    patchCount: 24
+    patchCount: 18
     minPerPatch: 4
-    maxPerPatch: 12
-    lonelyCount: 38
+    maxPerPatch: 8
+    lonelyCount: 52
     heightOffset: 1
     prefab: {fileID: 8915294898688528585, guid: 187b3a06955d5e147a841c1a03b5320c, type: 3}
   trees:
-    patchCount: 4
-    minPerPatch: 4
-    maxPerPatch: 6
-    lonelyCount: 12
+    patchCount: 6
+    minPerPatch: 2
+    maxPerPatch: 4
+    lonelyCount: 20
     heightOffset: 1
     prefab: {fileID: 8275337171425558242, guid: 21984276d097bce47b5435817af3fe80, type: 3}
+  carrots:
+    patchCount: 6
+    minPerPatch: 2
+    maxPerPatch: 8
+    lonelyCount: 12
+    heightOffset: 1
+    prefab: {fileID: 4124057614416705689, guid: 937ad9bd8ddf9234a97a984b81704fae, type: 3}
   landPrefab: {fileID: 9205955234342728835, guid: 0869c88284e40d744b7332e983e596e0, type: 3}
   waterPrefab: {fileID: 9205955234342728835, guid: d6b3f12d0305b294eb5d563d0c2c2182, type: 3}
-  bushPrefab: {fileID: 8275337171425558242, guid: 21984276d097bce47b5435817af3fe80, type: 3}
   landHolder: {fileID: 452730614}
   waterHolder: {fileID: 325243509}
   vegetationHolder: {fileID: 1359688049}
@@ -9820,7 +9826,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terminationCondition:
-    conditionType: 3
+    conditionType: 0
     targetAnimalType: {fileID: 11400000, guid: a211b0d099d3f0a4aa9eb1b4e0b92e3a, type: 2}
     generationReachedThreshold: 0
     numberOfAnimalsThreshold: 0

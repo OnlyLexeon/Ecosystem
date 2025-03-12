@@ -51,6 +51,9 @@ public class DayNightManager : MonoBehaviour
             //Check Termination Condition
             if (TerminationManager.Instance) TerminationManager.Instance.CheckTermination();
             else Debug.LogWarning("No Termination Condition Set!");
+
+            //Do Map Spawn
+            MapGenerator.Instance.DoDailyVegetation();
         }
 
         //Set day/night bools

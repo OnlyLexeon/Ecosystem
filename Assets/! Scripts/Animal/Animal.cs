@@ -980,7 +980,8 @@ public class Animal : MonoBehaviour
         }
         else
         {
-            float foodConsumed = foodSource.ConsumeFood(stats.foodEatPerSecond * Time.deltaTime);
+            float foodConsumed = foodSource.ConsumeFood(stats.foodEatPerSecond);
+            stats.hunger += foodConsumed;
         }
 
         currentState = AnimalState.Wandering;
@@ -1077,12 +1078,16 @@ public class Animal : MonoBehaviour
         float distanceToThreat = Vector3.Distance(transform.position, detectedPredator.position);
 
         // If burrow exists and is safe, run towards it
-        if (home != null && distanceToThreat > 10f)
+        if (home != null && distanceToThreat > 5f)
         {
             agent.SetDestination(home.transform.position);
             return;
         }
-        else if (distanceToThreat > 20f) detectedPredator = null;
+        else if (distanceToThreat > 20f)
+        {
+            detectedPredator = null;
+            return;
+        }
 
         Vector3 escapeDirection = (transform.position - detectedPredator.position).normalized;
         Vector3 escapeTarget = transform.position + escapeDirection * stats.detectionDistance;

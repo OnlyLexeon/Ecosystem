@@ -29,11 +29,11 @@ public class MapGenerator : MonoBehaviour
     [Header("Vegetation Settings")]
     public Vegetation bushes;
     public Vegetation trees;
+    public Vegetation carrots;
 
     [Header("Prefabs")]
     public GameObject landPrefab;
     public GameObject waterPrefab;
-    public GameObject bushPrefab;
 
     [Header("References(*)")]
     public Transform landHolder;
@@ -52,6 +52,11 @@ public class MapGenerator : MonoBehaviour
         Instance = this;
 
         StartCoroutine(GenerateMapAndBakeNavMesh());
+    }
+
+    public void DoDailyVegetation()
+    {
+        GenerateVegetation(carrots);
     }
 
     IEnumerator GenerateMapAndBakeNavMesh()
@@ -76,6 +81,10 @@ public class MapGenerator : MonoBehaviour
         yield return null;
 
         GenerateVegetation(trees);
+        yield return null;
+
+        DoDailyVegetation();
+        yield return null;
 
         GenerateOuterLandRing();
         yield return null;
@@ -84,6 +93,18 @@ public class MapGenerator : MonoBehaviour
         yield return null;
 
         BakeNavMesh();
+    }
+    void BakeNavMesh()
+    {
+        if (navMeshSurface != null)
+        {
+            navMeshSurface.BuildNavMesh();
+            Debug.Log("NavMesh baked successfully!");
+        }
+        else
+        {
+            Debug.LogError("NavMeshSurface not assigned!");
+        }
     }
 
     void CenterMap()
@@ -95,6 +116,7 @@ public class MapGenerator : MonoBehaviour
         Debug.Log("Map centered at (0,0,0)");
     }
 
+    //GENERATIOM
     void GenerateOuterLandRing()
     {
         for (int x = 0; x < width; x++)
@@ -117,8 +139,6 @@ public class MapGenerator : MonoBehaviour
             }
         }
     }
-
-
     void GenerateWater()
     {
         for (int x = 0; x < width; x++)
@@ -135,7 +155,6 @@ public class MapGenerator : MonoBehaviour
             }
         }
     }
-
     void GenerateVegetation(Vegetation vege)
     {
         List<Vector2Int> landPositions = new List<Vector2Int>();
@@ -186,16 +205,5 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void BakeNavMesh()
-    {
-        if (navMeshSurface != null)
-        {
-            navMeshSurface.BuildNavMesh();
-            Debug.Log("NavMesh baked successfully!");
-        }
-        else
-        {
-            Debug.LogError("NavMeshSurface not assigned!");
-        }
-    }
+    
 }
