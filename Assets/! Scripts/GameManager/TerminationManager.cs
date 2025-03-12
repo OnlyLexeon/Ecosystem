@@ -5,6 +5,7 @@ using UnityEngine;
 
 public enum TerminationConditionType
 {
+    None,
     SurvivedTillOldAge,
     GenerationReached_, //+ int
     NumberOfAnimals_, //+ int
@@ -50,6 +51,8 @@ public class TerminationManager : MonoBehaviour
             case TerminationConditionType.Extinction:
                 if (CheckExtinction(terminationCondition.targetAnimalType))
                     return true;
+                break;
+            default:
                 break;
         }
 

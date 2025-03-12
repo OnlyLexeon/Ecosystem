@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Home : MonoBehaviour
 {
+    public AnimalType animalType;
+
     public List<Animal> animalInside = new List<Animal>();
 
     public bool threatNearby = false;

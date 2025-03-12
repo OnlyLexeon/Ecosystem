@@ -75,6 +75,7 @@
     <Compile Include="Assets\! Scripts\UI Scripts\UIManager.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\ButtonCleanup.cs" />
     <Compile Include="Assets\! Scripts\Animal\Stats.cs" />
+    <Compile Include="Assets\! Scripts\Quality Scripts\RandomScale.cs" />
     <Compile Include="Assets\! Scripts\Animal\Animal.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\HistoryEvent.cs" />
     <Compile Include="Assets\! Scripts\Animal\AnimalType.cs" />

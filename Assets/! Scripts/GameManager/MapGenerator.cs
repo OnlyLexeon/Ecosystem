@@ -4,6 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
 
+[System.Serializable]
+public class Vegetation
+{
+    public int patchCount;
+    public int minPerPatch;
+    public int maxPerPatch;
+    public int lonelyCount;
+    public float heightOffset;
+    public GameObject prefab;
+}
+
+
 public class MapGenerator : MonoBehaviour
 {
     [Header("Size")]
@@ -14,12 +26,9 @@ public class MapGenerator : MonoBehaviour
     [Tooltip("Lower = More scattered, smaller | Higher = Fewer, larger ")] public float waterScale;
     [Tooltip("Lower = More Common | Higher = Less Common")] public float waterThreshold;
 
-    [Header("Bushes")]
-    public int bushPatchCount;
-    public int minBushesPerPatch;
-    public int maxBushesPerPatch;
-    public int lonelyBushesCount;
-    public float bushHeightOffset = 1f;
+    [Header("Vegetation Settings")]
+    public Vegetation bushes;
+    public Vegetation trees;
 
     [Header("Prefabs")]
     public GameObject landPrefab;
@@ -29,14 +38,19 @@ public class MapGenerator : MonoBehaviour
     [Header("References(*)")]
     public Transform landHolder;
     public Transform waterHolder;
-    public Transform bushHolder;
+    public Transform vegetationHolder;
+    public Transform burrowHolder;
     public NavMeshSurface navMeshSurface;
     public Transform map;
 
     private GameObject[,] terrainGrid;
 
+    public static MapGenerator Instance;
+
     void Awake()
     {
+        Instance = this;
+
         StartCoroutine(GenerateMapAndBakeNavMesh());
     }
 
@@ -58,8 +72,10 @@ public class MapGenerator : MonoBehaviour
         GenerateWater();
         yield return null;
 
-        GenerateBushes();
+        GenerateVegetation(bushes);
         yield return null;
+
+        GenerateVegetation(trees);
 
         GenerateOuterLandRing();
         yield return null;
@@ -120,11 +136,11 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void GenerateBushes()
+    void GenerateVegetation(Vegetation vege)
     {
         List<Vector2Int> landPositions = new List<Vector2Int>();
 
-        // Collect all valid land positions
+        // Collect valid land positions
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < length; z++)
@@ -136,40 +152,37 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        // Generate bush patches
-        for (int i = 0; i < bushPatchCount; i++)
+        // Generate vegetation patches
+        for (int i = 0; i < vege.patchCount; i++)
         {
-            if (landPositions.Count == 0) break; // No land left
+            if (landPositions.Count == 0) break;
 
             Vector2Int patchCenter = landPositions[Random.Range(0, landPositions.Count)];
+            int perPatch = Random.Range(vege.minPerPatch, vege.maxPerPatch);
 
-            int bushesPerPatch = Random.Range(minBushesPerPatch, maxBushesPerPatch);
-
-            for (int j = 0; j < bushesPerPatch; j++)
+            for (int j = 0; j < perPatch; j++)
             {
-                // Create a random offset so bushes aren't too clustered
-                int offsetX = Random.Range(-2, 3); // Range between -2 to +2
+                int offsetX = Random.Range(-2, 3);
                 int offsetZ = Random.Range(-2, 3);
-
                 int newX = Mathf.Clamp(patchCenter.x + offsetX, 0, width - 1);
                 int newZ = Mathf.Clamp(patchCenter.y + offsetZ, 0, length - 1);
 
                 if (terrainGrid[newX, newZ] != null && terrainGrid[newX, newZ].tag == "Land")
                 {
-                    Vector3 bushPosition = terrainGrid[newX, newZ].transform.position + Vector3.up * bushHeightOffset;
-                    Instantiate(bushPrefab, bushPosition, Quaternion.identity, bushHolder);
+                    Vector3 position = terrainGrid[newX, newZ].transform.position + Vector3.up * vege.heightOffset;
+                    Instantiate(vege.prefab, position, Quaternion.identity, vegetationHolder);
                 }
             }
         }
 
-        // Generate random lonely bushes
-        for (int i = 0; i < lonelyBushesCount; i++)
+        // Generate lonely vegetation
+        for (int i = 0; i < vege.lonelyCount; i++)
         {
             if (landPositions.Count == 0) break;
 
             Vector2Int randomPos = landPositions[Random.Range(0, landPositions.Count)];
-            Vector3 bushPosition = terrainGrid[randomPos.x, randomPos.y].transform.position + Vector3.up * bushHeightOffset;
-            Instantiate(bushPrefab, bushPosition, Quaternion.identity, bushHolder);
+            Vector3 position = terrainGrid[randomPos.x, randomPos.y].transform.position + Vector3.up * vege.heightOffset;
+            Instantiate(vege.prefab, position, Quaternion.identity, vegetationHolder);
         }
     }
 

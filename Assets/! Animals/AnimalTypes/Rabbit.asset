@@ -20,5 +20,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 99b417d35bc84b3499b4ed970401194c, type: 2}
   - {fileID: 11400000, guid: df4823c31a8a1564ea05d62928c3500e, type: 2}
   - {fileID: 11400000, guid: 9af28dd224056b347a31b8658a1dde3b, type: 2}
+  homePrefab: {fileID: 6033719048836278259, guid: 36927acf63382554eb7e325af482cb06, type: 3}
   animalSpawnPrefab: {fileID: 1151711369364588460, guid: c6677f50628037e41a90b08217477666, type: 3}
-  animalDeadPrefab: {fileID: 0}
+  animalDeadPrefab: {fileID: 1151711369364588460, guid: 5e208ac5df15a404092f8bb9098316e5, type: 3}

@@ -369,11 +369,14 @@ MonoBehaviour:
   lookWhileEatingInterval: 5
   lookAngleMin: 30
   lookAngleMax: 90
+  attackRange: 2
+  attackDamage: 10
   waitBeforeLeavingBurrow: 10
-  detectionDistance: 12
-  detectionAngle: 110
+  detectionDistance: 10
+  detectionAngle: 100
   baseSpeed: 1.5
-  runSpeed: 3.5
+  runSpeed: 4
+  injuredSpeed: 1
   wanderDistanceMin: 2
   wanderDistanceMax: 5
   wanderInterval: 2
@@ -407,8 +410,11 @@ MonoBehaviour:
   animalType: {fileID: 11400000, guid: a211b0d099d3f0a4aa9eb1b4e0b92e3a, type: 2}
   predators:
   - serializedVersion: 2
+    m_Bits: 1024
+  prey:
+  - serializedVersion: 2
     m_Bits: 0
-  prey: []
+  homeType: 0
   statsHUD: {fileID: 6481906710248654743}
   genePrefab: {fileID: 8468673657133802829, guid: a9321f6600dae864abca9ab8e5b20479, type: 3}
   animalName: 
@@ -437,8 +443,21 @@ MonoBehaviour:
   healthValueText: {fileID: 8692799725329430948}
   hungerValueText: {fileID: 2811097628200726827}
   thirstValueText: {fileID: 3796437238515423306}
+  targetFood: {fileID: 0}
+  targetWater: {fileID: 0}
+  targetHomeLocation: {x: 0, y: 0, z: 0}
   toMateBurrow: {fileID: 0}
-  wasSpawnedByUser: 0
+  targetMate: {fileID: 0}
+  detectedPredator: {fileID: 0}
+  detectedPrey: {fileID: 0}
+  attackTimer: 0
+  needsTimer: 0
+  agent: {fileID: 0}
+  nextLookTime: 0
+  wanderTimer: 0
+  randomDirection: {x: 0, y: 0, z: 0}
+  timeSlept: 0
+  takenDamage: 0
 --- !u!195 &6372509079974295027
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -449,10 +468,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
+  m_Speed: 1.5
+  m_Acceleration: 6
   avoidancePriority: 50
-  m_AngularSpeed: 300
+  m_AngularSpeed: 480
   m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1

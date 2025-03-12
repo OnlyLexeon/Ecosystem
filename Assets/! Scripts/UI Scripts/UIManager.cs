@@ -203,7 +203,7 @@ public class UIManager : MonoBehaviour
             string targetName = targetAnimalScript.animalName;
             targetText.text = "Target: " + targetName + " - " + targetType;
 
-            targetSpecies.text = "Fur Type: " + targetAnimalScript.furType.furName.ToString();
+            if (targetAnimalScript.furType) targetSpecies.text = "Fur Type: " + targetAnimalScript.furType.furName.ToString();
 
             targetGeneration.text = "Generation: " + targetStats.generation;
 

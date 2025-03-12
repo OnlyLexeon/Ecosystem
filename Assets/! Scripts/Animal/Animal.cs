@@ -5,6 +5,10 @@ using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
+using UnityEditor.U2D;
+using static TreeEditor.TreeEditorHelper;
+using UnityEngine.Rendering;
 
 public enum AnimalState
 {
@@ -13,7 +17,8 @@ public enum AnimalState
     DiggingBurrow,
 
     Wandering,
-    Running,
+    RunninngAway,
+    Hunting,
     Hiding,
 
     Eating,
@@ -28,13 +33,29 @@ public enum AnimalState
     Mating,
 }
 
+public enum DeathCause
+{
+    Thirst,
+    Starve,
+    Eaten,
+    OldAge,
+}
+
+public enum HomeType
+{
+    NearFood,
+    NearTrees,
+}
+
 public class Animal : MonoBehaviour
 {
     [Header("Animal Settings* (!!Set This!!)")]
+
     [Tooltip("Animals this animal will approach to snack on.")] public List<FoodType> foodTypeEdible;
     public AnimalType animalType;
     [Tooltip("Animals this animal will Run Away From)")] public List<LayerMask> predators;
-    [Tooltip("Animals this animal will Hunt)")]  public List<LayerMask> prey;
+    [Tooltip("Animals this animal will Hunt")]  public List<LayerMask> prey;
+    [Tooltip("Where this animal will place their home")] public HomeType homeType;
 
     [Header("References* (Ensure none empty)")]
     [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
@@ -74,22 +95,30 @@ public class Animal : MonoBehaviour
     public TextMeshProUGUI hungerValueText;
     public TextMeshProUGUI thirstValueText;
 
-    private float needsTimer = 0f;
-    private NavMeshAgent agent;
-    private Transform targetFood;
-    private Transform targetWater;
-    private Transform targetBurrow;
+    [Header("Debug Values")]
+    public Transform targetFood;
+    public Transform targetWater;
+    public Vector3 targetHomeLocation;
     public Transform toMateBurrow;
-    private Transform targetMate;
-    private Transform detectedPredator;
-    private float nextLookTime;
-    private float wanderTimer = 0f;
-    private Vector3 randomDirection; // Cached to avoid new allocation each frame
-    private NavMeshHit navHit;
-    private RaycastHit groundHit;
-    private float timeSlept = 0f;
-    private bool takenDamage = false;
-    public bool wasSpawnedByUser = false;
+    public Transform targetMate;
+    public Transform detectedPredator;
+    
+    public Transform detectedPrey;
+    public float attackTimer = 0f;
+
+    public float needsTimer = 0f;
+    
+    public NavMeshAgent agent;
+
+    public float nextLookTime;
+    public float wanderTimer = 0f;
+    public Vector3 randomDirection; // Cached to avoid new allocation each frame
+    public NavMeshHit navHit;
+    public RaycastHit groundHit;
+
+    public float timeSlept = 0f;
+
+    public bool takenDamage = false;
 
     void Start()
     {
@@ -107,16 +136,18 @@ public class Animal : MonoBehaviour
 
         //Assumes the rabbit was spawned, not natural
         //no genes set, age not 0, 
-        if (stats.genes.Count <= 0 && stats.agedDays > 0 && !wasSpawnedByUser)
+        if (stats.genes.Count <= 0)
         {
             Debug.Log("Assigned Genes!");
 
             stats.AssignRandomPersonalities();
 
             //Apply Model Skin
-            furType = animalType.furTypes[Random.Range(0, animalType.furTypes.Count)];
-
-            SetAnimalSkinModel();
+            if (animalType.furTypes.Count > 0)
+            {
+                furType = animalType.furTypes[Random.Range(0, animalType.furTypes.Count)];
+                SetAnimalSkinModel();
+            }
         }
 
         //APPLY STATS + GENES
@@ -162,15 +193,25 @@ public class Animal : MonoBehaviour
         }
 
         //Threats
-        DetectThreats(); // Always check for threats first
-        if (currentState == AnimalState.Running)
+        if (currentState == AnimalState.RunninngAway)
         {
             RunAway();
             return; // Stop other actions if running
         }
+        else
+        {
+            DetectPredator(); // Always check for threats first
+        }
 
         //Speed
-        agent.speed = (currentState == AnimalState.Running) ? stats.runSpeed : stats.baseSpeed;
+        if (stats.health <= stats.maxHealth * 0.25f)
+        {
+            agent.speed = stats.injuredSpeed;
+        }
+        else
+        {
+            agent.speed = (currentState == AnimalState.RunninngAway || currentState == AnimalState.Hunting) ? stats.runSpeed : stats.baseSpeed;
+        }
 
         //Sleeping
         if (DayNightManager.Instance.isNight)
@@ -191,13 +232,19 @@ public class Animal : MonoBehaviour
                 if (wanderTimer < stats.wanderInterval && !agent.pathPending) wanderTimer += Time.deltaTime;
                 else if (wanderTimer >= stats.wanderInterval) Wander();
 
-                if (isFoodCritical()) DetectFood();
-                if (isThirstCritical()) DetectDrink();
-                
+                if (isFoodCritical())
+                {
+                    if (!DetectFood()) DetectPrey();
+                }
+                if (isThirstCritical() && !detectedPrey) DetectDrink();
+
                 //Make Burrow
                 if (detectedPredator == null && home == null && currentState != AnimalState.MakingBurrow)
                 {
-                    MakeBurrow();
+                    if (FindPlaceToMakeHome(homeType))
+                    {
+                        MakeBurrow();
+                    }
                 }
                 //Find Mates
                 if (detectedPredator == null && stats.fertile == 1 && wantsToReproduce && !isThirstCritical() && !isFoodCritical() && !isHealthCritical() && !targetMate && DayNightManager.Instance.isDay)
@@ -213,8 +260,11 @@ public class Animal : MonoBehaviour
             case AnimalState.Drinking:
                 LookAroundWhileEatingOrDrinking();
                 break;
-            case AnimalState.Running:
+            case AnimalState.RunninngAway:
                 RunAway();
+                break;
+            case AnimalState.Hunting:
+                Hunt();
                 break;
         }
     }
@@ -233,6 +283,9 @@ public class Animal : MonoBehaviour
         {
             stats.health -= 0.2f;
 
+            //Check Death
+            if (stats.health <= 0) Die(DeathCause.Thirst);
+
             if (!takenDamage)
             {
                 takenDamage = true;
@@ -247,6 +300,9 @@ public class Animal : MonoBehaviour
         {
             stats.health -= 0.25f;
 
+            //Check Death
+            if (stats.health <= 0) Die(DeathCause.Starve);
+
             if (!takenDamage)
             {
                 takenDamage = true;
@@ -258,10 +314,7 @@ public class Animal : MonoBehaviour
             }
         }
 
-        //Health Manager
-        if (stats.health <= 0)
-            Die();
-        else if (!isDead && !isDying
+        if (!isDead && !isDying
             && stats.health < stats.maxHealth
             && !isFoodCritical() && !isThirstCritical())
         {
@@ -269,17 +322,30 @@ public class Animal : MonoBehaviour
             Regenerate();
         }
     }
-    public void Die()
+    public void Die(DeathCause cause)
     {
         isDead = true;
+
+        //Agent
+        agent.isStopped = true;
+        agent.enabled = false;
 
         //DESPAWN/DIE
         DoDieMinusNumberFromStats();
         WorldStats.Instance.UpdateGeneStats(animalType, -stats.GetPositiveGenesCount(), -stats.GetNegativeGenesCount(), -stats.GetNeutralGenesCount());
 
         //History
+        string causeOfDeath = "";
+        switch(cause)
+        {
+            case DeathCause.Thirst: causeOfDeath = "Thirst"; break;
+            case DeathCause.Starve: causeOfDeath = "Starvation"; break;
+            case DeathCause.OldAge: causeOfDeath = "Old Age"; break;
+            case DeathCause.Eaten: causeOfDeath = "Being Eaten"; break;
+            default: causeOfDeath = "Unknown"; break;
+        }
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has died!";
+            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has died from: " + causeOfDeath + "!";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Disable Collider
@@ -290,6 +356,17 @@ public class Animal : MonoBehaviour
         //Spawm a corpse
         //Rabbit corpse will be food source for Fox
         //Do not despawn this script object, required for child button teleporting
+        GameObject corpseToSpawn = Instantiate(animalType.animalDeadPrefab, transform.position, Quaternion.identity);
+        FoodSource corpseScript = corpseToSpawn.GetComponent<FoodSource>();
+        if (corpseScript)
+        {
+            if (corpseScript.convertHungerToFoodAvailable)
+            {
+                corpseScript.maxFood += stats.hunger / corpseScript.divideHungerBy;
+                corpseScript.foodAvailable = corpseScript.maxFood;
+            }
+        }
+        else Debug.LogWarning("This Dead Animal is not a food source! Add Food Source Script!");
 
         Debug.Log("Dieded");
     }
@@ -334,9 +411,6 @@ public class Animal : MonoBehaviour
         // Get random position
         randomDirection = transform.position + (Random.insideUnitSphere * Random.Range(stats.wanderDistanceMin, stats.wanderDistanceMax));
 
-        // Adjust to land
-        randomDirection = AdjustPositionToLand(randomDirection);
-
         // Check NavMesh
         if (NavMesh.SamplePosition(randomDirection, out navHit, stats.wanderDistanceMax, NavMesh.AllAreas))
         {
@@ -376,12 +450,19 @@ public class Animal : MonoBehaviour
         if (!isDying && stats.deathTime >= DayNightManager.Instance.time && DayNightManager.Instance.isDay)
         {
             isDying = true;
+
+            //History
+            string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has started decaying from Old Age!";
+            UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
         }
 
         if (isDying)
         {
             stats.health -= 0.5f;
-            Debug.Log("Ouch!");
+
+            //Check Death
+            if (stats.health <= 0) Die(DeathCause.OldAge);
         }
     }
 
@@ -670,7 +751,7 @@ public class Animal : MonoBehaviour
 
             //WORLD STATS
             //Check if generation has increased!
-
+            //CheckAnimalGeneration(); <---- already called in Start()
         }
 
         //reset target mate
@@ -679,84 +760,88 @@ public class Animal : MonoBehaviour
     }
 
     //BURROW
+    bool FindPlaceToMakeHome(HomeType homeType)
+    {
+        LayerMask layerMask;
+        System.Func<Collider, bool> isValidTarget = _ => true; // Default to always true
+
+        switch (homeType)
+        {
+            case HomeType.NearTrees:
+                layerMask = LayerMask.GetMask("Tree");
+                break;
+            case HomeType.NearFood:
+                layerMask = LayerMask.GetMask("Food");
+                isValidTarget = food => {
+                    var foodScript = food.GetComponent<FoodSource>();
+                    return foodScript != null &&
+                           foodTypeEdible.Contains(foodScript.foodType) &&
+                           foodScript.foodAvailable >= foodScript.minFoodToEat;
+                };
+                break;
+            default:
+                return false;
+        }
+
+        Transform closestTarget = FindClosestTarget(layerMask, isValidTarget);
+
+        if (closestTarget != null)
+        {
+            targetHomeLocation = closestTarget.position + (Random.insideUnitSphere * 2f);
+            return true;
+        }
+
+        targetHomeLocation = Vector3.zero;
+
+        if (targetHomeLocation == Vector3.zero) return false;
+        else return true;
+    }
+    Transform FindClosestTarget(LayerMask layerMask, System.Func<Collider, bool> isValidTarget)
+    {
+        Collider[] targets = Physics.OverlapSphere(transform.position, stats.detectionDistance, layerMask);
+
+        Transform closestTarget = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach (Collider target in targets)
+        {
+            if (isValidTarget(target))
+            {
+                float distance = Vector3.Distance(transform.position, target.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestTarget = target.transform;
+                    closestDistance = distance;
+                }
+            }
+        }
+
+        return closestTarget;
+    }
     void MakeBurrow()
     {
         if (home != null) return; // Already has a burrow
 
         currentState = AnimalState.MakingBurrow;
-        Vector3 burrowLocation = transform.position; // Default to current position
-
-        Collider[] foodSources = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Food"));
-
-        if (foodSources.Length > 0)
-        {
-            // Find the closest food source
-            Transform closestFood = foodSources[0].transform;
-            float closestDistance = Vector3.Distance(transform.position, closestFood.position);
-
-            foreach (Collider food in foodSources)
-            {
-                float distance = Vector3.Distance(transform.position, food.transform.position);
-                if (distance < closestDistance)
-                {
-                    closestFood = food.transform;
-                    closestDistance = distance;
-                }
-            }
-
-            // Set burrow location near the food source
-            burrowLocation = closestFood.position + (Random.insideUnitSphere * 2f);
-        }
-        else
-        {
-            // Wanders to find a food spot
-            burrowLocation += Random.insideUnitSphere * 5f;
-        }
-
-        burrowLocation = AdjustPositionToLand(burrowLocation);
 
         // Ensure burrow is on a valid NavMesh position
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(burrowLocation, out hit, 2f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(targetHomeLocation, out hit, 2f, NavMesh.AllAreas))
         {
             StartCoroutine(DigBurrow(hit.position));
         }
         else
         {
-            Debug.LogWarning("Could not find a valid burrow position!");
+            Debug.LogWarning("Could not find a valid Home position!");
             currentState = AnimalState.Wandering; // Avoid softlock
         }
     }
     void GoToSleep()
     {
-        if (home == null)
-        {
-            DetectBurrow();
-            if (targetBurrow != null)
-            {
-                home = targetBurrow.GetComponent<Home>();
-            }
-            else
-            {
-                Debug.LogWarning("Failed to find a Burrow to call Home!");
-            }
-        }
-        else if (home != null)
+        if (home != null)
         {
             agent.SetDestination(home.transform.position);
             currentState = AnimalState.GoingToSleep;
-        }
-    }
-    void DetectBurrow()
-    {
-        Collider[] burrows = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Burrow"));
-        foreach (Collider burrow in burrows)
-        {
-            Vector3 directionToBurrow = (burrow.transform.position - transform.position).normalized;
-            if (Vector3.Angle(transform.forward, directionToBurrow) < stats.detectionAngle / 2)
-            {
-                targetBurrow = burrow.transform;
-            }
         }
     }
     IEnumerator DigBurrow(Vector3 position)
@@ -770,24 +855,15 @@ public class Animal : MonoBehaviour
         }
 
         // Create burrow instantly upon arrival
-        GameObject newBurrow = Instantiate(Environment.Instance.burrowPrefab, position, Quaternion.identity);
+        GameObject newBurrow = Instantiate(animalType.homePrefab, position, Quaternion.identity, MapGenerator.Instance.burrowHolder);
+
         home = newBurrow.GetComponent<Home>();
 
         //Should enter burrow after creation
     }
-    Vector3 AdjustPositionToLand(Vector3 position)
-    {
-        // Reuse RaycastHit instead of creating new
-        if (Physics.Raycast(new Vector3(position.x, 10f, position.z), Vector3.down, out groundHit, Mathf.Infinity, LayerMask.GetMask("Land")))
-        {
-            position.y = groundHit.point.y; // Adjust to land surface
-        }
-
-        return position;
-    }
 
     // FOOD + DRINK
-    void DetectFood()
+    bool DetectFood()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, stats.detectionDistance, LayerMask.GetMask("Food"));
 
@@ -800,13 +876,22 @@ public class Animal : MonoBehaviour
             if (Vector3.Angle(transform.forward, directionToResource) < stats.detectionAngle / 2)
             {
                 FoodSource food = hit.GetComponent<FoodSource>();
-                if (food != null && foodTypeEdible.Contains(food.foodType) && food.foodAvailable >= food.minFoodToEat)
+                if (food != null && foodTypeEdible.Contains(food.foodType))
                 {
                     float distance = Vector3.Distance(transform.position, hit.transform.position);
+
                     if (distance < closestDistance)
                     {
-                        closestFood = hit.transform;
-                        closestDistance = distance;
+                        if (!food.isDeadAnimal && (food.instantConsumable || food.foodAvailable >= food.minFoodToEat))
+                        {
+                            closestFood = hit.transform;
+                            closestDistance = distance;
+                        }
+                        else if (food.isDeadAnimal && food.foodAvailable > 0)
+                        {
+                            closestFood = hit.transform;
+                            closestDistance = distance;
+                        }
                     }
                 }
             }
@@ -817,7 +902,11 @@ public class Animal : MonoBehaviour
             targetFood = closestFood;
             agent.SetDestination(targetFood.position);
             currentState = AnimalState.GoingToEat;
+
+            return true;
         }
+
+        return false;
     }
     void DetectDrink()
     {
@@ -866,25 +955,32 @@ public class Animal : MonoBehaviour
     {
         FoodSource foodSource = targetFood?.GetComponent<FoodSource>();
 
-        while (stats.hunger < stats.maxHunger && currentState == AnimalState.Eating && foodSource != null && foodSource.foodAvailable > 0)
+        if (foodSource.instantConsumable == false)
         {
-            if (detectedPredator != null)
+            while (stats.hunger < stats.maxHunger && currentState == AnimalState.Eating && foodSource != null && foodSource.foodAvailable > 0)
             {
-                currentState = AnimalState.Running;
-                foodSource.StopEating(); // Stop eating when interrupted
-                yield break;
-            }
+                if (detectedPredator != null)
+                {
+                    currentState = AnimalState.RunninngAway;
+                    foodSource.StopEating(); // Stop eating when interrupted
+                    yield break;
+                }
 
+                float foodConsumed = foodSource.ConsumeFood(stats.foodEatPerSecond * Time.deltaTime);
+                stats.hunger += foodConsumed;
+
+                if (foodSource.foodAvailable <= 0)
+                {
+                    foodSource.StopEating();
+                    break; // Stop eating if food is gone
+                }
+
+                yield return null;
+            }
+        }
+        else
+        {
             float foodConsumed = foodSource.ConsumeFood(stats.foodEatPerSecond * Time.deltaTime);
-            stats.hunger += foodConsumed;
-
-            if (foodSource.foodAvailable <= 0)
-            {
-                foodSource.StopEating();
-                break; // Stop eating if food is gone
-            }
-
-            yield return null;
         }
 
         currentState = AnimalState.Wandering;
@@ -896,7 +992,7 @@ public class Animal : MonoBehaviour
         {
             if (detectedPredator != null) // Interrupt drinking if a wolf is detected
             {
-                currentState = AnimalState.Running;
+                currentState = AnimalState.RunninngAway;
                 yield break;
             }
 
@@ -910,7 +1006,7 @@ public class Animal : MonoBehaviour
     {
         if (detectedPredator != null)
         {
-            currentState = AnimalState.Running;
+            currentState = AnimalState.RunninngAway;
             return;
         }
 
@@ -936,12 +1032,12 @@ public class Animal : MonoBehaviour
         }
 
         transform.rotation = targetRotation; // Ensure final rotation is correct
-        DetectThreats(); // Check for wolves after looking around
+        DetectPredator(); // Check for wolves after looking around
     }
 
 
     //THREATS
-    void DetectThreats()
+    void DetectPredator()
     {
         int predatorLayerMask = 0;
         foreach (LayerMask mask in predators)
@@ -967,10 +1063,9 @@ public class Animal : MonoBehaviour
 
         if (detectedPredator != null)
         {
-            currentState = AnimalState.Running;
+            currentState = AnimalState.RunninngAway;
         }
     }
-
     void RunAway()
     {
         if (detectedPredator == null)
@@ -979,29 +1074,148 @@ public class Animal : MonoBehaviour
             return;
         }
 
-        Vector3 directionToThreat = (detectedPredator.position - transform.position).normalized;
         float distanceToThreat = Vector3.Distance(transform.position, detectedPredator.position);
 
         // If burrow exists and is safe, run towards it
-        if (home != null && distanceToThreat > 5f)
+        if (home != null && distanceToThreat > 10f)
         {
             agent.SetDestination(home.transform.position);
             return;
         }
+        else if (distanceToThreat > 20f) detectedPredator = null;
 
-        // If no burrow or Wolf is too close, run in the opposite direction
         Vector3 escapeDirection = (transform.position - detectedPredator.position).normalized;
         Vector3 escapeTarget = transform.position + escapeDirection * stats.detectionDistance;
 
-        // Ensure the escape target is valid
+        // Check if escape path is blocked
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(escapeTarget, out hit, 2f, NavMesh.AllAreas))
+        if (NavMesh.Raycast(transform.position, escapeTarget, out hit, NavMesh.AllAreas))
         {
-            agent.SetDestination(hit.position);
+            // If blocked, try steering left or right
+            Vector3 alternateDirection = Vector3.Cross(Vector3.up, escapeDirection).normalized;
+            Vector3 alternateTarget1 = transform.position + alternateDirection * stats.detectionDistance;
+            Vector3 alternateTarget2 = transform.position - alternateDirection * stats.detectionDistance;
+
+            if (NavMesh.SamplePosition(alternateTarget1, out hit, 2f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+            }
+            else if (NavMesh.SamplePosition(alternateTarget2, out hit, 2f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+            }
+            else
+            {
+                Debug.LogWarning("No valid escape path found!");
+            }
         }
         else
         {
-            Debug.LogWarning("No valid escape path found!");
+            // No obstacles, move normally
+            if (NavMesh.SamplePosition(escapeTarget, out hit, 2f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+            }
+        }
+    }
+
+    //PREY/HUNTING
+    void DetectPrey()
+    {
+        int preyLayerMask = 0;
+        foreach (LayerMask mask in prey)
+        {
+            preyLayerMask |= mask.value; // Combine all layer masks
+        }
+
+        Collider[] preysToHunt = Physics.OverlapSphere(transform.position, stats.detectionDistance, preyLayerMask);
+        detectedPrey = null;
+        float closestDistance = Mathf.Infinity;
+
+        foreach (Collider prey in preysToHunt)
+        {
+            Vector3 directionToPrey = (prey.transform.position - transform.position).normalized;
+            float distanceToPrey = Vector3.Distance(transform.position, prey.transform.position);
+
+            if (Vector3.Angle(transform.forward, directionToPrey) < stats.detectionAngle / 2 && distanceToPrey < closestDistance)
+            {
+                detectedPrey = prey.transform;
+                closestDistance = distanceToPrey;
+            }
+        }
+
+        if (detectedPrey != null)
+        {
+            currentState = AnimalState.Hunting;
+        }
+    }
+    void Hunt()
+    {
+        if (detectedPrey == null)
+        {
+            currentState = AnimalState.Wandering;
+            return;
+        }
+
+        Animal preyScript = detectedPrey.GetComponent<Animal>();
+        if (!preyScript)
+        {
+            Debug.LogWarning("Prey Detected has no Animal Script!");
+            currentState = AnimalState.Wandering;
+            detectedPrey = null;
+            return;
+        }
+        else //has animal script
+        {
+            if (!preyScript.isDead && preyScript.currentState != AnimalState.Hiding)
+            {
+                agent.SetDestination(detectedPrey.position);
+
+                //Timer
+                if (attackTimer < 2f) attackTimer += Time.deltaTime;
+
+                float distanceToPrey = Vector3.Distance(transform.position, detectedPrey.position);
+                // If close enough, attempt to attack (you can replace this with an attack function)
+                if (distanceToPrey <= stats.attackRange)
+                {
+                    if (attackTimer >= 2f)
+                    {
+                        AttackPrey(preyScript);
+                    }
+                }
+            }
+            else
+            {
+                detectedPrey = null;
+                currentState = AnimalState.Wandering;
+            }
+        }
+    }
+    void AttackPrey(Animal preyToAttack)
+    {
+        attackTimer = 0;
+
+        preyToAttack.GetAttacked(stats.attackDamage, this);
+        if (preyToAttack.isDead || preyToAttack.currentState == AnimalState.Hiding)
+        {
+            detectedPrey = null;
+            currentState = AnimalState.Wandering;
+        }
+    }
+    void GetAttacked(float damage, Animal predatorAttacking)
+    {
+        stats.health -= damage;
+
+        //History
+        string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
+            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has been attacked by " +
+            $"{predatorAttacking.animalName} - {predatorAttacking.animalType.animalName.ToString()} ({furType.furName.ToString()})";
+        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+
+        //Check Death
+        if (stats.health <= 0)
+        {
+            Die(DeathCause.Eaten);
         }
     }
 
@@ -1011,7 +1225,7 @@ public class Animal : MonoBehaviour
         if (other == null) return;
 
         Home homeScript = other.GetComponent<Home>();
-        if (homeScript != null)
+        if (homeScript != null && homeScript.animalType == animalType)
         {
             float time = 0f;
 
@@ -1026,7 +1240,7 @@ public class Animal : MonoBehaviour
                     homeScript.EnterBurrowForSleep(this, time);
                     break;
 
-                case AnimalState.Running:
+                case AnimalState.RunninngAway:
                     currentState = AnimalState.Hiding;
                     time = stats.waitBeforeLeavingBurrow;
 
@@ -1189,9 +1403,11 @@ public class Animal : MonoBehaviour
     }
     public void SetAnimalSkinModel()
     {
-        ClearModelHolderChild();
         if (furType?.model != null)
+        {
+            ClearModelHolderChild();
             Instantiate(furType.model, modelHolder);
+        }
     }
     public void SetAnimalSkinModel(FurType newFurType)
     {

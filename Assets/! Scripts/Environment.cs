@@ -14,9 +14,6 @@ public class Environment : MonoBehaviour
     public GameObject bushReady;
     public GameObject bushFull;
 
-    [Header("Prefabs")]
-    public GameObject burrowPrefab;
-
     public static Environment Instance;
 
     private void Awake()

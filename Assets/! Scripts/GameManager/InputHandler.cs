@@ -273,17 +273,22 @@ public class InputHandler : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) // Left click to select target
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, LayerMask.GetMask("Rabbit", "Wolf")))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
-                target = hit.transform;
-                isFollowingTarget = true;
+                Animal animal = hit.transform.GetComponent<Animal>(); // Check if the clicked object has an Animal script
+                if (animal != null)
+                {
+                    target = hit.transform;
+                    isFollowingTarget = true;
 
-                UIManager.Instance.ShowControls(isFollowingTarget);
-                UIManager.Instance.SetDebugModeDisplayUI(!isOverHeadDebugStats);
-                UIManager.Instance.UpdateTargetUI();
+                    UIManager.Instance.ShowControls(isFollowingTarget);
+                    UIManager.Instance.SetDebugModeDisplayUI(!isOverHeadDebugStats);
+                    UIManager.Instance.UpdateTargetUI();
+                }
             }
         }
     }
+
     void FindClosestTarget()
     {
         Collider[] targets = Physics.OverlapSphere(transform.position, 100f, LayerMask.GetMask("Rabbit", "Wolf")); // or wolf

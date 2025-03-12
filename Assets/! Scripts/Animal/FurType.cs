@@ -8,7 +8,8 @@ public class FurType : ScriptableObject
 
     public override string ToString()
     {
-        return furName;
+        if (furName != null) return furName;
+        else return "No FurType";
     }
 
     private void OnValidate()

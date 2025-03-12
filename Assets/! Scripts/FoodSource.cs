@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum FoodType
 {
@@ -18,15 +19,22 @@ public class FoodSource : MonoBehaviour
 
     [Header("Food Settings* (Edit these!)")]
     public FoodType foodType;
-
+    
+    [Space(-10f)]
     [Header("(Non Instant)")]
     public float minFoodToEat = 10f;
     public float maxFood = 25f;
     public float foodReplenishedPerSecond = 0.1f;
 
+    [Space(-10f)]
     [Header("(Instant?)")]
     [Tooltip("Animals that eat this will instantly gain 'instantFood' amount of food.")] public bool instantConsumable = false;
-    public float instantFood = 0f;
+    [Tooltip("Animals that eat this will gain this amount! Leave empty for Dead Animals like Rabbits")] public float instantFood = 0f;
+
+    [Header("Dead Animal")]
+    [Tooltip("When True, auto destroy the food source upon full consumption")] public bool isDeadAnimal = false;
+    public bool convertHungerToFoodAvailable = true;
+    public float divideHungerBy = 4f;
 
     [Header("Food Stats (Debug)")]
     public bool canEat = false;
@@ -38,14 +46,16 @@ public class FoodSource : MonoBehaviour
 
     private void Start()
     {
-        foodAvailable = maxFood / 2f;
+        foodAvailable = maxFood;
 
         if (instantConsumable) canEat = true;
+
+        UpdateFoodSourceModel();
     }
 
     void Update()
     {
-        if (!isBeingEaten)
+        if (!isBeingEaten && foodReplenishedPerSecond > 0 && !isDeadAnimal)
         {
             // Increment timer only if not being eaten
             beingEatenTimer += Time.deltaTime;
@@ -68,33 +78,48 @@ public class FoodSource : MonoBehaviour
     {
         if (instantConsumable)
         {
+            canEat = false;
+            DestroyWithDelay();
             return instantFood;
         }
         else
         {
-            if (foodAvailable <= 0) return 0f;
-
-            beingEatenTimer = 0f; // Reset timer when eaten
-            isBeingEaten = true;  // Mark as being eaten
-
-            float foodTaken = Mathf.Min(amount, foodAvailable);
-            foodAvailable -= foodTaken;
-
-            // Disable eating if food drops below minFoodToEat
-            if (foodAvailable < minFoodToEat)
-                canEat = false;
-
-            // If food is empty, stop eating and reset state
-            if (foodAvailable <= 0)
+            if (isDeadAnimal)
             {
-                foodAvailable = 0;
-                isBeingEaten = false;
+                float foodTaken = Mathf.Min(amount, foodAvailable);
+                foodAvailable -= foodTaken;
+                if (foodAvailable <= 0) DestroyWithDelay();
+
+                return foodTaken;
             }
+            else
+            {
+                if (foodAvailable <= 0) return 0f;
 
-            UpdateFoodSourceModel();
+                beingEatenTimer = 0f; // Reset timer when eaten
+                isBeingEaten = true;  // Mark as being eaten
 
-            return foodTaken;
+                float foodTaken = Mathf.Min(amount, foodAvailable);
+                foodAvailable -= foodTaken;
+
+                // Disable eating if food drops below minFoodToEat
+                if (foodAvailable < minFoodToEat)
+                    canEat = false;
+
+                // If food is empty, stop eating and reset state
+                if (foodAvailable <= 0)
+                {
+                    foodAvailable = 0;
+                    isBeingEaten = false;
+                }
+
+                UpdateFoodSourceModel();
+
+                return foodTaken;
+            }
         }
+
+        return 0f;
     }
 
     public void StopEating()
@@ -104,12 +129,10 @@ public class FoodSource : MonoBehaviour
 
     public void UpdateFoodSourceModel()
     {
-        ClearModelHolderChild();
-
         switch (foodType)
         {
             case FoodType.Berries:
-
+                ClearModelHolderChild();
                 Instantiate(Environment.Instance.GetBushModel(DetermineBushType()), modelHolder);
                 break;
         }
@@ -132,5 +155,10 @@ public class FoodSource : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
+    }
+
+    public void DestroyWithDelay()
+    {
+        Destroy(gameObject, 0.1f);
     }
 }

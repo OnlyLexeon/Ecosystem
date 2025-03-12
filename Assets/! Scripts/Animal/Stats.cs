@@ -74,6 +74,9 @@ public class StatModifier
 
 public class Stats : MonoBehaviour
 {
+    [Header("Change Everything For Your Animal!")]
+    [Header("Acts as Default Settings (Modified by Genes later)")]
+
     [Header("About")]
     public Gender gender;
     public int agedDays = 3;
@@ -97,7 +100,6 @@ public class Stats : MonoBehaviour
     [Tooltip("Max Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int maxDeathTime = 960; //4pm
     [Tooltip("Exact Time taken till Animal Dies of Old Age AFTER reaching deathDays.")] public int deathTime = 0;
 
-
     [Header("Eat Settings")]
     public float needsInterval = 1f;
     public float foodEatPerSecond = 2f;
@@ -106,16 +108,21 @@ public class Stats : MonoBehaviour
     public float lookAngleMin = 30f;
     public float lookAngleMax = 90f;
 
+    [Header("Attack Settings (Hunters)")]
+    public float attackRange = 2f;
+    public float attackDamage = 10f;
+
     [Header("Hiding Settings")]
     public float waitBeforeLeavingBurrow = 10f;
 
     [Header("Detect Settings")]
-    public float detectionDistance = 12f;
-    public float detectionAngle = 110f;
+    public float detectionDistance = 10f;
+    public float detectionAngle = 100f;
 
     [Header("Move Settings")]
     public float baseSpeed = 1.5f;
     public float runSpeed = 3.5f;
+    public float injuredSpeed = 1f;
     public float wanderDistanceMin = 2f;
     public float wanderDistanceMax = 5f;
     public float wanderInterval = 2f;
