@@ -268,14 +268,11 @@ public class Stats : MonoBehaviour
 
     public void UpdateWorldStatsGenes(AnimalType animalType)
     {
-        foreach (Genes gene in genes)
-        {
-            int positiveGenes = GetPositiveGenesCount();
-            int negativeGenes = GetNegativeGenesCount();
-            int neutralGenes = GetNeutralGenesCount();
+        int positiveGenes = GetPositiveGenesCount();
+        int negativeGenes = GetNegativeGenesCount();
+        int neutralGenes = GetNeutralGenesCount();
 
-            WorldStats.Instance.UpdateGeneStats(animalType, positiveGenes, negativeGenes, neutralGenes);
-        }
+        WorldStats.Instance.UpdateGeneStats(animalType, positiveGenes, negativeGenes, neutralGenes);
     }
 
     public int GetPositiveGenesCount()

@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="Assets\! Scripts\Quality Scripts\GCManager.cs" />
     <Compile Include="Assets\! Scripts\GameManager\MapGenerator.cs" />
+    <Compile Include="Assets\! Scripts\GameManager\WorldStatsUI.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\DynamicTextBackground.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\RandomRotation.cs" />
     <Compile Include="Assets\! Scripts\Quality Scripts\AutoMemoryPreallocator.cs" />
@@ -85,6 +86,8 @@
     <Compile Include="Assets\! Scripts\GameManager\DayNightManager.cs" />
     <Compile Include="Assets\! Scripts\GameManager\TerminationManager.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\PersonalityButton.cs" />
+    <Compile Include="Assets\! Scripts\UI Scripts\TerminationConditionUI.cs" />
+    <Compile Include="Assets\! Scripts\GameManager\WorldStatsEntry.cs" />
     <Compile Include="Assets\! Scripts\FoodSource.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\AnimalContainer.cs" />
     <Compile Include="Assets\! Scripts\GameManager\GeneManager.cs" />
