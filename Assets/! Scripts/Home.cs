@@ -67,4 +67,14 @@ public class Home : MonoBehaviour
         //Check if female, give birth
         if (animal.stats.gender == Gender.Female) animal.GiveBirth(this);
     }
+
+    private void OnDestroy()
+    {
+        foreach (var animal in animalInside)
+        {
+            animalInside.Remove(animal);
+            animal.gameObject.SetActive(true);
+            animal.currentState = AnimalState.Wandering;
+        }
+    }
 }

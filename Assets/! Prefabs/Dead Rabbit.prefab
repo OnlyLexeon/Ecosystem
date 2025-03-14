@@ -49,7 +49,7 @@ MonoBehaviour:
   modelHolder: {fileID: 224112274778744170}
   foodType: 2
   minFoodToEat: 0
-  maxFood: 20
+  maxFood: 30
   foodReplenishedPerSecond: 0
   instantConsumable: 0
   instantFood: 0

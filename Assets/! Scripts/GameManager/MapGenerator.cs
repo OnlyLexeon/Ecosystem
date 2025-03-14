@@ -35,6 +35,11 @@ public class MapGenerator : MonoBehaviour
     public GameObject landPrefab;
     public GameObject waterPrefab;
 
+    [Header("Map Regeenrate")]
+    public float generateCooldown = 5f;
+    public float generateTimer = 0f;
+    public bool isGenerating = false;
+
     [Header("References(*)")]
     public Transform landHolder;
     public Transform waterHolder;
@@ -43,7 +48,7 @@ public class MapGenerator : MonoBehaviour
     public NavMeshSurface navMeshSurface;
     public Transform map;
 
-    private GameObject[,] terrainGrid;
+    public GameObject[,] terrainGrid;
 
     public static MapGenerator Instance;
 
@@ -54,6 +59,24 @@ public class MapGenerator : MonoBehaviour
         StartCoroutine(GenerateMapAndBakeNavMesh());
     }
 
+    private void Update()
+    {
+        if (!isGenerating && generateTimer < generateCooldown)
+        {
+            generateTimer += Time.deltaTime;
+        }
+    }
+
+    public void GenerateMap()
+    {
+        if (!isGenerating && generateTimer >= generateCooldown)
+        {
+            isGenerating = true;
+            generateTimer = 0f;
+            StartCoroutine(GenerateMapAndBakeNavMesh());
+        }
+    }
+
     public void DoDailyVegetation()
     {
         GenerateVegetation(carrots);
@@ -61,6 +84,9 @@ public class MapGenerator : MonoBehaviour
 
     IEnumerator GenerateMapAndBakeNavMesh()
     {
+        ClearMap();
+
+        //Make Land
         terrainGrid = new GameObject[width, length];
 
         for (int x = 0; x < width; x++)
@@ -93,6 +119,9 @@ public class MapGenerator : MonoBehaviour
         yield return null;
 
         BakeNavMesh();
+        yield return null;
+
+        isGenerating = false;
     }
     void BakeNavMesh()
     {
@@ -205,5 +234,33 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    
+    //CLEARING
+    void ClearMap()
+    {
+        if (terrainGrid != null)
+        {
+            foreach (var item in terrainGrid)
+            {
+                if (item != null) // Check to avoid null references
+                    Destroy(item.gameObject);
+            }
+        }
+
+        foreach (Transform child in landHolder)
+        {
+            if (child != null) Destroy(child.gameObject);
+        }
+        foreach (Transform child in waterHolder)
+        {
+            if (child != null) Destroy(child.gameObject);
+        }
+        foreach (Transform child in vegetationHolder)
+        {
+            if (child != null) Destroy(child.gameObject);
+        }
+        foreach (Transform child in burrowHolder)
+        {
+            if (child != null) Destroy(child.gameObject);
+        }
+    }
 }

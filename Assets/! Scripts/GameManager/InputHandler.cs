@@ -92,6 +92,12 @@ public class InputHandler : MonoBehaviour
             ToggleWorldStats();
         }
 
+        //Generate Map
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            MapGenerator.Instance.GenerateMap();
+        }
+
         //handle arrow keys
         if (Input.GetKey(KeyCode.LeftArrow))
             DayNightManager.Instance.UpSpeed(-0.1f);

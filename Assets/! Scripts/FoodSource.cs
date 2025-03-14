@@ -118,8 +118,6 @@ public class FoodSource : MonoBehaviour
                 return foodTaken;
             }
         }
-
-        return 0f;
     }
 
     public void StopEating()

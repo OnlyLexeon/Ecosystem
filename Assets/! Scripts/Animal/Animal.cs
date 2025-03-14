@@ -101,9 +101,9 @@ public class Animal : MonoBehaviour
     public Vector3 targetHomeLocation;
     public Transform toMateBurrow;
     public Transform targetMate;
-    public Transform detectedPredator;
-    
-    public Transform detectedPrey;
+
+    public Animal detectedPredator;
+    public Animal detectedPrey;
     public float attackTimer = 0f;
 
     public float needsTimer = 0f;
@@ -193,7 +193,7 @@ public class Animal : MonoBehaviour
         }
 
         //Threats
-        if (currentState == AnimalState.RunninngAway)
+        if (currentState == AnimalState.RunninngAway && detectedPredator != null)
         {
             RunAway();
             return; // Stop other actions if running
@@ -1057,7 +1057,9 @@ public class Animal : MonoBehaviour
 
             if (Vector3.Angle(transform.forward, directionToThreat) < stats.detectionAngle / 2 && distanceToThreat < closestDistance)
             {
-                detectedPredator = threat.transform;
+                Animal threatScript = threat.GetComponent<Animal>();
+                if (threatScript) detectedPredator = threatScript;
+                else Debug.LogError("No Animal Script found in Predator!! Check Layer or Scripts");
                 closestDistance = distanceToThreat;
             }
         }
@@ -1075,7 +1077,7 @@ public class Animal : MonoBehaviour
             return;
         }
 
-        float distanceToThreat = Vector3.Distance(transform.position, detectedPredator.position);
+        float distanceToThreat = Vector3.Distance(transform.position, detectedPredator.transform.position);
 
         // If burrow exists and is safe, run towards it
         if (home != null && distanceToThreat > 5f)
@@ -1089,7 +1091,7 @@ public class Animal : MonoBehaviour
             return;
         }
 
-        Vector3 escapeDirection = (transform.position - detectedPredator.position).normalized;
+        Vector3 escapeDirection = (transform.position - detectedPredator.transform.position).normalized;
         Vector3 escapeTarget = transform.position + escapeDirection * stats.detectionDistance;
 
         // Check if escape path is blocked
@@ -1144,7 +1146,9 @@ public class Animal : MonoBehaviour
 
             if (Vector3.Angle(transform.forward, directionToPrey) < stats.detectionAngle / 2 && distanceToPrey < closestDistance)
             {
-                detectedPrey = prey.transform;
+                Animal preyScript = prey.GetComponent<Animal>();
+                if (preyScript) detectedPrey = preyScript;
+                else Debug.LogError("No Animal Script found in Predator!! Check Layer or Scripts");
                 closestDistance = distanceToPrey;
             }
         }
@@ -1174,12 +1178,12 @@ public class Animal : MonoBehaviour
         {
             if (!preyScript.isDead && preyScript.currentState != AnimalState.Hiding)
             {
-                agent.SetDestination(detectedPrey.position);
+                agent.SetDestination(detectedPrey.transform.position);
 
                 //Timer
                 if (attackTimer < 2f) attackTimer += Time.deltaTime;
 
-                float distanceToPrey = Vector3.Distance(transform.position, detectedPrey.position);
+                float distanceToPrey = Vector3.Distance(transform.position, detectedPrey.transform.position);
                 // If close enough, attempt to attack (you can replace this with an attack function)
                 if (distanceToPrey <= stats.attackRange)
                 {
@@ -1209,6 +1213,10 @@ public class Animal : MonoBehaviour
     }
     void GetAttacked(float damage, Animal predatorAttacking)
     {
+        //Set detected predator as attacker
+        detectedPredator = predatorAttacking;
+        currentState = AnimalState.RunninngAway;
+
         stats.health -= damage;
 
         //History
