@@ -138,12 +138,12 @@ MonoBehaviour:
   foodType: 0
   minFoodToEat: 15
   maxFood: 45
-  foodReplenishedPerSecond: 0.2
+  foodReplenishedPerSecond: 0.15
   instantConsumable: 0
   instantFood: 0
   isDeadAnimal: 0
-  convertHungerToFoodAvailable: 1
-  divideHungerBy: 4
+  convertHungerToFoodAvailable: 0
+  divideHungerBy: 0
   canEat: 0
   foodAvailable: 0
 --- !u!135 &5940460506226367523

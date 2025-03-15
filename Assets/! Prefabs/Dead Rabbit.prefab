@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 1151711369364588460}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.8284605, y: 1.1045237, z: -7.6796036}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -55,7 +55,7 @@ MonoBehaviour:
   instantFood: 0
   isDeadAnimal: 1
   convertHungerToFoodAvailable: 1
-  divideHungerBy: 4
+  divideHungerBy: 5
   canEat: 0
   foodAvailable: 0
 --- !u!65 &1030173366427357893
@@ -106,7 +106,7 @@ Transform:
   m_LocalRotation: {x: -0.49999994, y: -0.5, z: -0.50000006, w: 0.5}
   m_LocalPosition: {x: -0.65, y: -0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3840433033103789465}
   m_Father: {fileID: 2262436294219814633}

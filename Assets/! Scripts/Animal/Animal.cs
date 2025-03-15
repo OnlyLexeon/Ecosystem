@@ -56,6 +56,8 @@ public class Animal : MonoBehaviour
     [Tooltip("Animals this animal will Run Away From)")] public List<LayerMask> predators;
     [Tooltip("Animals this animal will Hunt")]  public List<LayerMask> prey;
     [Tooltip("Where this animal will place their home")] public HomeType homeType;
+    public float adultScaleSize = 1f;
+    public float newbornScaleSize = 0.5f;
 
     [Header("References* (Ensure none empty)")]
     [Tooltip("Animal's Canvas (For OverHeadStats Toggle)")] public GameObject statsHUD;
@@ -232,12 +234,12 @@ public class Animal : MonoBehaviour
                 if (wanderTimer < stats.wanderInterval && !agent.pathPending) wanderTimer += Time.deltaTime;
                 else if (wanderTimer >= stats.wanderInterval) Wander();
 
+                if (isThirstCritical() && !detectedPrey) DetectDrink();
+                //Prioritize Food (Runs after thirst)
                 if (isFoodCritical())
                 {
                     if (!DetectFood()) DetectPrey();
                 }
-                if (isThirstCritical() && !detectedPrey) DetectDrink();
-
                 //Make Burrow
                 if (detectedPredator == null && home == null && currentState != AnimalState.MakingBurrow)
                 {
@@ -284,7 +286,7 @@ public class Animal : MonoBehaviour
             stats.health -= 0.2f;
 
             //Check Death
-            if (stats.health <= 0) Die(DeathCause.Thirst);
+            if (stats.health <= 0) Die(DeathCause.Starve);
 
             if (!takenDamage)
             {
@@ -301,7 +303,7 @@ public class Animal : MonoBehaviour
             stats.health -= 0.25f;
 
             //Check Death
-            if (stats.health <= 0) Die(DeathCause.Starve);
+            if (stats.health <= 0) Die(DeathCause.Thirst);
 
             if (!takenDamage)
             {
@@ -346,7 +348,7 @@ public class Animal : MonoBehaviour
         }
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
             $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has died from: " + causeOfDeath + "!";
-        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform), HistoryType.Death);
 
         //Disable Collider
         animalCollider.enabled = false;
@@ -358,6 +360,8 @@ public class Animal : MonoBehaviour
         //Do not despawn this script object, required for child button teleporting
         GameObject corpseToSpawn = Instantiate(animalType.animalDeadPrefab, transform.position, Quaternion.identity);
         FoodSource corpseScript = corpseToSpawn.GetComponent<FoodSource>();
+        //MODEL SIZE
+        corpseToSpawn.transform.localScale = transform.localScale;
         if (corpseScript)
         {
             if (corpseScript.convertHungerToFoodAvailable)
@@ -421,6 +425,8 @@ public class Animal : MonoBehaviour
     //AGING
     public void UpdateAge()
     {
+        if (isDead) return;
+
         stats.agedDays++;
 
         if (!isOld && stats.agedDays >= stats.deathDays)
@@ -649,7 +655,7 @@ public class Animal : MonoBehaviour
             //History
             string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
                 $"{childScript.animalName} - {childScript.animalType.animalName.ToString()} ({childScript.furType.furName.ToString()}) has mutated genetically with chance {mutationChance}%! Replaced Gene: {tempGene.name} | Mutated Into: {mutatedGene.name}";
-            UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(childScript.transform));
+            UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(childScript.transform), HistoryType.Mutation);
         }
 
         return childGenes;
@@ -710,7 +716,7 @@ public class Animal : MonoBehaviour
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
             $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has given birth to {totalOffspring} children! Father: {mateScript.animalName} | Generation: {stats.generation + 1}";
-        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
+        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform), HistoryType.Birth);
 
         //Spawning Rabbits
         for (int i = 0; i < totalOffspring; i++)
@@ -944,12 +950,15 @@ public class Animal : MonoBehaviour
             currentState = AnimalState.Eating;
             StartCoroutine(EatRoutine());
         }
-        else if (currentState == AnimalState.GoingToDrink && 
+        else if (currentState == AnimalState.GoingToEat && targetFood == null) currentState = AnimalState.Wandering;
+
+        if (currentState == AnimalState.GoingToDrink && 
             targetWater != null && Vector3.Distance(transform.position, targetWater.position) <= 2f)
         {
             currentState = AnimalState.Drinking;
             StartCoroutine(DrinkRoutine());
         }
+        else if (currentState == AnimalState.GoingToDrink && targetWater == null) currentState = AnimalState.Wandering;
     }
     IEnumerator EatRoutine()
     {
@@ -1080,12 +1089,12 @@ public class Animal : MonoBehaviour
         float distanceToThreat = Vector3.Distance(transform.position, detectedPredator.transform.position);
 
         // If burrow exists and is safe, run towards it
-        if (home != null && distanceToThreat > 5f)
+        if (home != null && distanceToThreat > 12f)
         {
             agent.SetDestination(home.transform.position);
             return;
         }
-        else if (distanceToThreat > 20f)
+        else if (distanceToThreat > 32f)
         {
             detectedPredator = null;
             return;
@@ -1222,7 +1231,7 @@ public class Animal : MonoBehaviour
         //History
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
             $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has been attacked by " +
-            $"{predatorAttacking.animalName} - {predatorAttacking.animalType.animalName.ToString()} ({furType.furName.ToString()})";
+            $"{predatorAttacking.animalName} - {predatorAttacking.animalType.animalName.ToString()} ({predatorAttacking.furType.furName.ToString()})";
         UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
 
         //Check Death
@@ -1295,6 +1304,16 @@ public class Animal : MonoBehaviour
             currentState = AnimalState.Drinking;
             StartCoroutine(DrinkRoutine());
         }
+        //FOOD FIX
+        if (currentState == AnimalState.GoingToEat && other.gameObject.layer == LayerMask.NameToLayer("Food"))
+        {
+            //check if target is collided
+            if (targetFood == other.transform)
+            {
+                currentState = AnimalState.Eating;
+                StartCoroutine(EatRoutine());
+            }
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -1335,7 +1354,8 @@ public class Animal : MonoBehaviour
     }
     public void ToggleUI(bool state)
     {
-        statsHUD.SetActive(state);
+        if (isDead) statsHUD.SetActive(false);
+        else statsHUD.SetActive(state);
     }
     void UpdateOverHeadUI() //UI updated once only
     {
@@ -1436,11 +1456,16 @@ public class Animal : MonoBehaviour
         //Fix TP bug
         targetWater = null;
         targetFood = null;
+        targetHomeLocation = Vector3.zero;
 
         NavMeshHit hit;
         if (NavMesh.SamplePosition(agent.transform.position, out hit, Mathf.Infinity, NavMesh.AllAreas))
         {
             agent.Warp(hit.position); // Move agent to the nearest valid position
+
+            currentState = AnimalState.Wandering;
+            StopAllCoroutines();
+
             Debug.Log("Agent snapped to NavMesh at: " + hit.position);
         }
         else

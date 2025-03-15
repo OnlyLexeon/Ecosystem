@@ -2,15 +2,26 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+public enum HistoryType
+{
+    Default,
+    Death,
+    Mating,
+    Birth,
+    Mutation,
+}
+
 public class HistoryEvent : MonoBehaviour
 {
     [SerializeField] public TextMeshProUGUI eventText;
     [SerializeField] public Button eventButton;
+    [SerializeField] public HistoryType historyType;
 
     private System.Action currentAction;
 
-    public void SetHistory(string historyText, System.Action onButtonClick = null)
+    public void SetHistory(string historyText, System.Action onButtonClick = null, HistoryType type = HistoryType.Default)
     {
+        historyType = type;
         eventText.text = historyText;
 
         // Avoid RemoveAllListeners() and use a local reference instead

@@ -352,11 +352,11 @@ MonoBehaviour:
   agedDays: 3
   generation: 0
   health: 40
-  hunger: 150
-  thirst: 150
+  hunger: 100
+  thirst: 100
   maxHealth: 40
-  maxHunger: 150
-  maxThirst: 150
+  maxHunger: 100
+  maxThirst: 100
   regenAmount: 2
   adultDays: 3
   deathDays: 15
@@ -415,6 +415,8 @@ MonoBehaviour:
   - serializedVersion: 2
     m_Bits: 512
   homeType: 1
+  adultScaleSize: 0.75
+  newbornScaleSize: 0.4
   statsHUD: {fileID: 6481906710248654743}
   genePrefab: {fileID: 8468673657133802829, guid: a9321f6600dae864abca9ab8e5b20479, type: 3}
   animalName: 
@@ -469,9 +471,9 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 4
-  m_Acceleration: 4
+  m_Acceleration: 3
   avoidancePriority: 50
-  m_AngularSpeed: 420
+  m_AngularSpeed: 400
   m_StoppingDistance: 0.5
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -499,7 +501,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 1.5, z: 2}
+  m_Size: {x: 1, y: 1.5, z: 2}
   m_Center: {x: 0, y: 0.25, z: 0}
 --- !u!54 &-4911554898805599716
 Rigidbody:
