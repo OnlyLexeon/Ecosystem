@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class Home : MonoBehaviour
 {
-    public AnimalType animalType;
+    [Header("Settings")]
+    public int destroyIfNoEnterInDays = 3;
+    public int daysWithoutEntering = 0;
 
+    public AnimalType animalType;
     public List<Animal> animalInside = new List<Animal>();
 
-    public bool threatNearby = false;
 
     //ENTERING
     public void EnterBurrow(Animal animal, float time) //hiding/making home
@@ -68,13 +70,31 @@ public class Home : MonoBehaviour
         if (animal.stats.gender == Gender.Female) animal.GiveBirth(this);
     }
 
-    private void OnDestroy()
+
+    public void UpdateDays()
     {
-        foreach (var animal in animalInside)
+        if (animalInside.Count <= 0)
         {
-            animalInside.Remove(animal);
+            daysWithoutEntering += 1;
+        }
+        else
+        {
+            daysWithoutEntering = 0;
+        }
+
+        if (daysWithoutEntering >= destroyIfNoEnterInDays) CallDestroy();
+    }
+
+    public void CallDestroy()
+    {
+        for (int i = animalInside.Count - 1; i >= 0; i--)
+        {
+            var animal = animalInside[i];
             animal.gameObject.SetActive(true);
             animal.currentState = AnimalState.Wandering;
+            animalInside.RemoveAt(i);
         }
+
+        Destroy(gameObject);
     }
 }

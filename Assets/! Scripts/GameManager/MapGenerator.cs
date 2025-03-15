@@ -256,7 +256,12 @@ public class MapGenerator : MonoBehaviour
         //Clear All Burrows
         foreach (Transform child in burrowHolder)
         {
-            if (child != null) Destroy(child.gameObject);
+            if (child != null)
+            {
+                Home homeScript = child.GetComponent<Home>();
+                if (homeScript) homeScript.CallDestroy();
+                else Debug.LogWarning("No Home Script! on Burrow!");
+            }
         }
     }
 

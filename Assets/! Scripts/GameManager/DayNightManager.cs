@@ -45,6 +45,8 @@ public class DayNightManager : MonoBehaviour
             time = 0f;
             dayNumber++;
 
+            //NEW DAYYY
+
             //Age all animals by 1
             AnimalContainer.Instance.UpdateAllAnimalAges();
 
@@ -54,6 +56,9 @@ public class DayNightManager : MonoBehaviour
 
             //Do Map Spawn
             MapGenerator.Instance.DoDailyVegetation();
+
+            //Burrows Depawn after a few days, without any animal inside it
+            BurrowManager.Instance.UpdateBurrows();
         }
 
         //Set day/night bools

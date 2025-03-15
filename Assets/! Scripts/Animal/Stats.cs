@@ -22,6 +22,9 @@ public enum StatType
     LookWhileEatingInterval,
     LookAngleMin,
     LookAngleMax,
+
+    //burrow
+    NewHomeDistance,
     LeaveBurrowWaitTime,
 
     //detect
@@ -112,7 +115,8 @@ public class Stats : MonoBehaviour
     public float attackRange = 2f;
     public float attackDamage = 10f;
 
-    [Header("Hiding Settings")]
+    [Header("Burrow Settings")]
+    public float newBurrowDistance = 32f;
     public float waitBeforeLeavingBurrow = 10f;
 
     [Header("Detect Settings")]
@@ -122,7 +126,6 @@ public class Stats : MonoBehaviour
     [Header("Move Settings")]
     public float baseSpeed = 1.5f;
     public float runSpeed = 3.5f;
-    public float injuredSpeed = 1f;
     public float wanderDistanceMin = 2f;
     public float wanderDistanceMax = 5f;
     public float wanderInterval = 2f;
@@ -231,6 +234,8 @@ public class Stats : MonoBehaviour
                     case StatType.DaysTillDeath: deathDays += Mathf.RoundToInt(modifier.value); break;
                     case StatType.MaxTimeTillDeath: maxDeathTime += Mathf.RoundToInt(modifier.value); break;
                     case StatType.MinTimeTillDeath: minDeathTime += Mathf.RoundToInt(modifier.value); break;
+
+                    case StatType.NewHomeDistance: newBurrowDistance += modifier.value; break;
                 }
             }
         }
@@ -249,6 +254,8 @@ public class Stats : MonoBehaviour
         lookWhileEatingInterval = Mathf.Max(lookWhileEatingInterval, 0.5f);
         waitBeforeLeavingBurrow = Mathf.Max(waitBeforeLeavingBurrow, 0.5f);
         detectionDistance = Mathf.Max(detectionDistance, 3f);
+
+        newBurrowDistance = Mathf.Max(newBurrowDistance, 24f);
 
         baseSpeed = Mathf.Max(baseSpeed, 0.5f);
         runSpeed = Mathf.Max(runSpeed, 1f);

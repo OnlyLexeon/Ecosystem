@@ -138,7 +138,7 @@ MonoBehaviour:
   foodType: 0
   minFoodToEat: 15
   maxFood: 45
-  foodReplenishedPerSecond: 0.15
+  foodReplenishedPerSecond: 0.1
   instantConsumable: 0
   instantFood: 0
   isDeadAnimal: 0

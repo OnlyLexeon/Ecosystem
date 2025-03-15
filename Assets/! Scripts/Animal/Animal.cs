@@ -206,14 +206,7 @@ public class Animal : MonoBehaviour
         }
 
         //Speed
-        if (stats.health <= stats.maxHealth * 0.25f)
-        {
-            agent.speed = stats.injuredSpeed;
-        }
-        else
-        {
-            agent.speed = (currentState == AnimalState.RunninngAway || currentState == AnimalState.Hunting) ? stats.runSpeed : stats.baseSpeed;
-        }
+        agent.speed = (currentState == AnimalState.RunninngAway || currentState == AnimalState.Hunting) ? stats.runSpeed : stats.baseSpeed;
 
         //Sleeping
         if (DayNightManager.Instance.isNight)
@@ -234,24 +227,27 @@ public class Animal : MonoBehaviour
                 if (wanderTimer < stats.wanderInterval && !agent.pathPending) wanderTimer += Time.deltaTime;
                 else if (wanderTimer >= stats.wanderInterval) Wander();
 
-                if (isThirstCritical() && !detectedPrey) DetectDrink();
+                //Find Mates
+                if (detectedPredator == null && stats.fertile == 1 && wantsToReproduce && !isThirstCritical() && !isFoodCritical() && !isHealthCritical() && !targetMate && DayNightManager.Instance.isDay)
+                {
+                    DetectMate();
+                }
+
+                if (isThirstCritical()) DetectDrink();
                 //Prioritize Food (Runs after thirst)
                 if (isFoodCritical())
                 {
                     if (!DetectFood()) DetectPrey();
                 }
+
                 //Make Burrow
-                if (detectedPredator == null && home == null && currentState != AnimalState.MakingBurrow)
+                if (detectedPredator == null && (home == null || Vector3.Distance(home.transform.position, transform.position) >= stats.newBurrowDistance) 
+                    && currentState != AnimalState.MakingBurrow)
                 {
                     if (FindPlaceToMakeHome(homeType))
                     {
                         MakeBurrow();
                     }
-                }
-                //Find Mates
-                if (detectedPredator == null && stats.fertile == 1 && wantsToReproduce && !isThirstCritical() && !isFoodCritical() && !isHealthCritical() && !targetMate && DayNightManager.Instance.isDay)
-                {
-                    DetectMate();
                 }
                 break;
             case AnimalState.GoingToEat:
@@ -442,7 +438,7 @@ public class Animal : MonoBehaviour
     public void ScaleChild()
     {
         //scale
-        float scaleFactor = Mathf.Lerp(0.15f, 0.4f, stats.agedDays / (float)stats.adultDays);
+        float scaleFactor = Mathf.Lerp(newbornScaleSize, adultScaleSize, stats.agedDays / (float)stats.adultDays);
         transform.localScale = new Vector3(scaleFactor, scaleFactor, scaleFactor);
 
         if (stats.agedDays >= stats.adultDays) isAdult = true;
@@ -826,8 +822,6 @@ public class Animal : MonoBehaviour
     }
     void MakeBurrow()
     {
-        if (home != null) return; // Already has a burrow
-
         currentState = AnimalState.MakingBurrow;
 
         // Ensure burrow is on a valid NavMesh position
@@ -852,11 +846,23 @@ public class Animal : MonoBehaviour
     }
     IEnumerator DigBurrow(Vector3 position)
     {
+        while (!agent.isOnNavMesh)
+        {
+            yield return null; // Wait until the agent is placed on the NavMesh
+        }
+
         agent.SetDestination(position);
 
         // Wait until the Rabbit reaches the position
         while (Vector3.Distance(transform.position, position) > 1.5f)
         {
+            if (!agent.isOnNavMesh || agent.pathStatus == NavMeshPathStatus.PathInvalid)
+            {
+                currentState = AnimalState.Wandering;
+                targetHomeLocation = Vector3.zero;
+                yield break; // Exit if the NavMesh becomes invalid
+            }
+
             yield return null; // Wait for the next frame
         }
 
@@ -1087,9 +1093,12 @@ public class Animal : MonoBehaviour
         }
 
         float distanceToThreat = Vector3.Distance(transform.position, detectedPredator.transform.position);
+        // Calculate direction to predator
+        Vector3 toPredator = (detectedPredator.transform.position - transform.position).normalized;
+        float dot = Vector3.Dot(transform.forward, toPredator);
 
         // If burrow exists and is safe, run towards it
-        if (home != null && distanceToThreat > 12f)
+        if (home != null && distanceToThreat > 12f && dot < Mathf.Cos(45 * Mathf.Deg2Rad))
         {
             agent.SetDestination(home.transform.position);
             return;
@@ -1453,6 +1462,7 @@ public class Animal : MonoBehaviour
     //OTHER FUNCTIONS
     void SnapToNavMesh()
     {
+        Debug.Log("Snap!");
         //Fix TP bug
         targetWater = null;
         targetFood = null;

@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: -4493892944609206647}
   - component: {fileID: 4670726373126320656}
   - component: {fileID: -1056659236121128921}
+  - component: {fileID: -3221547901730071439}
   m_Layer: 13
   m_Name: Tree
   m_TagString: Untagged
@@ -114,6 +115,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.8, y: 3.25, z: 0.8}
   m_Center: {x: 0, y: 1.12, z: 0}
+--- !u!114 &-3221547901730071439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8275337171425558242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1001 &5989037852543929486
 PrefabInstance:
   m_ObjectHideFlags: 0

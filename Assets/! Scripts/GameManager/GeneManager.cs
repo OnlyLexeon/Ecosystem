@@ -265,12 +265,20 @@ public class GeneManager : MonoBehaviour
                     new StatModifier(StatType.LookAngleMin, -10f)
                 }));
 
-        //Wait in Burrow
+        //Burrow
         defaultGenes.Add(new Genes("Careful", "Stays in burrows longer after hiding. (+5)", Positivity.Positive, 5,
                 new List<StatModifier> {
                     new StatModifier(StatType.LeaveBurrowWaitTime, 5f),
                 }));
         defaultGenes.Add(new Genes("Impatient", "Leaves burrow faster after hiding. (-5)", Positivity.Negative, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
+                }));
+        defaultGenes.Add(new Genes("Sendimental", "Distance before making a new Burrow (+12)", Positivity.Neutral, 5,
+                new List<StatModifier> {
+                    new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
+                }));
+        defaultGenes.Add(new Genes("Evacuator", "Distance before making a new Burrow (-12)", Positivity.Neutral, 5,
                 new List<StatModifier> {
                     new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
                 }));

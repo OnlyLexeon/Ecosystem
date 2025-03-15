@@ -79,6 +79,7 @@
     <Compile Include="Assets\! Scripts\Quality Scripts\RandomScale.cs" />
     <Compile Include="Assets\! Scripts\Animal\Animal.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\HistoryEvent.cs" />
+    <Compile Include="Assets\! Scripts\GameManager\BurrowManager.cs" />
     <Compile Include="Assets\! Scripts\Animal\AnimalType.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\! Scripts\Environment.cs" />
