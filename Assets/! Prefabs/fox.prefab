@@ -382,7 +382,7 @@ MonoBehaviour:
   wanderInterval: 4
   hungerDepletionRate: 0.1
   thirstDepletionRate: 0.15
-  additionalSleepHours: 0
+  additionalSleepHours: 2
   reproduceDaysLeft: 2
   fertile: 1
   baseOffSpringCount: 1
@@ -415,8 +415,8 @@ MonoBehaviour:
   - serializedVersion: 2
     m_Bits: 512
   homeType: 1
-  adultScaleSize: 0.75
-  newbornScaleSize: 0.4
+  adultScaleSize: 0.55
+  newbornScaleSize: 0.45
   statsHUD: {fileID: 6481906710248654743}
   genePrefab: {fileID: 8468673657133802829, guid: a9321f6600dae864abca9ab8e5b20479, type: 3}
   animalName: 

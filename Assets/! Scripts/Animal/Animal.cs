@@ -1103,7 +1103,7 @@ public class Animal : MonoBehaviour
             agent.SetDestination(home.transform.position);
             return;
         }
-        else if (distanceToThreat > 32f)
+        else if (distanceToThreat > 32f || !detectedPredator.gameObject.activeSelf)
         {
             detectedPredator = null;
             return;

@@ -175,9 +175,9 @@ public class UIManager : MonoBehaviour
                 hungerSlider.value = statScript.hunger;
                 thirstSlider.value = statScript.thirst;
 
-                healthText.text = statScript.health.ToString("F2") + "/" + statScript.maxHealth.ToString("F2");
-                hungerText.text = statScript.hunger.ToString("F2") + "/" + statScript.maxHunger.ToString("F2");
-                thirstText.text = statScript.thirst.ToString("F2") + "/" + statScript.maxThirst.ToString("F2");
+                healthText.text = statScript.health.ToString("F0") + "/" + statScript.maxHealth.ToString("F0");
+                hungerText.text = statScript.hunger.ToString("F0") + "/" + statScript.maxHunger.ToString("F0");
+                thirstText.text = statScript.thirst.ToString("F0") + "/" + statScript.maxThirst.ToString("F0");
 
                 targetAge.text = "Age (Days): " + statScript.agedDays + " / " + statScript.deathDays;
                 targetGender.text = "Gender: " + statScript.gender.ToString();
