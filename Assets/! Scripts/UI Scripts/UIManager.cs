@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using static Stats;
 using System.Collections.Generic;
 using System.Resources;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -100,6 +101,7 @@ public class UIManager : MonoBehaviour
 
     public static UIManager Instance;
 
+    private bool isClamping = false;
     private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
 
     private void Awake()
@@ -394,23 +396,29 @@ public class UIManager : MonoBehaviour
 
         historyEvents.Add(historyScript);
 
-        ClampHistoryCount();
+        if (!isClamping) StartCoroutine(ClampHistoryCount());
 
         FilterHistory(historyDropdown.value);
     }
-    public void ClampHistoryCount()
+    public IEnumerator ClampHistoryCount()
     {
+        isClamping = true;
+
         int excess = historyContainer.childCount - maxHistoryCount;
 
         // Limit the number of deletions per frame (prevents freezing)
         for (int i = 0; i < excess; i++)
         {
-            if (historyContainer.childCount == 0) return;
+            if (historyContainer.childCount == 0) break;
 
             HistoryEvent oldestEvent = historyEvents[0];
             historyEvents.RemoveAt(0);
             Destroy(oldestEvent.gameObject);
+
+            yield return null;
         }
+
+        isClamping = false;
     }
 
     public void FilterHistory(int dropdownIndex)

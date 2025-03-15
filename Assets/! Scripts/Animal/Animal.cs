@@ -1098,7 +1098,7 @@ public class Animal : MonoBehaviour
         float dot = Vector3.Dot(transform.forward, toPredator);
 
         // If burrow exists and is safe, run towards it
-        if (home != null && distanceToThreat > 12f && dot < Mathf.Cos(45 * Mathf.Deg2Rad))
+        if (home != null && distanceToThreat > 12f && dot < Mathf.Cos(60 * Mathf.Deg2Rad))
         {
             agent.SetDestination(home.transform.position);
             return;
@@ -1236,13 +1236,7 @@ public class Animal : MonoBehaviour
         currentState = AnimalState.RunninngAway;
 
         stats.health -= damage;
-
-        //History
-        string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
-            $"{animalName} - {animalType.animalName.ToString()} ({furType.furName.ToString()}) has been attacked by " +
-            $"{predatorAttacking.animalName} - {predatorAttacking.animalType.animalName.ToString()} ({predatorAttacking.furType.furName.ToString()})";
-        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(transform));
-
+        
         //Check Death
         if (stats.health <= 0)
         {

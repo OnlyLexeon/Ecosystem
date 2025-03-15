@@ -1214,7 +1214,7 @@ MonoBehaviour:
   historyDropdown: {fileID: 1545740384}
   historyContainer: {fileID: 282344608}
   historyEventPrefab: {fileID: 1487699027058551486, guid: 9f7fc8493a1b7804dae27917e57a6121, type: 3}
-  maxHistoryCount: 200
+  maxHistoryCount: 500
   targetText: {fileID: 1586678545}
   targetSpecies: {fileID: 680353220}
   targetAction: {fileID: 896128416}
@@ -29843,7 +29843,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 685706586}
   m_HandleRect: {fileID: 685706585}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 1.0000001
   m_Size: 0.24324325
   m_NumberOfSteps: 0
   m_OnValueChanged:
