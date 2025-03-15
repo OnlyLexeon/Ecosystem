@@ -14,7 +14,7 @@ public enum FoodType
 
 public class FoodSource : MonoBehaviour
 {
-    [Header("References")]
+    [Header("References (*)")]
     public Transform modelHolder;
 
     [Header("Food Settings* (Edit these!)")]

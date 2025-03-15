@@ -383,13 +383,13 @@ MonoBehaviour:
   hungerDepletionRate: 0.15
   thirstDepletionRate: 0.2
   additionalSleepHours: 0
-  reproduceDaysLeft: 2
+  reproduceDaysLeft: 1
   fertile: 1
-  baseOffSpringCount: 2
+  baseOffSpringCount: 4
   maxAdditionalOffSpring: 6
   minPositiveGenesPrefered: 2
   maxNegativeGenesPrefered: 3
-  reproduceCooldownDays: 2
+  reproduceCooldownDays: 1
   furDominance: 100
   seedDominance: 100
   geneMutationChance: 5
@@ -415,6 +415,8 @@ MonoBehaviour:
   - serializedVersion: 2
     m_Bits: 0
   homeType: 0
+  adultScaleSize: 0.4
+  newbornScaleSize: 0.15
   statsHUD: {fileID: 6481906710248654743}
   genePrefab: {fileID: 8468673657133802829, guid: a9321f6600dae864abca9ab8e5b20479, type: 3}
   animalName: 

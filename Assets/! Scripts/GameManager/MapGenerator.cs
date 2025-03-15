@@ -30,6 +30,7 @@ public class MapGenerator : MonoBehaviour
     public Vegetation bushes;
     public Vegetation trees;
     public Vegetation carrots;
+    public Vegetation rocks;
 
     [Header("Prefabs")]
     public GameObject landPrefab;
@@ -49,6 +50,7 @@ public class MapGenerator : MonoBehaviour
     public Transform map;
 
     public GameObject[,] terrainGrid;
+    public GameObject[,] vegetationGrid;
 
     public static MapGenerator Instance;
 
@@ -88,6 +90,7 @@ public class MapGenerator : MonoBehaviour
 
         //Make Land
         terrainGrid = new GameObject[width, length];
+        vegetationGrid = new GameObject[width, length];
 
         for (int x = 0; x < width; x++)
         {
@@ -109,13 +112,13 @@ public class MapGenerator : MonoBehaviour
         GenerateVegetation(trees);
         yield return null;
 
+        GenerateVegetation(rocks);
+        yield return null;
+
         DoDailyVegetation();
         yield return null;
 
         GenerateOuterLandRing();
-        yield return null;
-
-        CenterMap();
         yield return null;
 
         BakeNavMesh();
@@ -134,15 +137,6 @@ public class MapGenerator : MonoBehaviour
         {
             Debug.LogError("NavMeshSurface not assigned!");
         }
-    }
-
-    void CenterMap()
-    {
-        Vector3 offset = new Vector3(-width / 2f, 0, -length / 2f);
-
-        map.transform.Translate(offset);
-
-        Debug.Log("Map centered at (0,0,0)");
     }
 
     //GENERATIOM
@@ -193,7 +187,7 @@ public class MapGenerator : MonoBehaviour
         {
             for (int z = 0; z < length; z++)
             {
-                if (terrainGrid[x, z] != null && terrainGrid[x, z].tag == "Land")
+                if (terrainGrid[x, z] != null && terrainGrid[x, z].tag == "Land" && vegetationGrid[x, z] == null)
                 {
                     landPositions.Add(new Vector2Int(x, z));
                 }
@@ -215,7 +209,7 @@ public class MapGenerator : MonoBehaviour
                 int newX = Mathf.Clamp(patchCenter.x + offsetX, 0, width - 1);
                 int newZ = Mathf.Clamp(patchCenter.y + offsetZ, 0, length - 1);
 
-                if (terrainGrid[newX, newZ] != null && terrainGrid[newX, newZ].tag == "Land")
+                if (terrainGrid[newX, newZ] != null && terrainGrid[newX, newZ].tag == "Land" && vegetationGrid[newX, newZ] == null)
                 {
                     Vector3 position = terrainGrid[newX, newZ].transform.position + Vector3.up * vege.heightOffset;
                     Instantiate(vege.prefab, position, Quaternion.identity, vegetationHolder);
@@ -229,8 +223,13 @@ public class MapGenerator : MonoBehaviour
             if (landPositions.Count == 0) break;
 
             Vector2Int randomPos = landPositions[Random.Range(0, landPositions.Count)];
-            Vector3 position = terrainGrid[randomPos.x, randomPos.y].transform.position + Vector3.up * vege.heightOffset;
-            Instantiate(vege.prefab, position, Quaternion.identity, vegetationHolder);
+
+            if (vegetationGrid[randomPos.x, randomPos.y] == null) // Ensure the spot is free
+            {
+                Vector3 position = terrainGrid[randomPos.x, randomPos.y].transform.position + Vector3.up * vege.heightOffset;
+                GameObject newVege = Instantiate(vege.prefab, position, Quaternion.identity, vegetationHolder);
+                vegetationGrid[randomPos.x, randomPos.y] = newVege;
+            }
         }
     }
 
@@ -239,28 +238,41 @@ public class MapGenerator : MonoBehaviour
     {
         if (terrainGrid != null)
         {
-            foreach (var item in terrainGrid)
+            foreach (var terrain in terrainGrid)
             {
-                if (item != null) // Check to avoid null references
-                    Destroy(item.gameObject);
+                if (terrain != null) // Check to avoid null references
+                    Destroy(terrain.gameObject);
             }
         }
 
-        foreach (Transform child in landHolder)
+        if (vegetationGrid != null)
         {
-            if (child != null) Destroy(child.gameObject);
+            foreach(var vege in vegetationGrid)
+            {
+                if (vege != null)
+                    Destroy(vege.gameObject);
+            }
         }
-        foreach (Transform child in waterHolder)
-        {
-            if (child != null) Destroy(child.gameObject);
-        }
-        foreach (Transform child in vegetationHolder)
-        {
-            if (child != null) Destroy(child.gameObject);
-        }
+        //Clear All Burrows
         foreach (Transform child in burrowHolder)
         {
             if (child != null) Destroy(child.gameObject);
         }
     }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green; // Set square color
+
+        Vector3 topLeft = new Vector3(0, 0, 0);
+        Vector3 topRight = new Vector3(width, 0, 0);
+        Vector3 bottomRight = new Vector3(width, 0, length);
+        Vector3 bottomLeft = new Vector3(0, 0, length);
+
+        Gizmos.DrawLine(topLeft, topRight);
+        Gizmos.DrawLine(topRight, bottomRight);
+        Gizmos.DrawLine(bottomRight, bottomLeft);
+        Gizmos.DrawLine(bottomLeft, topLeft);
+    }
+
 }

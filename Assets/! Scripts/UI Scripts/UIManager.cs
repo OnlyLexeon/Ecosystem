@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
     public GameObject childrenButtonsPrefab;
 
     [Header("History Panel")]
+    public TMP_Dropdown historyDropdown;
     public Transform historyContainer;
     public GameObject historyEventPrefab;
     public int maxHistoryCount = 99;
@@ -99,9 +100,17 @@ public class UIManager : MonoBehaviour
 
     public static UIManager Instance;
 
+    private List<HistoryEvent> historyEvents = new List<HistoryEvent>();
+
     private void Awake()
     {
         Instance = this;
+    }
+
+    private void Start()
+    {
+        historyDropdown.onValueChanged.AddListener(FilterHistory);
+        SetupDropdownOptions();
     }
 
     private void Update()
@@ -377,15 +386,18 @@ public class UIManager : MonoBehaviour
     }
 
     //History UI
-    public void AddNewHistory(string text, System.Action onButtonClick = null)
+    public void AddNewHistory(string text, System.Action onButtonClick = null, HistoryType type = HistoryType.Default)
     {
         GameObject historyEvent = Instantiate(historyEventPrefab, historyContainer);
         HistoryEvent historyScript = historyEvent.GetComponent<HistoryEvent>();
-        historyScript.SetHistory(text, onButtonClick);
+        historyScript.SetHistory(text, onButtonClick, type);
+
+        historyEvents.Add(historyScript);
 
         ClampHistoryCount();
+
+        FilterHistory(historyDropdown.value);
     }
- 
     public void ClampHistoryCount()
     {
         int excess = historyContainer.childCount - maxHistoryCount;
@@ -393,11 +405,43 @@ public class UIManager : MonoBehaviour
         // Limit the number of deletions per frame (prevents freezing)
         for (int i = 0; i < excess; i++)
         {
-            Transform firstChild = historyContainer.GetChild(0);
-            if (firstChild == null) return;
+            if (historyContainer.childCount == 0) return;
 
-            Destroy(firstChild.gameObject);
-            Debug.LogWarning("Deleted Button");
+            HistoryEvent oldestEvent = historyEvents[0];
+            historyEvents.RemoveAt(0);
+            Destroy(oldestEvent.gameObject);
         }
+    }
+
+    public void FilterHistory(int dropdownIndex)
+    {
+        if (dropdownIndex == 0) // "All" option
+        {
+            foreach (var historyEvent in historyEvents)
+            {
+                historyEvent.gameObject.SetActive(true);
+            }
+            return;
+        }
+
+        HistoryType selectedType = (HistoryType)(dropdownIndex - 1); // Adjust index since "All" is index 0
+
+        foreach (var historyEvent in historyEvents)
+        {
+            bool shouldBeActive = historyEvent.historyType == selectedType;
+            historyEvent.gameObject.SetActive(shouldBeActive);
+        }
+    }
+    private void SetupDropdownOptions()
+    {
+        historyDropdown.ClearOptions();
+        List<string> options = new List<string>() { "All" }; // Add "All" option at index 0
+
+        foreach (HistoryType type in System.Enum.GetValues(typeof(HistoryType)))
+        {
+            options.Add(type.ToString());
+        }
+
+        historyDropdown.AddOptions(options);
     }
 }

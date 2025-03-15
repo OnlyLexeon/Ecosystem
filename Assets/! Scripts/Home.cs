@@ -33,7 +33,7 @@ public class Home : MonoBehaviour
 
         string eventString = $"Day {DayNightManager.Instance.dayNumber}, {DayNightManager.Instance.GetTimeString()}\n" +
                 $"{animal.animalName} - {animal.animalType} ({animal.furType}) entered a burrow to mate <3";
-        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(animal.transform));
+        UIManager.Instance.AddNewHistory(eventString, () => InputHandler.Instance.SetTargetAndFollow(animal.transform), HistoryType.Mating);
 
         animalInside.Add(animal);
         animal.gameObject.SetActive(false);

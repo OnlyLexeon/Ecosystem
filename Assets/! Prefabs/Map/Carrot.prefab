@@ -84,7 +84,7 @@ MonoBehaviour:
   maxFood: 0
   foodReplenishedPerSecond: 0
   instantConsumable: 1
-  instantFood: 15
+  instantFood: 10
   isDeadAnimal: 0
   convertHungerToFoodAvailable: 0
   divideHungerBy: 0
