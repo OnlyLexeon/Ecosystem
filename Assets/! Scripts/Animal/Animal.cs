@@ -1094,16 +1094,21 @@ public class Animal : MonoBehaviour
 
         float distanceToThreat = Vector3.Distance(transform.position, detectedPredator.transform.position);
         // Calculate direction to predator
-        Vector3 toPredator = (detectedPredator.transform.position - transform.position).normalized;
-        float dot = Vector3.Dot(transform.forward, toPredator);
-
-        // If burrow exists and is safe, run towards it
-        if (home != null && distanceToThreat > 12f && dot < Mathf.Cos(60 * Mathf.Deg2Rad))
+        if (home != null)
         {
-            agent.SetDestination(home.transform.position);
-            return;
+            Vector3 toHome = (home.transform.position - transform.position).normalized;
+            Vector3 toPredator = (detectedPredator.transform.position - transform.position).normalized;
+            float homeThreatDot = Vector3.Dot(toHome, toPredator);
+
+            // If burrow exists and is safe, run towards it
+            if (distanceToThreat > 12f && homeThreatDot < Mathf.Cos(60 * Mathf.Deg2Rad))
+            {
+                agent.SetDestination(home.transform.position);
+                return;
+            }
         }
-        else if (distanceToThreat > 32f || !detectedPredator.gameObject.activeSelf)
+       
+        if (distanceToThreat > 32f || !detectedPredator.gameObject.activeSelf)
         {
             detectedPredator = null;
             return;

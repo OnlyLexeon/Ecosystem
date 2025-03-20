@@ -35,6 +35,8 @@ public class FoodSource : MonoBehaviour
     [Tooltip("When True, auto destroy the food source upon full consumption")] public bool isDeadAnimal = false;
     public bool convertHungerToFoodAvailable = true;
     public float divideHungerBy = 4f;
+    public bool decay = false;
+    public float decayTime = 3 * 60 * 24;
 
     [Header("Food Stats (Debug)")]
     public bool canEat = false;
@@ -46,6 +48,8 @@ public class FoodSource : MonoBehaviour
 
     private void Start()
     {
+        if (decay) Destroy(gameObject, decayTime);
+
         foodAvailable = maxFood;
 
         if (instantConsumable) canEat = true;

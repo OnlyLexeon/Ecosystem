@@ -420,6 +420,15 @@ public class UIManager : MonoBehaviour
 
         isClamping = false;
     }
+    public void ClearHistory()
+    {
+        foreach (HistoryEvent historyEvent in new List<HistoryEvent>(historyEvents))
+        {
+            Destroy(historyEvent.gameObject);
+        }
+
+        historyEvents.Clear();
+    }
 
     public void FilterHistory(int dropdownIndex)
     {

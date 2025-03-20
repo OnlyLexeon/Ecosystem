@@ -56,6 +56,8 @@ MonoBehaviour:
   isDeadAnimal: 1
   convertHungerToFoodAvailable: 1
   divideHungerBy: 4
+  decay: 1
+  decayTime: 4320
   canEat: 0
   foodAvailable: 0
 --- !u!65 &1030173366427357893
