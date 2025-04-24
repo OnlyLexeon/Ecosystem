@@ -13710,9 +13710,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terminationCondition:
-    conditionType: 0
-    targetAnimalType: {fileID: 0}
-    generationReachedThreshold: 0
+    conditionType: 2
+    targetAnimalType: {fileID: 11400000, guid: a211b0d099d3f0a4aa9eb1b4e0b92e3a, type: 2}
+    generationReachedThreshold: 2
     numberOfAnimalsThreshold: 0
 --- !u!1 &798963868
 GameObject:
@@ -32623,7 +32623,556 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 994d5780ce5db284bb65485af7451b01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultGenes: []
+  defaultGenes:
+  - name: Lazy
+    description: Moves at a lower max distance when wandering. (-1.5)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 18
+      value: -1.5
+  - name: Adventurer
+    description: Moves at a higher max distance when wandering. (+1.5)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 19
+      value: 1.5
+  - name: Restful
+    description: Increases wander interval. (+2)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 20
+      value: 2
+  - name: Restless
+    description: Decreases wander interval. (-2)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 20
+      value: -2
+  - name: Energetic
+    description: Moves faster (+0.5) but loses more hunger. (+0.05)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 7
+      value: 0.05
+    - statType: 16
+      value: 0.5
+    - statType: 17
+      value: 0.5
+  - name: Sluggish
+    description: Moves slower (-0.5) but loses less hunger. (-0.05)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 7
+      value: -0.05
+    - statType: 16
+      value: -0.5
+    - statType: 17
+      value: -0.5
+  - name: Thirsty
+    description: Loses more thirst. (0.05)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 8
+      value: 0.05
+  - name: Retention
+    description: Loses less thirst. (-0.05)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 8
+      value: -0.05
+  - name: IronStomach
+    description: Loses less hunger. (-0.05)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 7
+      value: -0.05
+  - name: Hunger
+    description: Loses more hunger. (0.05)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 7
+      value: 0.05
+  - name: Gluttonous
+    description: Moves slower (-0.5) but eats faster (+2) and has more hunger capacity.
+      (+15)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 5
+      value: 2
+    - statType: 1
+      value: 15
+    - statType: 16
+      value: -0.5
+    - statType: 17
+      value: -0.5
+  - name: Storager
+    description: More hunger capacity. (+20)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 1
+      value: 20
+  - name: Starver
+    description: Less hunger capacity. (-20)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 1
+      value: -20
+  - name: Unathletic
+    description: Moves slower. (-0.3)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 16
+      value: -0.3
+    - statType: 17
+      value: -0.3
+  - name: Athletic
+    description: Moves faster. (+0.3)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 16
+      value: 0.3
+    - statType: 17
+      value: 0.3
+  - name: Runner
+    description: Runs faster. (+0.45)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 17
+      value: 0.45
+  - name: Wanderer
+    description: Wanders faster. (+0.45)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 16
+      value: 0.45
+  - name: Snail
+    description: Significantly slower. (-0.6)
+    positivity: 0
+    weightage: 5
+    statModifiers:
+    - statType: 16
+      value: -0.6
+    - statType: 17
+      value: -0.6
+  - name: Hyper
+    description: Significantly faster. (+0.6)
+    positivity: 4
+    weightage: 5
+    statModifiers:
+    - statType: 16
+      value: 0.6
+    - statType: 17
+      value: 0.6
+  - name: FastEater
+    description: Eats faster. (+1)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 5
+      value: 1
+  - name: SlowEater
+    description: Eats slower. (-1)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 5
+      value: -1
+  - name: FastDrinker
+    description: Drinks faster. (+2)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 6
+      value: 2
+  - name: SlowDrinker
+    description: Drinks slower. (-2)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 6
+      value: -2
+  - name: Fertile
+    description: Increase base offspring count. (+2)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 23
+      value: 2
+  - name: LessFertile
+    description: Decrease base offspring count. (-2)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 23
+      value: -2
+  - name: Reproductive
+    description: Increase random additional offspring count. (+2)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 24
+      value: 2
+  - name: Non-Reproductive
+    description: Decreases random additional offspring count. (-2)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 24
+      value: -2
+  - name: Non-Fertile
+    description: Can't Reproduce.
+    positivity: 0
+    weightage: 5
+    statModifiers:
+    - statType: 21
+      value: 0
+  - name: GeneBias
+    description: Prefers mate with more positive genes. (+1)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 25
+      value: 1
+  - name: MateInstinct
+    description: Prefers mate with less negative genes. (-1)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 26
+      value: -1
+  - name: GeneUnbias
+    description: Decrease mate's positive gene required. (-1)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 25
+      value: -1
+  - name: NonStandard
+    description: Increase mate's negative gene cap. (+1)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 26
+      value: 1
+  - name: Horny
+    description: Reduce reproduction cooldown day. (-1)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 27
+      value: -1
+  - name: Lustless
+    description: Increase reproduction cooldown day. (+1)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 27
+      value: 1
+  - name: SeedDominant
+    description: Increase chance of using this animal's Base/Additional offspring
+      count. (+50%)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 22
+      value: 50
+  - name: SeedRecessive
+    description: Decrease chance of using this animal's Base/Additional offspring
+      count. (-50%)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 22
+      value: -50
+  - name: FurDominance
+    description: Increase likeliness of Child inheriting this parent's fur color.
+      (+50%)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 29
+      value: 50
+  - name: RecessiveColor
+    description: Decrease likeliness of Child inheriting this parent's fur color.
+      (-50%)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 29
+      value: -50
+  - name: Strong
+    description: Has more health capacity. (+15)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 0
+      value: 15
+  - name: Weak
+    description: Has less health capacity. (-15)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 0
+      value: -15
+  - name: Healthy
+    description: Regens more health when injured. (+0.5)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 3
+      value: 0.5
+  - name: Unhealthy
+    description: Regens less health when injured. (-0.5)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 3
+      value: -0.5
+  - name: Alert
+    description: Detection radius (+20) and range increased. (+0.75)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 15
+      value: 20
+    - statType: 14
+      value: 0.75
+  - name: FarVision
+    description: Detection range greatly increased. (+1.5)
+    positivity: 4
+    weightage: 5
+    statModifiers:
+    - statType: 14
+      value: 1.5
+  - name: Blurred
+    description: Detection range (-20) and radius decreased. (-0.75)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 15
+      value: -20
+    - statType: 14
+      value: -0.75
+  - name: Impaired
+    description: Detection range significantly reduced. (-1.5)
+    positivity: 0
+    weightage: 5
+    statModifiers:
+    - statType: 14
+      value: -1.5
+  - name: Fixated
+    description: Detection range significantly increased (+1.5), but radius significantly
+      decreased. (-40)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 15
+      value: -40
+    - statType: 14
+      value: 1.5
+  - name: Shortsighted
+    description: Detection range significantly decreased (-1.5), but radius significantly
+      increased. (+40)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 15
+      value: 40
+    - statType: 14
+      value: -1.5
+  - name: Paranoid
+    description: Decrease Look around Interval. (-1.5)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 9
+      value: -1.5
+    - statType: 11
+      value: 10
+    - statType: 10
+      value: 10
+  - name: Unaware
+    description: Increases Look around Interval (+1.5)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 9
+      value: 1.5
+    - statType: 11
+      value: -10
+    - statType: 10
+      value: -10
+  - name: Careful
+    description: Stays in burrows longer after hiding. (+5)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 13
+      value: 5
+  - name: Impatient
+    description: Leaves burrow faster after hiding. (-5)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 13
+      value: -5
+  - name: Sendimental
+    description: Distance before making a new Burrow (+12)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 13
+      value: -5
+  - name: Evacuator
+    description: Distance before making a new Burrow (-12)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 13
+      value: -5
+  - name: Sleeper
+    description: Sleeps more than normal. (+1)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 28
+      value: 1
+  - name: Active
+    description: Sleeps less than normal. (-1)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 28
+      value: -1
+  - name: EarlyWorm
+    description: Sleeps a lot less than normal. (-2)
+    positivity: 4
+    weightage: 5
+    statModifiers:
+    - statType: 28
+      value: -2
+  - name: Hibernater
+    description: Sleeps a lot more than normal. (+2)
+    positivity: 0
+    weightage: 5
+    statModifiers:
+    - statType: 28
+      value: 2
+  - name: HighMetabolism
+    description: Decrease needs depletion interval (-0.25)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 4
+      value: -0.25
+  - name: LowMetabolism
+    description: Increase needs depletion interval (+0.25)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 4
+      value: 0.25
+  - name: MutativeGenes
+    description: Have a higher chance to mutate a gene next generation. (+5%)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 30
+      value: 5
+  - name: Non-Mutagenic
+    description: Have a lower chance to mutate a gene next generation. (-5%)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 30
+      value: -5
+  - name: MutativeGenes(+)
+    description: Have a higher chance to mutate a gene next generation. (+10%)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 30
+      value: 10
+  - name: Non-Mutagenic(-)
+    description: Have a lower chance to mutate a gene next generation. (-10%)
+    positivity: 2
+    weightage: 5
+    statModifiers:
+    - statType: 30
+      value: -10
+  - name: LongLiving
+    description: Lives longer by days. (+1)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 31
+      value: 1
+  - name: LongLiving++
+    description: Lives longer by days. (+3)
+    positivity: 4
+    weightage: 5
+    statModifiers:
+    - statType: 31
+      value: 3
+  - name: ShortLived
+    description: Lives shorter by days. (-1)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 31
+      value: -1
+  - name: ShortLived++
+    description: Lives shorter by days. (-3)
+    positivity: 0
+    weightage: 5
+    statModifiers:
+    - statType: 31
+      value: -3
+  - name: LateDeath
+    description: Lives longer into the day before withering away. (+60)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 33
+      value: 60
+  - name: LaterDeath++
+    description: Lives longer into the day before withering away. (+180)
+    positivity: 3
+    weightage: 5
+    statModifiers:
+    - statType: 33
+      value: 180
+  - name: EarlyDeath
+    description: Lives shorter into the day before withering away. (-60)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 32
+      value: -60
+  - name: EarlierDeath++
+    description: Lives shorter into the day before withering away. (-180)
+    positivity: 1
+    weightage: 5
+    statModifiers:
+    - statType: 32
+      value: -180
 --- !u!4 &1947985927
 Transform:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ using System.Collections;
 
 public class GeneUI : MonoBehaviour
 {
+    [Header("This Script handles the Gene UI (G Key) which is accessed during runtime")]
     public GameObject GeneMenu;
     public Transform geneDefaultListContainer;
     public Transform geneCustomListContainer;

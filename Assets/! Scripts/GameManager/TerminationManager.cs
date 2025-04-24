@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
@@ -13,9 +14,19 @@ public enum TerminationConditionType
     Extinction,
 }
 
+[System.Serializable]
+public class TerminationCondition
+{
+    public TerminationConditionType conditionType;
+    public AnimalType targetAnimalType; // Which animal this applies to
+
+    public int generationReachedThreshold; // Only used for GenerationCount
+    public int numberOfAnimalsThreshold; // Used for NumberOfAnimals
+}
+
 public class TerminationManager : MonoBehaviour
 {
-    [Header("'_' Symbol means Set Value Below (Condition)")]
+    [Header("Select Termination Condition*")]
     public TerminationCondition terminationCondition;
 
     public static TerminationManager Instance;
@@ -154,13 +165,57 @@ public class TerminationManager : MonoBehaviour
 }
 
 
-[System.Serializable]
-public class TerminationCondition
+[CustomPropertyDrawer(typeof(TerminationCondition))]
+public class TerminationConditionDrawer : PropertyDrawer
 {
-    public TerminationConditionType conditionType;
-    public AnimalType targetAnimalType; // Which animal this applies to
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+    {
+        int lines = 2; // Base lines: conditionType + targetAnimalType
 
-    [Header("Certain Conditions Only (Value)")]
-    public int generationReachedThreshold; // Only used for GenerationCount
-    public int numberOfAnimalsThreshold; // Used for NumberOfAnimals
+        var conditionProp = property.FindPropertyRelative("conditionType");
+
+        if (conditionProp.enumValueIndex == (int)TerminationConditionType.GenerationReached_)
+            lines++;
+        else if (conditionProp.enumValueIndex == (int)TerminationConditionType.NumberOfAnimals_)
+            lines++;
+
+        // Add some extra padding at the bottom
+        return lines * EditorGUIUtility.singleLineHeight + (lines - 1) * 2 + 6f;
+    }
+
+
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    {
+        EditorGUI.BeginProperty(position, label, property);
+
+        var conditionType = property.FindPropertyRelative("conditionType");
+        var targetAnimalType = property.FindPropertyRelative("targetAnimalType");
+        var genThreshold = property.FindPropertyRelative("generationReachedThreshold");
+        var numAnimalsThreshold = property.FindPropertyRelative("numberOfAnimalsThreshold");
+
+        float lineHeight = EditorGUIUtility.singleLineHeight;
+        float padding = 6f;
+
+        Rect line = new Rect(position.x, position.y, position.width, lineHeight);
+
+        EditorGUI.PropertyField(line, conditionType);
+        line.y += lineHeight + padding;
+
+        EditorGUI.PropertyField(line, targetAnimalType);
+        line.y += lineHeight + padding;
+
+        if ((TerminationConditionType)conditionType.enumValueIndex == TerminationConditionType.GenerationReached_)
+        {
+            EditorGUI.PropertyField(line, genThreshold);
+            line.y += lineHeight + padding;
+        }
+        else if ((TerminationConditionType)conditionType.enumValueIndex == TerminationConditionType.NumberOfAnimals_)
+        {
+            EditorGUI.PropertyField(line, numAnimalsThreshold);
+            line.y += lineHeight + padding;
+        }
+
+        EditorGUI.EndProperty();
+    }
+
 }

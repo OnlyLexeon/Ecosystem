@@ -351,21 +351,19 @@ MonoBehaviour:
   gender: 0
   agedDays: 3
   generation: 0
-  health: 20
-  hunger: 100
-  thirst: 100
-  maxHealth: 20
-  maxHunger: 100
-  maxThirst: 100
-  regenAmount: 1
   adultDays: 3
   deathDays: 12
   minDeathTime: 460
   maxDeathTime: 960
-  deathTime: 0
+  maxHealth: 20
+  maxHunger: 100
+  maxThirst: 100
+  regenAmount: 1
   needsInterval: 1
   foodEatPerSecond: 2
   drinkPerSecond: 4
+  hungerDepletionRate: 0.15
+  thirstDepletionRate: 0.2
   lookWhileEatingInterval: 5
   lookAngleMin: 30
   lookAngleMax: 90
@@ -380,12 +378,9 @@ MonoBehaviour:
   wanderDistanceMin: 4
   wanderDistanceMax: 6
   wanderInterval: 2
-  hungerDepletionRate: 0.15
-  thirstDepletionRate: 0.2
   additionalSleepHours: 0
-  reproduceDaysLeft: 1
   fertile: 1
-  baseOffSpringCount: 4
+  baseOffSpringCount: 3
   maxAdditionalOffSpring: 4
   minPositiveGenesPrefered: 2
   maxNegativeGenesPrefered: 3
@@ -394,6 +389,11 @@ MonoBehaviour:
   seedDominance: 100
   geneMutationChance: 5
   genes: []
+  health: 20
+  hunger: 100
+  thirst: 100
+  deathTime: 0
+  reproduceDaysLeft: 1
 --- !u!114 &2831069753851925193
 MonoBehaviour:
   m_ObjectHideFlags: 0

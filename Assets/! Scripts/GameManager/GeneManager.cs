@@ -24,344 +24,344 @@ public class GeneManager : MonoBehaviour
     //Loading
     private void LoadDefaultGenes()
     {
-        //Wandering
-        defaultGenes.Add(new Genes("Lazy", "Moves at a lower max distance when wandering. (-1.5)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.WanderDistanceMin, -1.5f)
-                }));
-        defaultGenes.Add(new Genes("Adventurer", "Moves at a higher max distance when wandering. (+1.5)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.WanderDistanceMax, 1.5f)
-                }));
-        defaultGenes.Add(new Genes("Restful", "Increases wander interval. (+2)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.WanderInterval, 2f)
-                }));
-        defaultGenes.Add(new Genes("Restless", "Decreases wander interval. (-2)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.WanderInterval, -2f)
-                }));
+        ////Wandering
+        //defaultGenes.Add(new Genes("Lazy", "Moves at a lower max distance when wandering. (-1.5)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.WanderDistanceMin, -1.5f)
+        //        }));
+        //defaultGenes.Add(new Genes("Adventurer", "Moves at a higher max distance when wandering. (+1.5)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.WanderDistanceMax, 1.5f)
+        //        }));
+        //defaultGenes.Add(new Genes("Restful", "Increases wander interval. (+2)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.WanderInterval, 2f)
+        //        }));
+        //defaultGenes.Add(new Genes("Restless", "Decreases wander interval. (-2)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.WanderInterval, -2f)
+        //        }));
 
-        //Depletion Rate
-        defaultGenes.Add(new Genes("Energetic", "Moves faster (+0.5) but loses more hunger. (+0.05)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.HungerDepletionRate, 0.05f),
-                    new StatModifier(StatType.BaseSpeed, 0.5f),
-                    new StatModifier(StatType.RunSpeed, 0.5f)
-                }));
-        defaultGenes.Add(new Genes("Sluggish", "Moves slower (-0.5) but loses less hunger. (-0.05)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.HungerDepletionRate, -0.05f),
-                    new StatModifier(StatType.BaseSpeed, -0.5f),
-                    new StatModifier(StatType.RunSpeed, -0.5f)
-                }));
-        defaultGenes.Add(new Genes("Thirsty", "Loses more thirst. (0.05)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.ThirstDepletionRate, 0.05f),
-                }));
-        defaultGenes.Add(new Genes("Retention", "Loses less thirst. (-0.05)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.ThirstDepletionRate, -0.05f),
-                }));
-        defaultGenes.Add(new Genes("IronStomach", "Loses less hunger. (-0.05)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.HungerDepletionRate, -0.05f),
-                }));
-        defaultGenes.Add(new Genes("Hunger", "Loses more hunger. (0.05)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.HungerDepletionRate, 0.05f),
-                }));
+        ////Depletion Rate
+        //defaultGenes.Add(new Genes("Energetic", "Moves faster (+0.5) but loses more hunger. (+0.05)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.HungerDepletionRate, 0.05f),
+        //            new StatModifier(StatType.BaseSpeed, 0.5f),
+        //            new StatModifier(StatType.RunSpeed, 0.5f)
+        //        }));
+        //defaultGenes.Add(new Genes("Sluggish", "Moves slower (-0.5) but loses less hunger. (-0.05)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.HungerDepletionRate, -0.05f),
+        //            new StatModifier(StatType.BaseSpeed, -0.5f),
+        //            new StatModifier(StatType.RunSpeed, -0.5f)
+        //        }));
+        //defaultGenes.Add(new Genes("Thirsty", "Loses more thirst. (0.05)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.ThirstDepletionRate, 0.05f),
+        //        }));
+        //defaultGenes.Add(new Genes("Retention", "Loses less thirst. (-0.05)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.ThirstDepletionRate, -0.05f),
+        //        }));
+        //defaultGenes.Add(new Genes("IronStomach", "Loses less hunger. (-0.05)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.HungerDepletionRate, -0.05f),
+        //        }));
+        //defaultGenes.Add(new Genes("Hunger", "Loses more hunger. (0.05)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.HungerDepletionRate, 0.05f),
+        //        }));
 
-        //Hunger
-        defaultGenes.Add(new Genes("Gluttonous", "Moves slower (-0.5) but eats faster (+2) and has more hunger capacity. (+15)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.FoodEatPerSecond, 2f),
-                    new StatModifier(StatType.MaxHunger, 15f),
-                    new StatModifier(StatType.BaseSpeed, -0.5f),
-                    new StatModifier(StatType.RunSpeed, -0.5f)
-                }));
-        defaultGenes.Add(new Genes("Storager", "More hunger capacity. (+20)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MaxHunger, 20f),
-                }));
-        defaultGenes.Add(new Genes("Starver", "Less hunger capacity. (-20)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MaxHunger, -20f),
-                }));
+        ////Hunger
+        //defaultGenes.Add(new Genes("Gluttonous", "Moves slower (-0.5) but eats faster (+2) and has more hunger capacity. (+15)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.FoodEatPerSecond, 2f),
+        //            new StatModifier(StatType.MaxHunger, 15f),
+        //            new StatModifier(StatType.BaseSpeed, -0.5f),
+        //            new StatModifier(StatType.RunSpeed, -0.5f)
+        //        }));
+        //defaultGenes.Add(new Genes("Storager", "More hunger capacity. (+20)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MaxHunger, 20f),
+        //        }));
+        //defaultGenes.Add(new Genes("Starver", "Less hunger capacity. (-20)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MaxHunger, -20f),
+        //        }));
 
-        //Movement
-        defaultGenes.Add(new Genes("Unathletic", "Moves slower. (-0.3)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.BaseSpeed, -0.3f),
-                    new StatModifier(StatType.RunSpeed, -0.3f),
-                }));
-        defaultGenes.Add(new Genes("Athletic", "Moves faster. (+0.3)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.BaseSpeed, 0.3f),
-                    new StatModifier(StatType.RunSpeed, 0.3f),
-                }));
-        defaultGenes.Add(new Genes("Runner", "Runs faster. (+0.45)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.RunSpeed, 0.45f),
-                }));
-        defaultGenes.Add(new Genes("Wanderer", "Wanders faster. (+0.45)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.BaseSpeed, 0.45f),
-                }));
-        defaultGenes.Add(new Genes("Snail", "Significantly slower. (-0.6)", Positivity.ExtremelyNegative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.BaseSpeed, -0.6f),
-                    new StatModifier(StatType.RunSpeed, -0.6f)
-                }));
-        defaultGenes.Add(new Genes("Hyper", "Significantly faster. (+0.6)", Positivity.ExtremelyPositive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.BaseSpeed, 0.6f),
-                    new StatModifier(StatType.RunSpeed, 0.6f)
-                }));
+        ////Movement
+        //defaultGenes.Add(new Genes("Unathletic", "Moves slower. (-0.3)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.BaseSpeed, -0.3f),
+        //            new StatModifier(StatType.RunSpeed, -0.3f),
+        //        }));
+        //defaultGenes.Add(new Genes("Athletic", "Moves faster. (+0.3)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.BaseSpeed, 0.3f),
+        //            new StatModifier(StatType.RunSpeed, 0.3f),
+        //        }));
+        //defaultGenes.Add(new Genes("Runner", "Runs faster. (+0.45)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.RunSpeed, 0.45f),
+        //        }));
+        //defaultGenes.Add(new Genes("Wanderer", "Wanders faster. (+0.45)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.BaseSpeed, 0.45f),
+        //        }));
+        //defaultGenes.Add(new Genes("Snail", "Significantly slower. (-0.6)", Positivity.ExtremelyNegative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.BaseSpeed, -0.6f),
+        //            new StatModifier(StatType.RunSpeed, -0.6f)
+        //        }));
+        //defaultGenes.Add(new Genes("Hyper", "Significantly faster. (+0.6)", Positivity.ExtremelyPositive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.BaseSpeed, 0.6f),
+        //            new StatModifier(StatType.RunSpeed, 0.6f)
+        //        }));
 
-        //Eat/Drink
-        defaultGenes.Add(new Genes("FastEater", "Eats faster. (+1)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.FoodEatPerSecond, 1f)
-                }));
-        defaultGenes.Add(new Genes("SlowEater", "Eats slower. (-1)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.FoodEatPerSecond, -1f)
-                }));
-        defaultGenes.Add(new Genes("FastDrinker", "Drinks faster. (+2)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DrinkPerSecond, 2f)
-                }));
-        defaultGenes.Add(new Genes("SlowDrinker", "Drinks slower. (-2)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DrinkPerSecond, -2f)
-                }));
+        ////Eat/Drink
+        //defaultGenes.Add(new Genes("FastEater", "Eats faster. (+1)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.FoodEatPerSecond, 1f)
+        //        }));
+        //defaultGenes.Add(new Genes("SlowEater", "Eats slower. (-1)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.FoodEatPerSecond, -1f)
+        //        }));
+        //defaultGenes.Add(new Genes("FastDrinker", "Drinks faster. (+2)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DrinkPerSecond, 2f)
+        //        }));
+        //defaultGenes.Add(new Genes("SlowDrinker", "Drinks slower. (-2)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DrinkPerSecond, -2f)
+        //        }));
 
-        //Seggs
-        defaultGenes.Add(new Genes("Fertile", "Increase base offspring count. (+2)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.BaseOffspringCount, 2f)
-                }));
-        defaultGenes.Add(new Genes("LessFertile", "Decrease base offspring count. (-2)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.BaseOffspringCount, -2f)
-                }));
-        defaultGenes.Add(new Genes("Reproductive", "Increase random additional offspring count. (+2)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MaxAdditionalOffspring, 2f)
-                }));
-        defaultGenes.Add(new Genes("Non-Reproductive", "Decreases random additional offspring count. (-2)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MaxAdditionalOffspring, -2f)
-                }));
-        defaultGenes.Add(new Genes("Non-Fertile", "Can't Reproduce.", Positivity.ExtremelyNegative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.Fertile, 0)
-                }));
-        defaultGenes.Add(new Genes("GeneBias", "Prefers mate with more positive genes. (+1)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MinPositiveGenesPrefered, 1f)
-                }));
-        defaultGenes.Add(new Genes("MateInstinct", "Prefers mate with less negative genes. (-1)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MaxNegativeGenesPrefered, -1f)
-                }));
-        defaultGenes.Add(new Genes("GeneUnbias", "Decrease mate's positive gene required. (-1)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MinPositiveGenesPrefered, -1f)
-                }));
-        defaultGenes.Add(new Genes("NonStandard", "Increase mate's negative gene cap. (+1)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MaxNegativeGenesPrefered, 1f)
-                }));
-        defaultGenes.Add(new Genes("Horny", "Reduce reproduction cooldown day. (-1)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.ReproduceCooldownDays, -1f)
-                }));
-        defaultGenes.Add(new Genes("Lustless", "Increase reproduction cooldown day. (+1)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.ReproduceCooldownDays, 1f)
-                }));
+        ////Seggs
+        //defaultGenes.Add(new Genes("Fertile", "Increase base offspring count. (+2)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.BaseOffspringCount, 2f)
+        //        }));
+        //defaultGenes.Add(new Genes("LessFertile", "Decrease base offspring count. (-2)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.BaseOffspringCount, -2f)
+        //        }));
+        //defaultGenes.Add(new Genes("Reproductive", "Increase random additional offspring count. (+2)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MaxAdditionalOffspring, 2f)
+        //        }));
+        //defaultGenes.Add(new Genes("Non-Reproductive", "Decreases random additional offspring count. (-2)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MaxAdditionalOffspring, -2f)
+        //        }));
+        //defaultGenes.Add(new Genes("Non-Fertile", "Can't Reproduce.", Positivity.ExtremelyNegative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.Fertile, 0)
+        //        }));
+        //defaultGenes.Add(new Genes("GeneBias", "Prefers mate with more positive genes. (+1)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MinPositiveGenesPrefered, 1f)
+        //        }));
+        //defaultGenes.Add(new Genes("MateInstinct", "Prefers mate with less negative genes. (-1)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MaxNegativeGenesPrefered, -1f)
+        //        }));
+        //defaultGenes.Add(new Genes("GeneUnbias", "Decrease mate's positive gene required. (-1)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MinPositiveGenesPrefered, -1f)
+        //        }));
+        //defaultGenes.Add(new Genes("NonStandard", "Increase mate's negative gene cap. (+1)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MaxNegativeGenesPrefered, 1f)
+        //        }));
+        //defaultGenes.Add(new Genes("Horny", "Reduce reproduction cooldown day. (-1)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.ReproduceCooldownDays, -1f)
+        //        }));
+        //defaultGenes.Add(new Genes("Lustless", "Increase reproduction cooldown day. (+1)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.ReproduceCooldownDays, 1f)
+        //        }));
 
-        //Offspring Values To Pick (Base Offspring + Additional Offspring)
-        defaultGenes.Add(new Genes("SeedDominant", "Increase chance of using this animal's Base/Additional offspring count. (+50%)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DominanceOverChildCount, 50f)
-                }));
-        defaultGenes.Add(new Genes("SeedRecessive", "Decrease chance of using this animal's Base/Additional offspring count. (-50%)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DominanceOverChildCount, -50f)
-                }));
+        ////Offspring Values To Pick (Base Offspring + Additional Offspring)
+        //defaultGenes.Add(new Genes("SeedDominant", "Increase chance of using this animal's Base/Additional offspring count. (+50%)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DominanceOverChildCount, 50f)
+        //        }));
+        //defaultGenes.Add(new Genes("SeedRecessive", "Decrease chance of using this animal's Base/Additional offspring count. (-50%)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DominanceOverChildCount, -50f)
+        //        }));
 
-        //Color or Pigment Fur
-        defaultGenes.Add(new Genes("FurDominance", "Increase likeliness of Child inheriting this parent's fur color. (+50%)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.FurTypeDominance, 50f),
-                }));
-        defaultGenes.Add(new Genes("RecessiveColor", "Decrease likeliness of Child inheriting this parent's fur color. (-50%)", Positivity.Neutral, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.FurTypeDominance, -50f),
-                }));
+        ////Color or Pigment Fur
+        //defaultGenes.Add(new Genes("FurDominance", "Increase likeliness of Child inheriting this parent's fur color. (+50%)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.FurTypeDominance, 50f),
+        //        }));
+        //defaultGenes.Add(new Genes("RecessiveColor", "Decrease likeliness of Child inheriting this parent's fur color. (-50%)", Positivity.Neutral, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.FurTypeDominance, -50f),
+        //        }));
 
-        //Health
-        defaultGenes.Add(new Genes("Strong", "Has more health capacity. (+15)", Positivity.Positive, 5,
-               new List<StatModifier> {
-                    new StatModifier(StatType.MaxHealth, 15f)
-               }));
-        defaultGenes.Add(new Genes("Weak", "Has less health capacity. (-15)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.MaxHealth, -15f)
-                }));
-        defaultGenes.Add(new Genes("Healthy", "Regens more health when injured. (+0.5)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.Regen, 0.5f)
-                }));
-        defaultGenes.Add(new Genes("Unhealthy", "Regens less health when injured. (-0.5)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.Regen, -0.5f)
-                }));
+        ////Health
+        //defaultGenes.Add(new Genes("Strong", "Has more health capacity. (+15)", Positivity.Positive, 5,
+        //       new List<StatModifier> {
+        //            new StatModifier(StatType.MaxHealth, 15f)
+        //       }));
+        //defaultGenes.Add(new Genes("Weak", "Has less health capacity. (-15)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.MaxHealth, -15f)
+        //        }));
+        //defaultGenes.Add(new Genes("Healthy", "Regens more health when injured. (+0.5)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.Regen, 0.5f)
+        //        }));
+        //defaultGenes.Add(new Genes("Unhealthy", "Regens less health when injured. (-0.5)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.Regen, -0.5f)
+        //        }));
 
-        //Detection
-        defaultGenes.Add(new Genes("Alert", "Detection radius (+20) and range increased. (+0.75)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DetectionAngle, 20f),
-                    new StatModifier(StatType.DetectionDistance, 0.75f)
-                }));
-        defaultGenes.Add(new Genes("FarVision", "Detection range greatly increased. (+1.5)", Positivity.ExtremelyPositive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DetectionDistance, 1.5f),
-                }));
-        defaultGenes.Add(new Genes("Blurred", "Detection range (-20) and radius decreased. (-0.75)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DetectionAngle, -20f),
-                    new StatModifier(StatType.DetectionDistance, -0.75f)
-                }));
-        defaultGenes.Add(new Genes("Impaired", "Detection range significantly reduced. (-1.5)", Positivity.ExtremelyNegative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DetectionDistance, -1.5f),
-                }));
-        defaultGenes.Add(new Genes("Fixated", "Detection range significantly increased (+1.5), but radius significantly decreased. (-40)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DetectionAngle, -40f),
-                    new StatModifier(StatType.DetectionDistance, 1.5f),
-                }));
-        defaultGenes.Add(new Genes("Shortsighted", "Detection range significantly decreased (-1.5), but radius significantly increased. (+40)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.DetectionAngle, 40f),
-                    new StatModifier(StatType.DetectionDistance, -1.5f),
-                }));
+        ////Detection
+        //defaultGenes.Add(new Genes("Alert", "Detection radius (+20) and range increased. (+0.75)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DetectionAngle, 20f),
+        //            new StatModifier(StatType.DetectionDistance, 0.75f)
+        //        }));
+        //defaultGenes.Add(new Genes("FarVision", "Detection range greatly increased. (+1.5)", Positivity.ExtremelyPositive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DetectionDistance, 1.5f),
+        //        }));
+        //defaultGenes.Add(new Genes("Blurred", "Detection range (-20) and radius decreased. (-0.75)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DetectionAngle, -20f),
+        //            new StatModifier(StatType.DetectionDistance, -0.75f)
+        //        }));
+        //defaultGenes.Add(new Genes("Impaired", "Detection range significantly reduced. (-1.5)", Positivity.ExtremelyNegative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DetectionDistance, -1.5f),
+        //        }));
+        //defaultGenes.Add(new Genes("Fixated", "Detection range significantly increased (+1.5), but radius significantly decreased. (-40)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DetectionAngle, -40f),
+        //            new StatModifier(StatType.DetectionDistance, 1.5f),
+        //        }));
+        //defaultGenes.Add(new Genes("Shortsighted", "Detection range significantly decreased (-1.5), but radius significantly increased. (+40)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.DetectionAngle, 40f),
+        //            new StatModifier(StatType.DetectionDistance, -1.5f),
+        //        }));
 
-        //Look while Eating
-        defaultGenes.Add(new Genes("Paranoid", "Decrease Look around Interval. (-1.5)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.LookWhileEatingInterval, -1.5f),
-                    new StatModifier(StatType.LookAngleMax, 10f),
-                    new StatModifier(StatType.LookAngleMin, 10f)
-                }));
-        defaultGenes.Add(new Genes("Unaware", "Increases Look around Interval (+1.5)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.LookWhileEatingInterval, 1.5f),
-                    new StatModifier(StatType.LookAngleMax, -10f),
-                    new StatModifier(StatType.LookAngleMin, -10f)
-                }));
+        ////Look while Eating
+        //defaultGenes.Add(new Genes("Paranoid", "Decrease Look around Interval. (-1.5)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.LookWhileEatingInterval, -1.5f),
+        //            new StatModifier(StatType.LookAngleMax, 10f),
+        //            new StatModifier(StatType.LookAngleMin, 10f)
+        //        }));
+        //defaultGenes.Add(new Genes("Unaware", "Increases Look around Interval (+1.5)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.LookWhileEatingInterval, 1.5f),
+        //            new StatModifier(StatType.LookAngleMax, -10f),
+        //            new StatModifier(StatType.LookAngleMin, -10f)
+        //        }));
 
-        //Burrow
-        defaultGenes.Add(new Genes("Careful", "Stays in burrows longer after hiding. (+5)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.LeaveBurrowWaitTime, 5f),
-                }));
-        defaultGenes.Add(new Genes("Impatient", "Leaves burrow faster after hiding. (-5)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
-                }));
-        defaultGenes.Add(new Genes("Sendimental", "Distance before making a new Burrow (+12)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
-                }));
-        defaultGenes.Add(new Genes("Evacuator", "Distance before making a new Burrow (-12)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
-                }));
+        ////Burrow
+        //defaultGenes.Add(new Genes("Careful", "Stays in burrows longer after hiding. (+5)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.LeaveBurrowWaitTime, 5f),
+        //        }));
+        //defaultGenes.Add(new Genes("Impatient", "Leaves burrow faster after hiding. (-5)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
+        //        }));
+        //defaultGenes.Add(new Genes("Sendimental", "Distance before making a new Burrow (+12)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
+        //        }));
+        //defaultGenes.Add(new Genes("Evacuator", "Distance before making a new Burrow (-12)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.LeaveBurrowWaitTime, -5f),
+        //        }));
 
-        //Sleep
-        defaultGenes.Add(new Genes("Sleeper", "Sleeps more than normal. (+1)", Positivity.Negative, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.SleepHours, 1f),
-            }));
-        defaultGenes.Add(new Genes("Active", "Sleeps less than normal. (-1)", Positivity.Positive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.SleepHours, -1f),
-                }));
-        defaultGenes.Add(new Genes("EarlyWorm", "Sleeps a lot less than normal. (-2)", Positivity.ExtremelyPositive, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.SleepHours, -2f),
-                }));
-        defaultGenes.Add(new Genes("Hibernater", "Sleeps a lot more than normal. (+2)", Positivity.ExtremelyNegative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.SleepHours, 2f),
-                }));
+        ////Sleep
+        //defaultGenes.Add(new Genes("Sleeper", "Sleeps more than normal. (+1)", Positivity.Negative, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.SleepHours, 1f),
+        //    }));
+        //defaultGenes.Add(new Genes("Active", "Sleeps less than normal. (-1)", Positivity.Positive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.SleepHours, -1f),
+        //        }));
+        //defaultGenes.Add(new Genes("EarlyWorm", "Sleeps a lot less than normal. (-2)", Positivity.ExtremelyPositive, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.SleepHours, -2f),
+        //        }));
+        //defaultGenes.Add(new Genes("Hibernater", "Sleeps a lot more than normal. (+2)", Positivity.ExtremelyNegative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.SleepHours, 2f),
+        //        }));
 
-        //Needs interval
-        defaultGenes.Add(new Genes("HighMetabolism", "Decrease needs depletion interval (-0.25)", Positivity.Negative, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.NeedsInterval, -0.25f),
-                }));
-        defaultGenes.Add(new Genes("LowMetabolism", "Increase needs depletion interval (+0.25)", Positivity.Positive, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.NeedsInterval, 0.25f),
-                }));
+        ////Needs interval
+        //defaultGenes.Add(new Genes("HighMetabolism", "Decrease needs depletion interval (-0.25)", Positivity.Negative, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.NeedsInterval, -0.25f),
+        //        }));
+        //defaultGenes.Add(new Genes("LowMetabolism", "Increase needs depletion interval (+0.25)", Positivity.Positive, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.NeedsInterval, 0.25f),
+        //        }));
 
-        //Mutation
-        defaultGenes.Add(new Genes("MutativeGenes", "Have a higher chance to mutate a gene next generation. (+5%)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.GeneMutationChance, 5f),
-                }));
-        defaultGenes.Add(new Genes("Non-Mutagenic", "Have a lower chance to mutate a gene next generation. (-5%)", Positivity.Neutral, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.GeneMutationChance, -5f),
-                }));
-        defaultGenes.Add(new Genes("MutativeGenes(+)", "Have a higher chance to mutate a gene next generation. (+10%)", Positivity.Neutral, 5,
-                new List<StatModifier> {
-                    new StatModifier(StatType.GeneMutationChance, 10f),
-                }));
-        defaultGenes.Add(new Genes("Non-Mutagenic(-)", "Have a lower chance to mutate a gene next generation. (-10%)", Positivity.Neutral, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.GeneMutationChance, -10f),
-                }));
+        ////Mutation
+        //defaultGenes.Add(new Genes("MutativeGenes", "Have a higher chance to mutate a gene next generation. (+5%)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.GeneMutationChance, 5f),
+        //        }));
+        //defaultGenes.Add(new Genes("Non-Mutagenic", "Have a lower chance to mutate a gene next generation. (-5%)", Positivity.Neutral, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.GeneMutationChance, -5f),
+        //        }));
+        //defaultGenes.Add(new Genes("MutativeGenes(+)", "Have a higher chance to mutate a gene next generation. (+10%)", Positivity.Neutral, 5,
+        //        new List<StatModifier> {
+        //            new StatModifier(StatType.GeneMutationChance, 10f),
+        //        }));
+        //defaultGenes.Add(new Genes("Non-Mutagenic(-)", "Have a lower chance to mutate a gene next generation. (-10%)", Positivity.Neutral, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.GeneMutationChance, -10f),
+        //        }));
 
-        //Aging
-        defaultGenes.Add(new Genes("LongLiving", "Lives longer by days. (+1)", Positivity.Positive, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.DaysTillDeath, 1f),
-                }));
-        defaultGenes.Add(new Genes("LongLiving++", "Lives longer by days. (+3)", Positivity.ExtremelyPositive, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.DaysTillDeath, 3f),
-                }));
-        defaultGenes.Add(new Genes("ShortLived", "Lives shorter by days. (-1)", Positivity.Negative, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.DaysTillDeath, -1f),
-                }));
-        defaultGenes.Add(new Genes("ShortLived++", "Lives shorter by days. (-3)", Positivity.ExtremelyNegative, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.DaysTillDeath, -3f),
-                }));
-        defaultGenes.Add(new Genes("LateDeath", "Lives longer into the day before withering away. (+60)", Positivity.Positive, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.MaxTimeTillDeath, 60f),
-                }));
-        defaultGenes.Add(new Genes("LaterDeath++", "Lives longer into the day before withering away. (+180)", Positivity.Positive, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.MaxTimeTillDeath, 180f),
-                }));
-        defaultGenes.Add(new Genes("EarlyDeath", "Lives shorter into the day before withering away. (-60)", Positivity.Negative, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.MinTimeTillDeath, -60f),
-                }));
-        defaultGenes.Add(new Genes("EarlierDeath++", "Lives shorter into the day before withering away. (-180)", Positivity.Negative, 5,
-            new List<StatModifier> {
-                    new StatModifier(StatType.MinTimeTillDeath, -180f),
-                }));
+        ////Aging
+        //defaultGenes.Add(new Genes("LongLiving", "Lives longer by days. (+1)", Positivity.Positive, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.DaysTillDeath, 1f),
+        //        }));
+        //defaultGenes.Add(new Genes("LongLiving++", "Lives longer by days. (+3)", Positivity.ExtremelyPositive, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.DaysTillDeath, 3f),
+        //        }));
+        //defaultGenes.Add(new Genes("ShortLived", "Lives shorter by days. (-1)", Positivity.Negative, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.DaysTillDeath, -1f),
+        //        }));
+        //defaultGenes.Add(new Genes("ShortLived++", "Lives shorter by days. (-3)", Positivity.ExtremelyNegative, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.DaysTillDeath, -3f),
+        //        }));
+        //defaultGenes.Add(new Genes("LateDeath", "Lives longer into the day before withering away. (+60)", Positivity.Positive, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.MaxTimeTillDeath, 60f),
+        //        }));
+        //defaultGenes.Add(new Genes("LaterDeath++", "Lives longer into the day before withering away. (+180)", Positivity.Positive, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.MaxTimeTillDeath, 180f),
+        //        }));
+        //defaultGenes.Add(new Genes("EarlyDeath", "Lives shorter into the day before withering away. (-60)", Positivity.Negative, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.MinTimeTillDeath, -60f),
+        //        }));
+        //defaultGenes.Add(new Genes("EarlierDeath++", "Lives shorter into the day before withering away. (-180)", Positivity.Negative, 5,
+        //    new List<StatModifier> {
+        //            new StatModifier(StatType.MinTimeTillDeath, -180f),
+        //        }));
 
         //Getting Detected/Stealth
         //new Genes("Quiet", "Less detectable.", 2), //not done
@@ -443,7 +443,7 @@ public enum Positivity
 public class Genes
 {
     public string name;
-    public string description;
+    [TextArea] public string description;
     public Positivity positivity;
     public int weightage; // default 5
     public List<StatModifier> statModifiers = new List<StatModifier>();
