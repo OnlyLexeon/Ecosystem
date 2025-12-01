@@ -161,6 +161,8 @@ public class Animal : MonoBehaviour
         //SPAWNING DEBUG STATS
         DoSpawnAddNumberToStats();
         CheckAnimalGeneration();
+        
+        //TerminationManager.Instance.CheckTermination();
 
         //SET AGE TIME
         CalculateDeathTime();

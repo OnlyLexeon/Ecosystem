@@ -55,7 +55,7 @@
     <UnityVersion>6000.0.34f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.34f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.34f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.34f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
@@ -86,6 +86,7 @@
     <Compile Include="Assets\! Scripts\Home.cs" />
     <Compile Include="Assets\! Scripts\GameManager\DayNightManager.cs" />
     <Compile Include="Assets\! Scripts\GameManager\TerminationManager.cs" />
+    <Compile Include="Assets\! Scripts\Quality Scripts\AutoLogger.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\PersonalityButton.cs" />
     <Compile Include="Assets\! Scripts\UI Scripts\TerminationConditionUI.cs" />
     <Compile Include="Assets\! Scripts\GameManager\WorldStatsEntry.cs" />
